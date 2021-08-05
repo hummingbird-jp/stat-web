@@ -29,7 +29,7 @@ var remoteUsers = {};
  * On initiation. `client` is not attached to any project or channel for any specific user.
  */
 var options = {
-	appid: null,
+	appid: "adaa9fb7675e4ca19ca80a6762e44dd2",
 	channel: null,
 	uid: null,
 	token: null
@@ -41,7 +41,10 @@ var options = {
  */
 $(() => {
 	var urlParams = new URL(location.href).searchParams;
-	options.appid = urlParams.get("appid");
+
+	// App ID is now pre-set
+	//options.appid = urlParams.get("appid");
+
 	options.channel = urlParams.get("channel");
 	options.token = urlParams.get("token");
 	options.uid = urlParams.get("uid");
