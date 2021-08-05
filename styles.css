@@ -3,8 +3,22 @@ body {
 	color: aliceblue;
 }
 
+hr {
+	margin: 2rem 1rem;
+}
+
+#token,
+#channel {
+	margin-top: 1rem;
+}
+
+#join,
+#leave {
+	margin-top: 1rem;
+}
+
 #join-form {
-	margin-top: 10px;
+	margin-top: 15rem;
 }
 
 .tips {
