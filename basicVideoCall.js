@@ -10,6 +10,8 @@
  * @param {string} mode - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/clientconfig.html#mode| streaming algorithm} used by Agora SDK.
  * @param  {string} codec - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/clientconfig.html#codec| client codec} used by the browser.
  */
+$("#leave").hide();
+
 var client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
 /*
@@ -100,6 +102,12 @@ async function join() {
 	client.on("user-published", handleUserPublished);
 	client.on("user-unpublished", handleUserUnpublished);
 
+	// hide join panel; show up #leave button
+	$(".form").hide();
+	$(".tips").hide();
+	$("hr").hide();
+	$("#join").text("Joining...");
+
 	// Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
 	[options.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
 		// Join the channel.
@@ -116,6 +124,9 @@ async function join() {
 	// Publish the local video and audio tracks to the channel.
 	await client.publish(Object.values(localTracks));
 	console.log("publish success");
+
+	$("#join").hide();
+	$("#leave").show();
 }
 
 /*
@@ -142,6 +153,13 @@ async function leave() {
 	$("#join").attr("disabled", false);
 	$("#leave").attr("disabled", true);
 	console.log("client leaves channel success");
+
+	$(".form").show();
+	$("#join").text("Join");
+	$("#join").show();
+	$(".tips").show();
+	$("hr").show();
+	$("#leave").hide();
 }
 
 
