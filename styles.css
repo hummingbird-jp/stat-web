@@ -3,18 +3,28 @@ body {
 	color: aliceblue;
 }
 
+a {
+	color: #90ff3c;
+}
+
 hr {
 	margin: 2rem 1rem;
 }
 
-#token,
-#channel {
+.form {
 	margin-top: 1rem;
 }
 
-#join,
-#leave {
+.btn {
 	margin-top: 1rem;
+	background-color: #90ff3c;
+	color: #262626;
+	border: none;
+}
+
+.btn:hover {
+	background-color: #6aba2d;
+	color: #080808;
 }
 
 #join-form {
@@ -24,7 +34,7 @@ hr {
 .tips {
 	font-size: 12px;
 	margin-bottom: 2px;
-	color: gray;
+	color: darkgray;
 }
 
 .join-info-text {
