@@ -23,9 +23,16 @@ hr {
 	border: none;
 }
 
-.btn:hover {
+.btn:hover,
+.btn:focus,
+.btn:disabled {
 	background-color: #6aba2d;
 	color: #080808;
+}
+
+#leave {
+	background-color: red;
+	color: aliceblue;
 }
 
 #join-form {
