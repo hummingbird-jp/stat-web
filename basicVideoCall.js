@@ -156,12 +156,17 @@ async function leave() {
 	$("#leave").attr("disabled", true);
 	console.log("client leaves channel success");
 
-	$(".form").show();
-	$("#join").text("Join");
-	$("#join").show();
-	$(".tips").show();
-	$("hr").show();
-	$("#leave").hide();
+	$("#leave").text("Leaving...");
+	setTimeout(() => {
+		$(".form").show();
+		$("#join").text("Join");
+		$("#join").show();
+		$(".tips").show();
+		$("hr").show();
+		$("#leave").text("Leave");
+		$("#leave").hide();
+	}, 1000);
+
 }
 
 
