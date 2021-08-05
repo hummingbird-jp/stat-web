@@ -34,7 +34,8 @@ var options = {
 	appid: "adaa9fb7675e4ca19ca80a6762e44dd2",
 	channel: null,
 	uid: null,
-	token: null
+	token: null,
+	userName: null,
 };
 
 /*
@@ -72,6 +73,7 @@ $("#join-form").submit(async function (e) {
 		options.token = $("#token").val();
 		options.channel = $("#channel").val();
 		options.uid = $("#uid").val();
+		options.userName = $("#userName").val();
 		await join();
 		if (options.token) {
 			$("#success-alert-with-token").css("display", "block");
@@ -119,7 +121,7 @@ async function join() {
 
 	// Play the local video track to the local browser and update the UI with the user ID.
 	localTracks.videoTrack.play("local-player");
-	$("#local-player-name").text(`localVideo(${options.uid})`);
+	$("#local-player-name").text(`${options.userName} (You)`);
 
 	// Publish the local video and audio tracks to the channel.
 	await client.publish(Object.values(localTracks));
