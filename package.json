@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/hummingbird-jp/stat-web/issues"
   },
-  "homepage": "https://github.com/hummingbird-jp/stat-web#readme"
+  "homepage": "https://github.com/hummingbird-jp/stat-web#readme",
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
