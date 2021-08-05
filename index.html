@@ -12,23 +12,6 @@
 </head>
 
 <body>
-
-	<!--
-  This page interacts with the Agora Voice Call for Web Next Generation SDK to easily create Video Call
-  functionality in a Web page.
-
-  This HTML page imports the next generation Agora Video SDK for Web from
-  https://download.agora.io/sdk/release/AgoraRTC_N.js and local functionality from basicVideoCall.js.
-
-  The form in this page passes data and actions input by the user to basicVideoCall.js. basicVideoCall
-  creates an AgoraRTC client which adds and and removes local and remote users to a specific channel.
--->
-
-	<!--
-  When a user tries to join a Video Call without supplying an AccessToken, this button
-  calls #success-alert in basicVideoCall.js. #success-alert refreshes this page with the
-  user information.
--->
 	<div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
 		<strong>Congratulations!</strong><span> You can invite others join this channel by click </span><a href=""
 			target="_blank">here</a>
@@ -37,10 +20,6 @@
 		</button>
 	</div>
 
-	<!--
-  When a user successfully joins a Video Call channel with an AccessToken, this section displays
-  a banner with a close button.
--->
 	<div id="success-alert-with-token" class="alert alert-success alert-dismissible fade show" role="alert">
 		<strong>Congratulations!</strong><span> Joined room successfully. </span>
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -48,10 +27,6 @@
 		</button>
 	</div>
 
-	<!--
-  When a user successfully joins a Video Call channel with an AccessToken, this section displays
-  a banner with a close button.
--->
 	<div id="success-alert-with-token" class="alert alert-success alert-dismissible fade show" role="alert">
 		<strong>Congratulations!</strong><span> Joined room successfully. </span>
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -61,46 +36,37 @@
 
 	<div class="container">
 
-		<!--
-    Input fields so the user can securely join a Video Call channel.
-  -->
+		<!-- Input fields so the user can securely join a Video Call channel. -->
 		<form id="join-form">
 			<div class="row join-info-group">
-				<!--<div class="col-sm">
-					<p class="join-info-text">APP ID</p>
+				<div class="col-md-4 mx-auto">
+					<!--<p class="join-info-text">APP ID</p>
 					<input id="appid" type="text" placeholder="Enter the appid" required>
 					<p class="tips">You find your APP ID in the <a href="https://console.agora.io/projects">Agora
-							Console</a></p>
-				</div>-->
-				<div class="col-sm">
-					<p class="join-info-text">Token(optional)</p>
-					<input id="token" type="text" placeholder="Enter the app token">
+							Console</a></p>-->
+
+					<p class="join-info-text">Token</p>
+					<input id="token" type="text" placeholder="Enter the app token" required>
 					<p class="tips">To create a temporary token, <a href="https://console.agora.io/projects">edit your
 							project</a> in Agora Console.</p>
-				</div>
-				<div class="col-sm">
+
 					<p class="join-info-text">Channel Name</p>
 					<input id="channel" type="text" placeholder="Enter the channel name" required>
 					<p class="tips">You create a channel when you create a temporary token. You guessed it, in <a
 							href="https://console.agora.io/projects">Agora Console</a></p>
-				</div>
-				<!--<div class="col-sm">
-					<p class="join-info-text">User ID(optional)</p>
-					<input id="uid" type="text" placeholder="Enter the user ID">
-				</div>-->
-			</div>
 
-			<!--
-      Join or leave a Video Call channel.
-    -->
-			<div class="button-group">
-				<button id="join" type="submit" class="btn btn-primary btn-sm">Join</button>
-				<button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
-			</div>
+					<!--<p class="join-info-text">User ID(optional)</p>
+					<input id="uid" type="text" placeholder="Enter the user ID">-->
+				</div>
+
+				<!-- Join or leave a Video Call channel. -->
+				<div class="button-group">
+					<button id="join" type="submit" class="btn btn-primary btn-sm">Join</button>
+					<button id="leave" type="button" class="btn btn-primary btn-sm" disabled>Leave</button>
+				</div>
 		</form>
-		<!--
-    This local media splayer is enabled when the user has successfully joined a Video Call channel.
-  -->
+
+		<!-- This local media splayer is enabled when the user has successfully joined a Video Call channel. -->
 		<div class="row video-group">
 			<div class="col">
 				<p id="local-player-name" class="player-name"></p>
@@ -113,14 +79,12 @@
 		</div>
 	</div>
 
-	<!--
-  Import the Agora Video Call SDK for Web and local calls to it.
--->
+	<!-- Import the Agora Video Call SDK for Web and local calls to it. -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-	<!-- ????????? -->
-	<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-		integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">-->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+		crossorigin="anonymous"></script>
 
 	<script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
 	<script src="./basicVideoCall.js"></script>
