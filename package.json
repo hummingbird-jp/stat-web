@@ -1,0 +1,19 @@
+{
+  "name": "stat-web",
+  "version": "1.0.0",
+  "description": "This is a web-rtc project made by hummingbird.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hummingbird-jp/stat-web.git"
+  },
+  "author": "Yusuke Hakamaya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hummingbird-jp/stat-web/issues"
+  },
+  "homepage": "https://github.com/hummingbird-jp/stat-web#readme"
+}
