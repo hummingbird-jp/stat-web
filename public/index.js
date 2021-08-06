@@ -1,8 +1,7 @@
 initScreen();
 
 function initScreen() {
-	$("#leave").hide();
-	$(".video-group").hide();
+	$(".meeting-area").hide();
 }
 
 var client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -117,12 +116,9 @@ async function join() {
 	await client.publish(Object.values(localTracks));
 	console.log("publish success");
 
-	$(".form").hide();
-	$(".tips").hide();
-	$("hr").hide();
-	$("#join").hide();
-	$("#leave").fadeIn();
-	$(".video-group").fadeIn();
+	$(".join-area").hide();
+	$(".meeting-area").fadeIn();
+	$("#join").text("Join");
 }
 
 /*
@@ -154,17 +150,11 @@ async function leave() {
 
 	// timeout is unnecessary of course, but for better UX
 	setTimeout(() => {
-		$(".form").show();
-		$("#join").text("Join");
-		$("#join").show();
-		$(".tips").show();
-		$("hr").show();
+		$(".join-area").fadeIn();
+		$(".meeting-area").hide();
 		$("#leave").text("Leave");
-		$("#leave").hide();
 	}, 1000);
-
 }
-
 
 /*
  * Add the local use to a remote channel.

@@ -14,111 +14,133 @@
 	<meta property="og:site_name" content="Stat! Web" />
 	<meta property="og:description" content="Stat! Web is a Web RTC project made by hummingbird with ❤️." />
 
+	<!-- OGP/Twitter -->
 	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:site" content="@yhakamay" />
 
 	<title>Stat! Web</title>
+
+	<!-- Favicon -->
 	<link rel="shortcut icon" href="favicon.png" type="image/x-icon">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
 		integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+	<!-- Stylesheets -->
 	<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 	<div class="container">
-		<img src="favicon.png" alt="" class="mx-auto d-block logo">
-		<h1>Join</h1>
-		<form id="join-form">
-			<div class="row join-info-group">
-				<div class="col-md-4 mx-auto">
-					<input class="form form-control" id="token" type="text" placeholder="Token" required>
-					<p class="tips">Generate a temporary token at <a href="https://console.agora.io/projects">Agora
-							Console</a>.</p>
+		<div class="join-area">
+			<img src="favicon.png" alt="" class="mx-auto d-block logo">
+			<div style="height: 5rem;"></div>
+			<form id="join-form">
+				<div class="row join-info-group">
+					<div class="col-md-4 mx-auto">
+						<input class="form form-control" id="token" type="text" placeholder="Token" required>
+						<p class="tips">Generate a temporary token at <a href="https://console.agora.io/projects"
+								tabindex="-1">Agora
+								Console</a>.</p>
+						<input class="form form-control" id="channel" type="text" placeholder="Channel Name" required>
+						<p class="tips">Find it at <a href="https://console.agora.io/projects" tabindex="-1">Agora
+								Console</a>.</p>
+						<input class="form form-control" id="userName" type="text" placeholder="User Name" required>
+						<p class="tips">User Name is <strong>temporary</strong>, so don't overthink it!</p>
+						<hr>
+						<div class="button-group d-grid gap-2">
+							<button id="join" type="submit" class="btn btn-primary">Join</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
 
-					<input class="form form-control" id="channel" type="text" placeholder="Channel Name" required>
-					<p class="tips">Find it at <a href="https://console.agora.io/projects">Agora Console</a>.</p>
-
-					<input class="form form-control" id="userName" type="text" placeholder="User Name" required>
-					<p class="tips">User Name is <strong>temporary</strong>, so don't overthink it!</p>
-
-					<hr>
-
-					<div class="button-group d-grid gap-2">
-						<button id="join" type="submit" class="btn btn-primary">Join</button>
-						<button id="leave" type="button" class="btn btn-primary" disabled>Leave</button>
+		<div class="meeting-area">
+			<div class="col-md-4 mx-auto">
+				<div class="button-group d-grid gap-2">
+					<button id="leave" type="button" class="btn btn-primary" disabled>Leave</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<h1>Timer</h1>
+					<div id="clockdiv" class="">
+						<div>
+							<span class="minutes"></span>
+							<div class="smalltext">Min</div>
+						</div>
+						<div>
+							<span class="seconds"></span>
+							<div class="smalltext">Sec</div>
+						</div>
+					</div>
+					<div class="col-md-8 mx-auto">
+						<div id="timer-slider">
+							<input type="range" class="form-range" min="1" max="30" value="5" step="1"
+								id="timer-duration">
+						</div>
+						<div class="button-group d-grid gap-2">
+							<button id="start-timer" class="btn btn-primary" onclick="startTimer()">
+								Start
+							</button>
+							<button id="stop-timer" class="btn btn-primary" onclick="stopTimer()"
+								style="display: none;">
+								Stop
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6" id="agenda-group">
+					<!-- Agenda Textbox and input -->
+					<h1>Agenda</h1>
+					<h2 id="agenda-out"></h2>
+					<div class="col-md-8 mx-auto" id="agenda-in-group">
+						<input class="form form-control" id="agenda-in" type="text" placeholder="Agenda" required>
+						<div class="button-group d-grid gap-2">
+							<button id="reset-timer" class="btn btn-primary" onclick="showValue()">Set Agenda</button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</form>
 
-		<!-- This local media splayer is enabled when the user has successfully joined a Video Call channel. -->
-		<div class="row video-group">
-			<div class="col">
-				<p id="local-player-name" class="player-name"></p>
-				<!-- TODO: mask video player to circular -->
-				<div id="local-player" class="player"></div>
-			</div>
-			<div class="w-100"></div>
-			<div class="col">
-				<div id="remote-playerlist"></div>
-			</div>
-		</div>
+			<hr>
 
-		<!-- TODO: Temporal placement of Timer -->
-		<h1>Countdown Clock</h1>
-		<div id="clockdiv" class="">
-			<div>
-				<span class="minutes"></span>
-				<div class="smalltext">Minutes</div>
-			</div>
-			<div>
-				<span class="seconds"></span>
-				<div class="smalltext">Seconds</div>
-			</div>
-		</div>
-		<div class="col-md-4 mx-auto">
-			<div id="timer-slider">
-				<!--<input type="range" id="timer-duration" min="1" max="30" value="5">-->
-				<input type="range" class="form-range" min="1" max="30" value="5" step="1" id="timer-duration">
-			</div>
-
-			<div class="button-group d-grid gap-2">
-				<button id="start-timer" class="btn btn-primary" onclick="startTimer()">
-					Start
-				</button>
-				<button id="stop-timer" class="btn btn-primary" onclick="stopTimer()" style="display: none;">
-					Stop
-				</button>
-			</div>
-		</div>
-
-		<!-- Agenda Textbox and input -->
-		<h1>Agenda</h1>
-		<h2 id="agenda-out"></h2>
-		<div class="col-md-4 mx-auto">
-			<input class="form form-control" id="agenda-in" type="text" placeholder="Agenda" required>
-			<div class="button-group d-grid gap-2">
-				<button id="reset-timer" class="btn btn-primary" onclick="showValue()">Set Agenda</button>
+			<!-- This local media splayer is enabled when the user has successfully joined a Video Call channel. -->
+			<div class="row video-group">
+				<div class="col">
+					<p id="local-player-name" class="player-name"></p>
+					<!-- TODO: mask video player to circular -->
+					<div id="local-player" class="player"></div>
+				</div>
+				<div class="w-100"></div>
+				<div class="col">
+					<div id="remote-playerlist"></div>
+				</div>
 			</div>
 		</div>
 	</div>
 
+	<!-- jQuery -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+	<!-- Bootstrap -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
 		crossorigin="anonymous"></script>
-	<script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
-	<script src="./index.js"></script>
 
+	<!-- Agora SDK -->
+	<script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
+
+	<!-- Scripts -->
+	<script src="./index.js"></script>
+	<script src="./timer.js"></script>
+	<script src="./agenda.js"></script>
+
+	<!-- Firebase -->
 	<script src="/__/firebase/8.9.0/firebase-app.js"></script>
 	<script src="/__/firebase/8.9.0/firebase-analytics.js"></script>
 	<script src="/__/firebase/init.js"></script>
 
-	<!-- Countdown Timer added by R.S. Must be integrated in the future. -->
-	<script src="./timer.js"></script>
-
-	<!-- TODO: functions related to Agenda  by R.S. Must be integrated in the future. -->
-	<script src="./agenda.js"></script>
 </body>
 
 </html>
