@@ -21,15 +21,15 @@ function getTimeRemaining(endtime) {
 	};
 }
 
-function initializeClock(id, endtime) {
-	const clock = document.getElementById(id);
+function initTimer(id, endtime) {
+	const timer = document.getElementById(id);
 
-	const minutesSpan = clock.querySelector('.minutes');
-	const secondsSpan = clock.querySelector('.seconds');
+	const minutesSpan = timer.querySelector('.minutes');
+	const secondsSpan = timer.querySelector('.seconds');
 
-	clock.classList.remove("flashTimer");
+	timer.classList.remove("flashTimer");
 
-	function updateClock() {
+	function updateTimer() {
 		if (lockObj === true) {
 			clearInterval(timeinterval);
 			lockObj = false;
@@ -42,13 +42,18 @@ function initializeClock(id, endtime) {
 		$(secondsSpan).text(('0' + t.seconds).slice(-2));
 
 		if (t.total <= 0) {
+			$(timer).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
 			clearInterval(timeinterval);
-			clock.classList.add("flashTimer");
+
+			const timerSound = new Audio("sounds/alarm.wav");
+			timerSound.play();
+
+			initTimer(id, endtime);
 		}
 	}
 
-	updateClock();
-	const timeinterval = setInterval(updateClock, 1000);
+	updateTimer();
+	const timeinterval = setInterval(updateTimer, 1000);
 }
 
 function getDeadline(val) {
@@ -59,7 +64,7 @@ function startTimer() {
 	const duration = $("#timer-duration").val();
 	const deadline = getDeadline(duration);
 
-	initializeClock('clockdiv', deadline);
+	initTimer('clockdiv', deadline);
 
 	$("#timer-slider").css("visibility", "hidden");
 	$("#start-timer").css("display", "none");
@@ -75,10 +80,10 @@ function stopTimer() {
 }
 
 function setCurrentValue(val) {
-	const clock = $("#clockdiv")[0];
+	const timer = $("#clockdiv")[0];
 
-	const minutesSpan = clock.querySelector('.minutes');
-	const secondsSpan = clock.querySelector('.seconds');
+	const minutesSpan = timer.querySelector('.minutes');
+	const secondsSpan = timer.querySelector('.seconds');
 
 	const endtime = getDeadline(val);
 	const t = getTimeRemaining(endtime);
