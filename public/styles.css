@@ -12,6 +12,12 @@ body {
 	margin-top: 10rem;
 }
 
+#github-icon {
+	position: fixed;
+	bottom: 1rem;
+	right: 1rem;
+}
+
 h1 {
 	font-weight: bold;
 	font-size: 2rem;
