@@ -2,7 +2,9 @@ body {
 	background-color: #262626;
 	text-align: center;
 	color: aliceblue;
+	font-family: "Montserrat", sans-serif;
 	font-size: 1rem;
+	padding-bottom: 3rem;
 }
 
 .logo {
@@ -11,9 +13,16 @@ body {
 }
 
 h1 {
-	color: aliceblue;
+	font-weight: bold;
+	font-size: 2rem;
+	letter-spacing: 0.3rem;
+	margin: 1rem;
+}
+
+h2 {
 	font-weight: bold;
 	font-size: 3rem;
+	letter-spacing: 0.3rem;
 	margin: 40px 0px 20px;
 }
 
