@@ -1,8 +1,8 @@
-const sliderInputElem = $("#timer-duration")[0];
+const timerSlider = $("#timer-duration")[0];
 let lockObj = false;
 
-$(sliderInputElem).on("input", () => setCurrentValue(e.target.value));
-setCurrentValue(sliderInputElem.value);
+$(timerSlider).on("input", (e) => setCurrentValue(e.target.value));
+setCurrentValue(timerSlider.value);
 
 function getTimeRemaining(endtime) {
 	const total = Date.parse(endtime) - Date.parse(new Date());
