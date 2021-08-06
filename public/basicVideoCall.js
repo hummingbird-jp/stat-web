@@ -98,9 +98,6 @@ async function join() {
 	client.on("user-unpublished", handleUserUnpublished);
 
 	// hide join panel; show up #leave button
-	$(".form").hide();
-	$(".tips").hide();
-	$("hr").hide();
 	$("#join").text("Joining...");
 
 	// Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
@@ -120,8 +117,11 @@ async function join() {
 	await client.publish(Object.values(localTracks));
 	console.log("publish success");
 
+	$(".form").hide();
+	$(".tips").hide();
+	$("hr").hide();
 	$("#join").hide();
-	$("#leave").show();
+	$("#leave").fadeIn();
 	$(".video-group").fadeIn();
 }
 
