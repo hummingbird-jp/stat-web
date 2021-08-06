@@ -137,3 +137,19 @@ input {
 #timer-duration {
 	margin-top: 2rem;
 }
+
+/* Agenda */
+#agenda-group {
+	position: relative;
+}
+
+#agenda-in-group {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	transform: translate(-50%);
+}
+
+.meeting-area > hr {
+	margin: 5rem 30rem;
+}
