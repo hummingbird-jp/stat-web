@@ -1,5 +1,7 @@
 initScreen();
 
+let published = false;
+
 function initScreen() {
 	$(".meeting-area").hide();
 }
@@ -114,12 +116,26 @@ async function join() {
 
 	// Publish the local video and audio tracks to the channel.
 	await client.publish(Object.values(localTracks));
+	published = true;
 	console.log("publish success");
 
 	$(".join-area").hide();
 	$(".meeting-area").fadeIn();
 	$("#join").text("Join");
 }
+
+// Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
+$("#unpublish").on("click", async function () {
+	if (published === true) {
+		await client.unpublish(Object.values(localTracks));
+		published = false;
+		$("#unpublish").text("You're now muted and off-camera");
+	} else {
+		await client.publish(Object.values(localTracks));
+		published = true;
+		$("#unpublish").html(`<img src="images/mute.svg" alt="" class="material-icons">`);
+	}
+});
 
 /*
  * Stop all local and remote tracks then leave the channel.

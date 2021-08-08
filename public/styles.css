@@ -58,7 +58,17 @@ hr {
 	color: #080808;
 }
 
+#unpublish {
+	position: fixed;
+	bottom: 4rem;
+	z-index: 0;
+	color: aliceblue;
+}
+
 #leave {
+	position: fixed;
+	bottom: 1rem;
+	z-index: 0;
 	background-color: red;
 	color: aliceblue;
 }
