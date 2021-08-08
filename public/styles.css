@@ -95,11 +95,12 @@ input {
 }
 
 .player {
-	width: 480px;
-	height: 320px;
+	width: 240px;
+	height: 160px;
 }
 
 .player-name {
+	text-align: left;
 	margin: 8px 0;
 }
 
@@ -165,5 +166,5 @@ input {
 }
 
 .meeting-area > hr {
-	margin: 5rem 30rem;
+	margin: 3rem 10rem 1rem 10rem;
 }
