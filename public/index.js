@@ -185,10 +185,10 @@ async function subscribe(user, mediaType) {
 	console.log("subscribe success");
 	if (mediaType === 'video') {
 		const player = $(`
-      <div id="player-wrapper-${uid}">
-        <p class="player-name">${uid}</p>
-        <div id="player-${uid}" class="player"></div>
-      </div>
+		<div id="player-wrapper-${uid}">
+			<p class="player-name">${uid}</p>
+			<div id="player-${uid}" class="player"></div>
+		</div>
     `);
 		$("#remote-playerlist").append(player);
 		user.videoTrack.play(`player-${uid}`);
