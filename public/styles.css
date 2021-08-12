@@ -155,12 +155,12 @@ input {
 	margin-top: 2rem;
 }
 
-/* Agenda */
-#agenda-group {
-	position: relative;
+/* Meeting Area */
+.main-view {
+	min-height: 20rem;
 }
 
-#agenda-in-group {
+.main-controller {
 	position: absolute;
 	bottom: 0;
 	left: 50%;
@@ -169,4 +169,19 @@ input {
 
 .meeting-area > hr {
 	margin: 3rem 10rem 1rem 10rem;
+}
+
+/* Agenda */
+#agenda-group {
+	position: relative;
+}
+
+/* Timer */
+#timer-group {
+	position: relative;
+}
+
+/* BGM */
+#bgm-group {
+	position: relative;
 }
