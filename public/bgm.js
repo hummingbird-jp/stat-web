@@ -21,13 +21,7 @@ const uriAudioDefault = audioSet[0].uri;
 var audioElm = new Audio(uriAudioDefault);
 configureDefaultAudio(audioElm);
 
-var uriAudio = null;
-const selecterObj = document.getElementById("bgm-selecter");
-selecterObj.addEventListener('change', (event) => {
-    const val = parseInt(event.target.value);
-    uriAudio = audioSet[val].uri;
-});
-
+const selectorObj = document.getElementById("bgm-selector");
 const playButton = document.getElementById("play-button");
 const stopButton = document.getElementById("stop-button");
 const playbackSpan = document.getElementById("playback-span");
@@ -36,33 +30,49 @@ const playbackSpan = document.getElementById("playback-span");
 playButton.addEventListener('click', function() {
 
     if (this.dataset.playing === "preSelect") {
-        if (uriAudio === null) {
+        if (selectorObj.value === "default") {
             console.log("BGM not selected.");
         } else {
-            audioElm.src = uriAudio;
-            audioElm.pause()
-            audioElm.load();
-            configureDefaultAudio(audioElm);
-            this.dataset.playing = "true";
+            // audioElm.src = uriAudio;
+            // audioElm.pause()
+            // audioElm.load();
+            // configureDefaultAudio(audioElm);
+            // audioElm.play();
+            // this.dataset.playing = "true";
+            // configureControlPanelPlaying();
 
-            stopButton.disabled = false;
-            stopButton.dataset.stateStop = "false";
-
-            playbackSpan.textContent = "Pause";
-            selecterObj.disabled = true;
+            // var category = selectorObj.value;
+            // console.log("category: ", category);
+            // db.collection("audioSet").where("category", "==", category)
+            //     .limit(1)
+            //     .get()
+            //     .then((querySnapshot) => {
+            //         querySnapshot.forEach((doc) => {
+            //             console.log(doc.id, " => ", doc.data());
+            //             var currentTrackId = doc.id;
+            //             db.collection("sync-bgm-beta").doc(syncBgmDocId).set({
+            //                 currentTime: 0,
+            //                 currentTrackId: currentTrackId,
+            //                 isChanged: true,
+            //                 isPlaying: true
+            //             })
+            //         });
+            //     })
+            //     .catch((error) => {
+            //         console.log("Error getting documents: ", error);
+            //     });
+            sendBgmStatus(0, true, true);
         }
-    } else if (this.dataset.playing === 'false') {
-        audioElm.play();
-        this.dataset.playing = 'true';
-        playbackSpan.textContent = "Pause";
-
-        selecterObj.disabled = true;
-    } else if (this.dataset.playing === 'true') {
-        audioElm.pause();
-        this.dataset.playing = 'false';
-        playbackSpan.textContent = "Play";
-
-        stopButton.disabled = false;
+    } else if (this.dataset.playing === 'false') { // when "Play" clicked
+        var currentTime = audioElm.currentTime;
+        sendBgmStatus(currentTime, false, true);
+        // audioElm.play();
+        // configureControlPanelPlaying();
+    } else if (this.dataset.playing === 'true') { // when "Pause" clicked
+        var currentTime = audioElm.currentTime;
+        sendBgmStatus(currentTime, false, false);
+        // audioElm.pause();
+        // configureControlPanelPaused();
     }
 
     let state = this.getAttribute('aria-checked') === "true" ? true : false;
@@ -70,23 +80,61 @@ playButton.addEventListener('click', function() {
 
 }, false);
 
+function sendBgmStatus(currentTime, isChanged, isPlaying) {
+    var category = selectorObj.value;
+    console.log("category: ", category);
+    db.collection("audioSet").where("category", "==", category)
+        .limit(1)
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(doc.id, " => ", doc.data());
+                var currentTrackId = doc.id;
+                db.collection("sync-bgm-beta").doc(syncBgmDocId).set({
+                    currentTime: currentTime,
+                    currentTrackId: currentTrackId,
+                    isChanged: isChanged,
+                    isPlaying: isPlaying
+                })
+            });
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+}
+
 stopButton.addEventListener("click", function() {
-    audioElm.pause();
-    audioElm.currentTime = 0;
+    sendBgmStatus(0, false, false);
+    // audioElm.pause();
+    // audioElm.currentTime = 0;
     configureDefaultControlPanel();
 });
 
 function configureDefaultAudio(audioElm) {
     audioElm.preload = 'none';
     audioElm.loop = true;
-    audioElm.autoplay = true;
+    audioElm.autoplay = false;
     audioElm.volume = 0.05;
 }
 
 function configureDefaultControlPanel() {
     stopButton.disabled = true;
-    selecterObj.disabled = false;
-    selecterObj.value = "default";
+    selectorObj.disabled = false;
+    selectorObj.value = "default";
     playbackSpan.textContent = "Play";
     playButton.dataset.playing = "preSelect";
+}
+
+function configureControlPanelPlaying() {
+    playbackSpan.textContent = "Pause";
+    playButton.dataset.playing = 'true';
+    stopButton.disabled = false;
+    selectorObj.disabled = true;
+}
+
+function configureControlPanelPaused() {
+    playbackSpan.textContent = "Play";
+    playButton.dataset.playing = 'false';
+    stopButton.disabled = false;
+    selectorObj.disabled = true;
 }
