@@ -38,6 +38,8 @@
 
 <body>
     <div class="container">
+
+        <!-- Join Area will dissapear once user joined meeting -->
         <div class="join-area">
             <img src="favicon.png" alt="" class="mx-auto d-block logo">
             <div style="height: 5rem;"></div>
@@ -46,10 +48,10 @@
                     <div class="col-lg-4 col-md-6 mx-auto">
                         <input class="form form-control" id="token" type="text" placeholder="Token" required autofocus>
                         <p class="tips">Generate a temporary token at <a href="https://console.agora.io/projects" tabindex="-1">Agora
-                                Console</a>.</p>
+								Console</a>.</p>
                         <input class="form form-control" id="channel" type="text" placeholder="Channel Name" required>
                         <p class="tips">Find it at <a href="https://console.agora.io/projects" tabindex="-1">Agora
-                                Console</a>.</p>
+								Console</a>.</p>
                         <input class="form form-control" id="userName" type="text" placeholder="User Name" required>
                         <p class="tips">User Name is <strong>temporary</strong>, so don't overthink it!</p>
                         <hr>
@@ -61,20 +63,26 @@
             </form>
         </div>
 
+        <!-- Meeting Area shows up after user joined meeting -->
         <div class="meeting-area">
             <div class="row">
-                <div class="col-md-8 mx-auto" id="agenda-group">
-                    <!-- Agenda Textbox and input -->
+
+                <!-- Agenda -->
+                <div class="col-md-4 mx-auto main-view" id="agenda-group">
                     <h1>Agenda</h1>
                     <h2 id="agenda-out"></h2>
-                    <div class="col-md-8 mx-auto" id="agenda-in-group">
+
+                    <div class="col-md-8 mx-auto main-controller">
                         <input class="form form-control" id="agenda-in" type="text" placeholder="Agenda" required>
                         <div class="button-group d-grid gap-2">
                             <button id="reset-timer" class="btn btn-primary" onclick="showValue()">Set Agenda</button>
                         </div>
                     </div>
+
                 </div>
-                <div class="col-md-6">
+
+                <!-- Timer -->
+                <div class="col-md-4 mx-auto main-view" id="timer-group">
                     <h1>Timer</h1>
                     <div id="clockdiv" class="">
                         <div>
@@ -86,45 +94,46 @@
                             <div class="smalltext">Sec</div>
                         </div>
                     </div>
-                    <div class="col-md-4 mx-auto">
+
+                    <div class="col-md-8 mx-auto main-controller">
                         <div id="timer-slider">
                             <input type="range" class="form-range" min="1" max="30" value="5" step="1" id="timer-duration">
                         </div>
                         <div class="button-group d-grid gap-2">
                             <button id="start-timer" class="btn btn-primary" onclick="startTimer()">
-                                Start
-                            </button>
+								Start
+							</button>
                             <button id="stop-timer" class="btn btn-primary" onclick="stopTimer()" style="display: none;">
-                                Stop
-                            </button>
+								Stop
+							</button>
                         </div>
                     </div>
                 </div>
-                <!-- BGM player -->
-                <div class="col-md-6 mx-auto" id="bgm-group">
+
+                <!-- BGM -->
+                <div class="col-md-4 mx-auto main-view" id="bgm-group">
                     <h1>BGM</h1>
-                    <select id="bgm-selecter" class="form-select col-md-4 mx-auto">
-                        <option value="default" selected>Choose your motivation</option>
-                        <option value="0">Be natural</option>
-                        <option value="1">Be relaxed</option>
-                        <option value="2">Be focused</option>
-                    </select>
-                    <div class="row">
-                        <div class="col-md-8 mx-auto">
-                            <button id="play-button" class="btn btn-primary" data-playing="preSelect" role="switch" aria-checked="false">
-                                <span id="playback-span">Play</span>
-                            </button>
-                            <button id="stop-button" class="btn btn-primary" disabled>
-                                <span>Stop</span>
-                            </button>
-                        </div>
+
+                    <div class="col-md-8 mx-auto main-controller">
+                        <select id="bgm-selector" class="form-select col-md-4 mx-auto">
+							<option value="default" selected>Choose your motivation</option>
+							<option value="natural">Be natural</option>
+							<option value="relaxed">Be relaxed</option>
+							<option value="focused">Be focused</option>
+						</select>
+                        <button id="play-button" class="btn btn-primary" data-playing="preSelect" role="switch" aria-checked="false">
+							<span id="playback-span">Play</span>
+						</button>
+                        <button id="stop-button" class="btn btn-primary" disabled>
+							<span>Stop</span>
+						</button>
                     </div>
                 </div>
             </div>
 
             <hr>
 
-            <!-- This local media splayer is enabled when the user has successfully joined a Video Call channel. -->
+            <!-- This local media player is enabled when the user has successfully joined a Video Call channel. -->
             <div class="row video-group">
                 <div class="col">
                     <p id="local-player-name" class="player-name"></p>
@@ -141,13 +150,13 @@
             <div class="row control-button-group">
                 <div class="col-sm">
                     <button id="unpublish" type="button" class="btn btn-danger btn-md">
-                        <img src="images/mute.svg" alt="" class="material-icons">
-                    </button>
+						<img src="images/mute.svg" alt="" class="material-icons">
+					</button>
                 </div>
                 <div class="col-sm">
                     <button id="leave" type="button" class="btn btn-danger btn-md">
-                        <img src="images/call-end.svg" alt="" class="material-icons">
-                    </button>
+						<img src="images/call-end.svg" alt="" class="material-icons">
+					</button>
                 </div>
             </div>
         </div>
@@ -155,9 +164,9 @@
         <!-- View Source on GitHub -->
         <a href="https://github.com/hummingbird-jp/stat-web" target="_blank" rel="noopener noreferrer">
             <svg id="github-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path
-                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-            </svg>
+				<path
+					d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+			</svg>
         </a>
     </div>
 
@@ -177,9 +186,11 @@
     <script src="./bgm.js" defer></script>
 
     <!-- Firebase -->
-    <script src="/__/firebase/8.9.0/firebase-app.js" defer></script>
-    <script src="/__/firebase/8.9.0/firebase-analytics.js" defer></script>
-    <script src="/__/firebase/init.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
+    <script src="./firebase/init.js"></script>
+    <script src="./firebase/sync-bgm.js"></script>
 
 </body>
 
