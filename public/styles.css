@@ -79,10 +79,6 @@ hr {
 	color: aliceblue;
 }
 
-/*#join-form {
-	margin-top: 5rem;
-}*/
-
 .tips {
 	font-size: 0.8rem;
 	margin-top: 0.5rem;
@@ -104,11 +100,6 @@ input {
 .player-name {
 	text-align: left;
 	margin: 8px 0;
-}
-
-#success-alert,
-#success-alert-with-token {
-	display: none;
 }
 
 @media (max-width: 640px) {
@@ -155,12 +146,12 @@ input {
 	margin-top: 2rem;
 }
 
-/* Agenda */
-#agenda-group {
-	position: relative;
+/* Meeting Area */
+.main-view {
+	min-height: 20rem;
 }
 
-#agenda-in-group {
+.main-controller {
 	position: absolute;
 	bottom: 0;
 	left: 50%;
@@ -169,4 +160,19 @@ input {
 
 .meeting-area > hr {
 	margin: 3rem 10rem 1rem 10rem;
+}
+
+/* Agenda */
+#agenda-group {
+	position: relative;
+}
+
+/* Timer */
+#timer-group {
+	position: relative;
+}
+
+/* BGM */
+#bgm-group {
+	position: relative;
 }
