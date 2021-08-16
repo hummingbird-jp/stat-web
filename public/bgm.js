@@ -7,10 +7,10 @@ const uriAudioDefault = "https://firebasestorage.googleapis.com/v0/b/stat-web-63
 var audioElm = new Audio(uriAudioDefault);
 configureAudioDefault(audioElm);
 
-const selectorObj = $("#bgm-selector");
-const playButton = $("#play-button");
-const stopButton = $("#stop-button");
-const playbackSpan = $("#playback-span");
+const selectorObj = document.getElementById("bgm-selector"); //$("#bgm-selector");
+const playButton = document.getElementById("play-button"); //$("#play-button");
+const stopButton = document.getElementById("stop-button"); //$("#stop-button");
+const playbackSpan = document.getElementById("playback-span"); // $("#playback-span");
 
 /*
  * Firestore related constants
