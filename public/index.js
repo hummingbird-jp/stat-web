@@ -3,7 +3,12 @@ initScreen();
 let published = false;
 
 function initScreen() {
-	$(".meeting-area").hide();
+    $(".meeting-area").hide();
+
+    if (typeof audioElm != "undefined") {
+        audioElm.pause();
+        configureDefaultControlPanel(); // bgm buttons default setting
+    }
 }
 
 var client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -12,8 +17,8 @@ var client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
  * Clear the video and audio tracks used by `client` on initiation.
  */
 var localTracks = {
-	videoTrack: null,
-	audioTrack: null
+    videoTrack: null,
+    audioTrack: null
 };
 
 /*
@@ -25,11 +30,11 @@ var remoteUsers = {};
  * On initiation. `client` is not attached to any project or channel for any specific user.
  */
 var options = {
-	appid: "adaa9fb7675e4ca19ca80a6762e44dd2",
-	channel: null,
-	uid: null,
-	token: null,
-	userName: null,
+    appid: "adaa9fb7675e4ca19ca80a6762e44dd2",
+    channel: null,
+    uid: null,
+    token: null,
+    userName: null,
 };
 
 /*
@@ -37,21 +42,21 @@ var options = {
  * attempts to join a Video Call channel using those parameters.
  */
 $(() => {
-	var urlParams = new URL(location.href).searchParams;
+    var urlParams = new URL(location.href).searchParams;
 
-	// App ID is now pre-set
-	//options.appid = urlParams.get("appid");
+    // App ID is now pre-set
+    //options.appid = urlParams.get("appid");
 
-	options.channel = urlParams.get("channel");
-	options.token = urlParams.get("token");
-	options.uid = urlParams.get("uid");
-	if (options.appid && options.channel) {
-		$("#uid").val(options.uid);
-		$("#appid").val(options.appid);
-		$("#token").val(options.token);
-		$("#channel").val(options.channel);
-		$("#join-form").submit();
-	}
+    options.channel = urlParams.get("channel");
+    options.token = urlParams.get("token");
+    options.uid = urlParams.get("uid");
+    if (options.appid && options.channel) {
+        $("#uid").val(options.uid);
+        $("#appid").val(options.appid);
+        $("#token").val(options.token);
+        $("#channel").val(options.channel);
+        $("#join-form").submit();
+    }
 })
 
 /*
@@ -59,34 +64,34 @@ $(() => {
  * entered in the form and calls join asynchronously. The UI is updated to match the options entered
  * by the user.
  */
-$("#join-form").submit(async function (e) {
-	e.preventDefault();
-	$("#join").attr("disabled", true);
-	try {
-		options.appid = $("#appid").val();
-		options.token = $("#token").val();
-		options.channel = $("#channel").val();
-		options.uid = $("#uid").val();
-		options.userName = $("#userName").val();
-		await join();
-		if (options.token) {
-			$("#success-alert-with-token").css("display", "block");
-		} else {
-			$("#success-alert a").attr("href", `index.html?appid=${options.appid}&channel=${options.channel}&token=${options.token}`);
-			$("#success-alert").css("display", "block");
-		}
-	} catch (error) {
-		console.error(error);
-	} finally {
-		$("#leave").attr("disabled", false);
-	}
+$("#join-form").submit(async function(e) {
+    e.preventDefault();
+    $("#join").attr("disabled", true);
+    try {
+        options.appid = $("#appid").val();
+        options.token = $("#token").val();
+        options.channel = $("#channel").val();
+        options.uid = $("#uid").val();
+        options.userName = $("#userName").val();
+        await join();
+        if (options.token) {
+            $("#success-alert-with-token").css("display", "block");
+        } else {
+            $("#success-alert a").attr("href", `index.html?appid=${options.appid}&channel=${options.channel}&token=${options.token}`);
+            $("#success-alert").css("display", "block");
+        }
+    } catch (error) {
+        console.error(error);
+    } finally {
+        $("#leave").attr("disabled", false);
+    }
 })
 
 /*
  * Called when a user clicks Leave in order to exit a channel.
  */
-$("#leave").click(function (e) {
-	leave();
+$("#leave").click(function(e) {
+    leave();
 })
 
 /*
@@ -94,82 +99,82 @@ $("#leave").click(function (e) {
  */
 async function join() {
 
-	// Add an event listener to play remote tracks when remote user publishes.
-	client.on("user-published", handleUserPublished);
-	client.on("user-unpublished", handleUserUnpublished);
+    // Add an event listener to play remote tracks when remote user publishes.
+    client.on("user-published", handleUserPublished);
+    client.on("user-unpublished", handleUserUnpublished);
 
-	// hide join panel; show up #leave button
-	$("#join").text("Joining...");
+    // hide join panel; show up #leave button
+    $("#join").text("Joining...");
 
-	// Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
-	[options.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
-		// Join the channel.
-		client.join(options.appid, options.channel, options.token || null, options.uid || null),
-		// Create tracks to the local microphone and camera.
-		AgoraRTC.createMicrophoneAudioTrack(),
-		AgoraRTC.createCameraVideoTrack()
-	]);
+    // Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
+    [options.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
+        // Join the channel.
+        client.join(options.appid, options.channel, options.token || null, options.uid || null),
+        // Create tracks to the local microphone and camera.
+        AgoraRTC.createMicrophoneAudioTrack(),
+        AgoraRTC.createCameraVideoTrack()
+    ]);
 
-	// Play the local video track to the local browser and update the UI with the user ID.
-	localTracks.videoTrack.play("local-player");
-	$("#local-player-name").text(`${options.userName} (You)`);
+    // Play the local video track to the local browser and update the UI with the user ID.
+    localTracks.videoTrack.play("local-player");
+    $("#local-player-name").text(`${options.userName} (You)`);
 
-	// Publish the local video and audio tracks to the channel.
-	await client.publish(Object.values(localTracks));
-	published = true;
-	console.log("publish success");
+    // Publish the local video and audio tracks to the channel.
+    await client.publish(Object.values(localTracks));
+    published = true;
+    console.log("publish success");
 
-	$(".join-area").hide();
-	$(".meeting-area").fadeIn();
-	$("#join").text("Join");
+    $(".join-area").hide();
+    $(".meeting-area").fadeIn();
+    $("#join").text("Join");
 }
 
 // Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
-$("#unpublish").on("click", async function () {
-	if (published === true) {
-		await client.unpublish(Object.values(localTracks));
-		published = false;
-		$("#unpublish").text("You're now muted and off-camera");
-	} else {
-		await client.publish(Object.values(localTracks));
-		published = true;
-		$("#unpublish").html(`<img src="images/mute.svg" alt="" class="material-icons">`);
-	}
+$("#unpublish").on("click", async function() {
+    if (published === true) {
+        await client.unpublish(Object.values(localTracks));
+        published = false;
+        $("#unpublish").text("You're now muted and off-camera");
+    } else {
+        await client.publish(Object.values(localTracks));
+        published = true;
+        $("#unpublish").html(`<img src="images/mute.svg" alt="" class="material-icons">`);
+    }
 });
 
 /*
  * Stop all local and remote tracks then leave the channel.
  */
 async function leave() {
-	for (trackName in localTracks) {
-		var track = localTracks[trackName];
-		if (track) {
-			track.stop();
-			track.close();
-			localTracks[trackName] = undefined;
-		}
-	}
+    for (trackName in localTracks) {
+        var track = localTracks[trackName];
+        if (track) {
+            track.stop();
+            track.close();
+            localTracks[trackName] = undefined;
+        }
+    }
 
-	// Remove remote users and player views.
-	remoteUsers = {};
-	$("#remote-playerlist").html("");
+    // Remove remote users and player views.
+    remoteUsers = {};
+    $("#remote-playerlist").html("");
 
-	// leave the channel
-	await client.leave();
+    // leave the channel
+    await client.leave();
 
-	$("#local-player-name").text("");
-	$("#join").attr("disabled", false);
-	$("#leave").attr("disabled", true);
-	console.log("client leaves channel success");
+    $("#local-player-name").text("");
+    $("#join").attr("disabled", false);
+    $("#leave").attr("disabled", true);
+    console.log("client leaves channel success");
 
-	$("#leave").text("Leaving...");
+    $("#leave").text("Leaving...");
 
-	// timeout is unnecessary of course, but for better UX
-	setTimeout(() => {
-		$(".join-area").fadeIn();
-		$(".meeting-area").hide();
-		$("#leave").text("Leave");
-	}, 1000);
+    // timeout is unnecessary of course, but for better UX
+    setTimeout(() => {
+        $(".join-area").fadeIn();
+        $(".meeting-area").hide();
+        $("#leave").text("Leave");
+    }, 1000);
 }
 
 /*
@@ -179,23 +184,23 @@ async function leave() {
  * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
  */
 async function subscribe(user, mediaType) {
-	const uid = user.uid;
-	// subscribe to a remote user
-	await client.subscribe(user, mediaType);
-	console.log("subscribe success");
-	if (mediaType === 'video') {
-		const player = $(`
+    const uid = user.uid;
+    // subscribe to a remote user
+    await client.subscribe(user, mediaType);
+    console.log("subscribe success");
+    if (mediaType === 'video') {
+        const player = $(`
 		<div id="player-wrapper-${uid}">
 			<p class="player-name">${uid}</p>
 			<div id="player-${uid}" class="player"></div>
 		</div>
     `);
-		$("#remote-playerlist").append(player);
-		user.videoTrack.play(`player-${uid}`);
-	}
-	if (mediaType === 'audio') {
-		user.audioTrack.play();
-	}
+        $("#remote-playerlist").append(player);
+        user.videoTrack.play(`player-${uid}`);
+    }
+    if (mediaType === 'audio') {
+        user.audioTrack.play();
+    }
 }
 
 /*
@@ -205,9 +210,9 @@ async function subscribe(user, mediaType) {
  * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
  */
 function handleUserPublished(user, mediaType) {
-	const id = user.uid;
-	remoteUsers[id] = user;
-	subscribe(user, mediaType);
+    const id = user.uid;
+    remoteUsers[id] = user;
+    subscribe(user, mediaType);
 }
 
 /*
@@ -216,7 +221,7 @@ function handleUserPublished(user, mediaType) {
  * @param  {string} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to remove.
  */
 function handleUserUnpublished(user) {
-	const id = user.uid;
-	delete remoteUsers[id];
-	$(`#player-wrapper-${id}`).remove();
+    const id = user.uid;
+    delete remoteUsers[id];
+    $(`#player-wrapper-${id}`).remove();
 }
