@@ -4,19 +4,18 @@
  */
 const uriAudioDefault = "https://firebasestorage.googleapis.com/v0/b/stat-web-6372a.appspot.com/o/bgm%2Fnature_sound.mp3?alt=media&token=aff3df2f-787d-43e6-be5f-2a51cae2abef";
 
-var audioElm = new Audio(uriAudioDefault);
+const audioElm = new Audio(uriAudioDefault);
 configureAudioDefault(audioElm);
 
-const selectorObj = document.getElementById("bgm-selector"); //$("#bgm-selector");
-const playButton = document.getElementById("play-button"); //$("#play-button");
-const stopButton = document.getElementById("stop-button"); //$("#stop-button");
-const playbackSpan = document.getElementById("playback-span"); // $("#playback-span");
+const selectorObj = $("#bgm-selector")[0];
+const playButton = $("#play-button")[0];
+const stopButton = $("#stop-button")[0];
+const playbackSpan = $("#playback-span")[0];
 
 /*
  * Firestore related constants
  * TODO: syncBgmDocId is beta, currently a document id is given. 
  */
-var db = firebase.firestore();
 const syncBgmDocId = "tQ4vN4gwalYtkbTI8Py3";
 const syncBgmCollection = "sync-bgm-beta";
 const audioSetCollection = "audioSet";
@@ -33,7 +32,7 @@ $("#leave").click(function(e) {
  */
 playButton.addEventListener('click', function() {
 
-    var currentTime = audioElm.currentTime;
+    const currentTime = audioElm.currentTime;
 
     if (this.dataset.playing === "preSelect") {
         if (selectorObj.value === "default") {
@@ -62,24 +61,24 @@ db.collection(syncBgmCollection).doc(syncBgmDocId) // listen to "currentTrackId"
     .onSnapshot((doc) => {
 
         // Only for debugging
-        console.log("Current data: ", doc.data());
+        // console.log("Current data: ", doc.data());
 
-        var currentTrackId = doc.data().currentTrackId;
-        var currentTime = doc.data().currentTime;
-        var isPlaying = doc.data().isPlaying;
-        var isChanged = doc.data().isChanged;
+        const currentTrackId = doc.data().currentTrackId;
+        const currentTime = doc.data().currentTime;
+        const isPlaying = doc.data().isPlaying;
+        const isChanged = doc.data().isChanged;
 
         if (!$(".meeting-area").is(":hidden")) {
 
             if (isChanged) {
 
-                var docRef = db.collection(audioSetCollection).doc(currentTrackId);
+                const docRef = db.collection(audioSetCollection).doc(currentTrackId);
 
                 docRef.get().then((doc) => {
                     if (doc.exists) {
 
                         // Only for debugging
-                        console.log("audioSet data: ", doc.data());
+                        // console.log("audioSet data: ", doc.data());
 
                         changeTrackTo(doc.data().uri, currentTime);
                         changeSelectorTo(doc.data().category);
@@ -104,10 +103,10 @@ db.collection(syncBgmCollection).doc(syncBgmDocId) // listen to "currentTrackId"
     });
 
 function sendBgmStatus(currentTime, isChanged, isPlaying) {
-    var category = selectorObj.value;
+    const category = selectorObj.value;
 
     // Only for debugging
-    console.log("category: ", category);
+    // console.log("category: ", category);
 
     db.collection(audioSetCollection).where("category", "==", category)
         .limit(1)
@@ -116,9 +115,9 @@ function sendBgmStatus(currentTime, isChanged, isPlaying) {
             querySnapshot.forEach((doc) => {
 
                 // Only for debugging
-                console.log(doc.id, " => ", doc.data());
+                // console.log(doc.id, " => ", doc.data());
 
-                var currentTrackId = doc.id;
+                const currentTrackId = doc.id;
                 db.collection(syncBgmCollection).doc(syncBgmDocId).set({
                     currentTime: currentTime,
                     currentTrackId: currentTrackId,
