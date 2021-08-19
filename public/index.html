@@ -129,6 +129,22 @@
 						</button>
                     </div>
                 </div>
+
+                <!-- Talk Visualizer -->
+                <div class="col-md-6 mx-auto">
+                    <canvas id="voice-visualizer"></canvas>
+                    <canvas id="talk-amount-visualizer"></canvas>
+                    <form class="controls">
+                        <div>
+                            <label for="visual">Visualizer setting</label>
+                            <select name="visual" id="visual">
+                                <option value="sinewave">Sinewave</option>
+                                <option value="frequencybars" selected>Frequency bars</option>
+                                <option value="off">OFF</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <hr>
@@ -179,18 +195,18 @@
     <!-- Agora SDK -->
     <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js" defer></script>
 
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-firestore.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js" defer></script>
+    <script src="./firebase/init.js" defer></script>
+
     <!-- Scripts -->
     <script src="./index.js" defer></script>
     <script src="./timer.js" defer></script>
     <script src="./agenda.js" defer></script>
     <script src="./bgm.js" defer></script>
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
-    <script src="./firebase/init.js"></script>
-    <script src="./firebase/sync-bgm.js"></script>
+    <script src="./voice-visualizer.js" defer></script>
 
 </body>
 
