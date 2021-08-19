@@ -8,9 +8,9 @@ const audioElm = new Audio(uriAudioDefault);
 configureAudioDefault(audioElm);
 
 const selectorObj = $("#bgm-selector")[0];
-const playButton = document.getElementById("play-button"); //$("#play-button");
-const stopButton = document.getElementById("stop-button"); //$("#stop-button");
-const playbackSpan = document.getElementById("playback-span"); // $("#playback-span");
+const playButton = $("#play-button")[0];
+const stopButton = $("#stop-button")[0];
+const playbackSpan = $("#playback-span")[0];
 
 /*
  * Firestore related constants
@@ -61,7 +61,7 @@ db.collection(syncBgmCollection).doc(syncBgmDocId) // listen to "currentTrackId"
     .onSnapshot((doc) => {
 
         // Only for debugging
-        console.log("Current data: ", doc.data());
+        // console.log("Current data: ", doc.data());
 
         const currentTrackId = doc.data().currentTrackId;
         const currentTime = doc.data().currentTime;
