@@ -3,6 +3,7 @@ let published = false;
 let localTracks;
 let remoteUsers;
 let options;
+let meetingId;
 
 initScreen();
 initAgora();
@@ -136,6 +137,8 @@ async function join() {
 	localTracks.videoTrack.play("local-player");
 	$("#local-player-name").text(`${options.userName} (You)`);
 
+	meetingId = generateMeetingId();
+
 	// Publish the local video and audio tracks to the channel.
 	await client.publish(Object.values(localTracks));
 	published = true;
@@ -205,6 +208,12 @@ async function subscribe(user, mediaType) {
 	if (mediaType === 'audio') {
 		user.audioTrack.play();
 	}
+}
+
+function generateMeetingId() {
+	const token = options.token;
+
+	return token.replace('/', '');
 }
 
 /*
