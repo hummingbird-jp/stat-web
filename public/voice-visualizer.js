@@ -45,7 +45,7 @@ function initTalkVisualizer() {
     let stream;
 
 
-    //set up the different audio nodes we will use for the app
+    //　set up the different audio nodes we will use for the app
 
     const analyser = audioCtx.createAnalyser();
     analyser.minDecibels = -90;
