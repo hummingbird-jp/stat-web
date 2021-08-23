@@ -23,8 +23,10 @@ function sendAgenda(agenda) {
 
 // Listen to sync-agenda-beta collection; code below will be run
 // when something has changed on Firestore > sync-agenda-beta
-db.collection(syncAgendaCollection).doc(meetingId).onSnapshot((doc) => {
-	const newAgenda = doc.data().agenda;
+function listenAgenda() {
+	db.collection(syncAgendaCollection).doc(meetingId).onSnapshot((doc) => {
+		const newAgenda = doc.data().agenda;
 
-	$('#agenda-out').text(newAgenda);
-});
+		$('#agenda-out').text(newAgenda);
+	});
+}

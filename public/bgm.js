@@ -52,50 +52,52 @@ stopButton.addEventListener("click", function () {
 	configureControlPanelDefault();
 });
 
-db.collection(syncBgmCollection).doc(meetingId) // listen to "currentTrackId"
-	.onSnapshot((doc) => {
+function listenBgm() {
+	db.collection(syncBgmCollection).doc(meetingId) // listen to "currentTrackId"
+		.onSnapshot((doc) => {
 
-		// Only for debugging
-		// console.log("Current data: ", doc.data());
+			// Only for debugging
+			// console.log("Current data: ", doc.data());
 
-		const currentTrackId = doc.data().currentTrackId;
-		const currentTime = doc.data().currentTime;
-		const isPlaying = doc.data().isPlaying;
-		const isChanged = doc.data().isChanged;
+			const currentTrackId = doc.data().currentTrackId;
+			const currentTime = doc.data().currentTime;
+			const isPlaying = doc.data().isPlaying;
+			const isChanged = doc.data().isChanged;
 
-		if (!$(".meeting-area").is(":hidden")) {
+			if (!$(".meeting-area").is(":hidden")) {
 
-			if (isChanged) {
+				if (isChanged) {
 
-				const docRef = db.collection(audioSetCollection).doc(currentTrackId);
+					const docRef = db.collection(audioSetCollection).doc(currentTrackId);
 
-				docRef.get().then((doc) => {
-					if (doc.exists) {
+					docRef.get().then((doc) => {
+						if (doc.exists) {
 
-						// Only for debugging
-						// console.log("audioSet data: ", doc.data());
+							// Only for debugging
+							// console.log("audioSet data: ", doc.data());
 
-						changeTrackTo(doc.data().uri, currentTime);
-						changeSelectorTo(doc.data().category);
-						configureControlPanelPlaying();
-					}
-				})
-			} else {
-				/*
-				 * If audio track is not changed but paused or resumed
-				 */
-				if (isPlaying) {
-					audioElm.currentTime = currentTime;
-					audioElm.play()
-					configureControlPanelPlaying();
+							changeTrackTo(doc.data().uri, currentTime);
+							changeSelectorTo(doc.data().category);
+							configureControlPanelPlaying();
+						}
+					})
 				} else {
-					audioElm.pause();
-					audioElm.currentTime = currentTime;
-					configureControlPanelPaused();
+					/*
+					 * If audio track is not changed but paused or resumed
+					 */
+					if (isPlaying) {
+						audioElm.currentTime = currentTime;
+						audioElm.play()
+						configureControlPanelPlaying();
+					} else {
+						audioElm.pause();
+						audioElm.currentTime = currentTime;
+						configureControlPanelPaused();
+					}
 				}
 			}
-		}
-	});
+		});
+}
 
 function sendBgmStatus(currentTime, isChanged, isPlaying) {
 	const category = selectorObj.value;
@@ -118,7 +120,7 @@ function sendBgmStatus(currentTime, isChanged, isPlaying) {
 					currentTrackId: currentTrackId,
 					isChanged: isChanged,
 					isPlaying: isPlaying
-				})
+				});
 			});
 		})
 		.catch((error) => {
