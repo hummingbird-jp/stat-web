@@ -1,10 +1,10 @@
-// document.body.addEventListener('click', init);
+const syncTalkdataCollection = "sync-talkdata-beta";
+
 $("#join").click(function() {
     initTalkVisualizer();
 });
 
 function initTalkVisualizer() {
-    // document.body.removeEventListener('click', init)
 
     // Older browsers might not implement mediaDevices at all, so we set an empty object first
     if (navigator.mediaDevices === undefined) {
@@ -38,8 +38,9 @@ function initTalkVisualizer() {
     // window. is needed otherwise Safari explodes
 
     const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-    // console.log("Sampling rate: ", audioCtx.sampleRate);
-    // const voiceSelect = document.getElementById("voice");
+
+    console.log("Sampling rate: ", audioCtx.sampleRate);
+
     let source;
     let stream;
 
@@ -59,8 +60,6 @@ function initTalkVisualizer() {
     const intendedWidth = document.querySelector('.col-md-6').clientWidth;
     canvas.setAttribute('width', intendedWidth);
 
-    const visualSelect = document.getElementById("visual");
-
     let drawVisual;
 
     /*
@@ -72,6 +71,7 @@ function initTalkVisualizer() {
     const talkDataArray = new Array(talkDataBufferLength).fill(0);
     const talkDataSendTrigger = new Array(talkDataBufferLength).fill(0);
     let isTalking = false;
+    let shouldContinue = true;
 
     talkCanvas.setAttribute("width", intendedWidth);
     talkDataSendTrigger[talkDataSendTrigger.length - 1] = 1;
@@ -97,178 +97,143 @@ function initTalkVisualizer() {
         const WIDTH = canvas.width;
         const HEIGHT = canvas.height;
 
+        analyser.fftSize = 256;
 
-        const visualSetting = visualSelect.value;
-        // console.log(visualSetting);
+        const bufferLengthAlt = analyser.frequencyBinCount;
+        const freqRes = (audioCtx.sampleRate / 2) / bufferLengthAlt;
+        const dataArrayAlt = new Uint8Array(bufferLengthAlt);
 
-        if (visualSetting === "sinewave") {
-            analyser.fftSize = 2048;
-            const bufferLength = analyser.fftSize;
-            // console.log(bufferLength);
-            const dataArray = new Uint8Array(bufferLength);
+        canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
 
-            canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+        const draw = function() {
+            drawVisual = requestAnimationFrame(draw);
 
-            const draw = function() {
+            /*
+             * Note: Stop animation when "leave" button clicked.
+             */
+            if (!shouldContinue) {
+                cancelAnimationFrame(drawVisual);
+            }
 
-                drawVisual = requestAnimationFrame(draw);
+            analyser.getByteFrequencyData(dataArrayAlt);
 
-                analyser.getByteTimeDomainData(dataArray);
-
-                canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-                canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-                canvasCtx.lineWidth = 2;
-                canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
-
-                canvasCtx.beginPath();
-
-                const sliceWidth = WIDTH * 1.0 / bufferLength;
-                let x = 0;
-
-                for (let i = 0; i < bufferLength; i++) {
-
-                    const v = dataArray[i] / 128.0;
-                    const y = v * HEIGHT / 2;
-
-                    if (i === 0) {
-                        canvasCtx.moveTo(x, y);
-                    } else {
-                        canvasCtx.lineTo(x, y);
-                    }
-
-                    x += sliceWidth;
-                }
-
-                canvasCtx.lineTo(canvas.width, canvas.height / 2);
-                canvasCtx.stroke();
-            };
-
-            draw();
-
-        } else if (visualSetting == "frequencybars") {
-            analyser.fftSize = 256;
-            const bufferLengthAlt = analyser.frequencyBinCount;
-            // console.log(bufferLengthAlt);
-
-            const freqRes = (audioCtx.sampleRate / 2) / bufferLengthAlt;
-            // console.log("Frequency resolution: ", freqRes, " Hz")
-
-            const dataArrayAlt = new Uint8Array(bufferLengthAlt);
-
-            canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-
-            const drawAlt = function() {
-                drawVisual = requestAnimationFrame(drawAlt);
-
-                analyser.getByteFrequencyData(dataArrayAlt);
-
-                canvasCtx.fillStyle = 'rgb(0, 0, 0)';
-                canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-                const barWidth = (WIDTH / bufferLengthAlt) * 2.5;
-                let barHeight;
-                let x = 0;
-
-                const audioFreqAvg = dataArrayAlt.reduce((a, b) => a + b) / bufferLengthAlt;
-                const start = Math.ceil(100 / freqRes);
-                const end = Math.ceil(400 / freqRes)
-                const voiceVolume = dataArrayAlt.slice(start, end).reduce((a, b) => a + b) / (end - start);
-
-                for (let i = 0; i < bufferLengthAlt; i++) {
-                    barHeight = dataArrayAlt[i];
-
-                    canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
-                    if (i > Math.ceil(100 / freqRes) && i < Math.ceil(400 / freqRes) + 1) {
-                        if (barHeight > audioFreqAvg && barHeight > 80) {
-                            isTalking = true;
-                            canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',255,60)';
-                        } else {
-                            isTalking = false;
-                            canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',60,60)';
-                        }
-                    }
-                    canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
-
-                    x += barWidth + 1;
-                }
-
-                /*
-                 * Update talkDataArray and draw
-                 */
-                talkDataArray.shift();
-                if (isTalking) {
-                    talkDataArray.push(voiceVolume);
-                } else {
-                    talkDataArray.push(0);
-                }
-                talkCanvasCxt.fillStyle = 'rgb(200, 200, 200)';
-                talkCanvasCxt.fillRect(0, 0, WIDTH, HEIGHT);
-
-                talkCanvasCxt.lineWidth = 2;
-                talkCanvasCxt.strokeStyle = 'rgb(0, 0, 0)';
-
-                talkCanvasCxt.beginPath();
-
-                const sliceWidth = WIDTH * 1.0 / talkDataArray.length;
-                let x2 = 0;
-
-                for (let i = 0; i < talkDataArray.length; i++) {
-
-                    const v = talkDataArray[i] / 256.0;
-                    const y = (1 - v) * HEIGHT;
-
-                    if (i === 0) {
-                        talkCanvasCxt.moveTo(x2, y);
-                    } else {
-                        talkCanvasCxt.lineTo(x2, y);
-                    }
-
-                    x2 += sliceWidth;
-                }
-
-                talkCanvasCxt.lineTo(talkCanvas.width, talkCanvas.height / 2);
-                talkCanvasCxt.stroke();
-
-                /*
-                 * Update talkDataSendTrigger
-                 */
-                talkDataSendTrigger.shift();
-                if (talkDataSendTrigger[0] === 1) {
-                    const talkDataAvg = talkDataArray.reduce((a, b) => a + b) / talkDataArray.length;
-                    sendTalkDataToFirebase(talkDataAvg);
-                    console.log("trigger! Your talkDataAvg: ", talkDataAvg);
-
-                    talkDataSendTrigger.push(1);
-                    getTalkDataFromFirebase();
-                } else {
-                    talkDataSendTrigger.push(0);
-                }
-            };
-
-            drawAlt();
-
-        } else if (visualSetting == "off") {
-            canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-            canvasCtx.fillStyle = "#262626";
+            canvasCtx.fillStyle = 'rgb(0, 0, 0)';
             canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-        }
+
+            const barWidth = (WIDTH / bufferLengthAlt) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            const audioFreqAvg = dataArrayAlt.reduce((a, b) => a + b) / bufferLengthAlt;
+            const start = Math.ceil(100 / freqRes);
+            const end = Math.ceil(400 / freqRes)
+            const voiceVolume = dataArrayAlt.slice(start, end).reduce((a, b) => a + b) / (end - start);
+
+            for (let i = 0; i < bufferLengthAlt; i++) {
+                barHeight = dataArrayAlt[i];
+
+                canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
+                if (i > Math.ceil(100 / freqRes) && i < Math.ceil(400 / freqRes) + 1) {
+                    if (barHeight > audioFreqAvg && barHeight > 80) {
+                        isTalking = true;
+                        canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',255,60)';
+                    } else {
+                        isTalking = false;
+                        canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',60,60)';
+                    }
+                }
+                canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
+
+                x += barWidth + 1;
+            }
+
+            /*
+             * Update talkDataArray and draw
+             */
+            talkDataArray.shift();
+            if (isTalking) {
+                talkDataArray.push(voiceVolume);
+            } else {
+                talkDataArray.push(0);
+            }
+            talkCanvasCxt.fillStyle = 'rgb(200, 200, 200)';
+            talkCanvasCxt.fillRect(0, 0, WIDTH, HEIGHT);
+
+            talkCanvasCxt.lineWidth = 2;
+            talkCanvasCxt.strokeStyle = 'rgb(0, 0, 0)';
+
+            talkCanvasCxt.beginPath();
+
+            const sliceWidth = WIDTH * 1.0 / talkDataArray.length;
+            let x2 = 0;
+
+            for (let i = 0; i < talkDataArray.length; i++) {
+
+                const v = talkDataArray[i] / 256.0;
+                const y = (1 - v) * HEIGHT;
+
+                if (i === 0) {
+                    talkCanvasCxt.moveTo(x2, y);
+                } else {
+                    talkCanvasCxt.lineTo(x2, y);
+                }
+
+                x2 += sliceWidth;
+            }
+
+            talkCanvasCxt.lineTo(talkCanvas.width, talkCanvas.height / 2);
+            talkCanvasCxt.stroke();
+
+            /*
+             * Update talkDataSendTrigger
+             */
+            talkDataSendTrigger.shift();
+            if (talkDataSendTrigger[0] === 1) {
+                const talkDataAvg = talkDataArray.reduce((a, b) => a + b) / talkDataArray.length;
+                sendTalkDataToFirebase(talkDataAvg);
+                console.log("trigger! Your talkDataAvg: ", Math.round(talkDataAvg));
+
+                talkDataSendTrigger.push(1);
+                getTalkDataFromFirebase();
+            } else {
+                talkDataSendTrigger.push(0);
+            }
+        };
+
+        draw();
 
     }
 
-    // event listeners to change visualize
+    $("#leave").on("click", function() {
+        audioCtx.close().then(function() {
+            console.log("Audio Context was closed. ");
+        });
+        shouldContinue = false;
+        const constraints = { audio: true }
 
-    visualSelect.onchange = function() {
-        window.cancelAnimationFrame(drawVisual);
-        visualize();
-    };
+        /*
+         * Note: use MediaStreamTrack.stop() to stop tracks,
+         * but the red circle sign on the right side of web browzer tab remains.
+         */
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then(
+                function(stream) {
+                    const tracks = stream.getTracks();
+                    tracks.forEach(function(track) {
+                        track.stop();
+                        console.log("log : track stopped")
+                    });
+                })
+            .catch(function(err) { console.log('The following gUM error occured: ' + err); })
+    });
+
 }
 
 function sendTalkDataToFirebase(value) {
     const timestamp = firebase.firestore.Timestamp.now();
     const userName = $("#userName").val();
 
-    db.collection("sync-talkdata-beta").add({
+    db.collection(syncBgmCollection).add({
         timestamp: timestamp,
         talkValue: value,
         userName: userName
@@ -276,9 +241,18 @@ function sendTalkDataToFirebase(value) {
 }
 
 function getTalkDataFromFirebase() {
+    const myUserName = $("#userName").val();
+
+    /*
+     * Note: Player names are given in this version.
+     * TODO: We should share and unify user names between agora and Firestore.
+     */
+    // const playerNames = $(".player-name").text();
+    // console.log("player name: ", playerNames);
+
     const userNames = ["Ryutaro Suda", "Yusuke Hakamaya", "Natsumi Aoyama"];
     let sums = new Array(userNames.length).fill(0);
-    db.collection("sync-talkdata-beta").orderBy("timestamp", "desc")
+    db.collection(syncTalkdataCollection).orderBy("timestamp", "desc")
         .limit(10)
         .get()
         .then((querySnapshot) => {
