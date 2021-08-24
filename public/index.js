@@ -3,6 +3,7 @@ let published = false;
 let localTracks;
 let remoteUsers;
 let options;
+let meetingId;
 
 initScreen();
 initAgora();
@@ -115,6 +116,12 @@ function initAgora() {
  * Join a channel, then create local video and audio tracks and publish them to the channel.
  */
 async function join() {
+	meetingId = generateMeetingId();
+
+	listenAgenda();
+	listenBgm();
+	// TODO: implement functionality
+	// listenTimer();
 
 	// Add an event listener to play remote tracks when remote user publishes.
 	client.on("user-published", handleUserPublished);
@@ -135,6 +142,7 @@ async function join() {
 	// Play the local video track to the local browser and update the UI with the user ID.
 	localTracks.videoTrack.play("local-player");
 	$("#local-player-name").text(`${options.userName} (You)`);
+
 
 	// Publish the local video and audio tracks to the channel.
 	await client.publish(Object.values(localTracks));
@@ -205,6 +213,12 @@ async function subscribe(user, mediaType) {
 	if (mediaType === 'audio') {
 		user.audioTrack.play();
 	}
+}
+
+function generateMeetingId() {
+	const token = options.token;
+
+	return token.replace('/', '');
 }
 
 /*
