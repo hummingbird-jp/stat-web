@@ -66,7 +66,7 @@ function initTalkVisualizer() {
      * Variables for talk amount observer
      */
     const talkCanvas = document.getElementById("talk-amount-visualizer");
-    const talkCanvasCxt = talkCanvas.getContext("2d");
+    const talkCanvasCtx = talkCanvas.getContext("2d");
     const talkDataBufferLength = 1024;
     const talkDataArray = new Array(talkDataBufferLength).fill(0);
     const talkDataSendTrigger = new Array(talkDataBufferLength).fill(0);
@@ -120,9 +120,8 @@ function initTalkVisualizer() {
             canvasCtx.fillStyle = 'rgb(0, 0, 0)';
             canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
-            const barWidth = (WIDTH / bufferLengthAlt) * 2.5;
-            let barHeight;
-            let x = 0;
+            let barWidth;
+            let barWidthSum = new Array(1).fill(0);
 
             const audioFreqAvg = dataArrayAlt.reduce((a, b) => a + b) / bufferLengthAlt;
             const start = Math.ceil(100 / freqRes);
@@ -130,25 +129,23 @@ function initTalkVisualizer() {
             const voiceVolume = dataArrayAlt.slice(start, end).reduce((a, b) => a + b) / (end - start);
 
             for (let i = 0; i < bufferLengthAlt; i++) {
-                barHeight = dataArrayAlt[i];
+                barWidth = dataArrayAlt[i];
 
-                canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
                 if (i > Math.ceil(100 / freqRes) && i < Math.ceil(400 / freqRes) + 1) {
-                    if (barHeight > audioFreqAvg && barHeight > 80) {
+                    barWidthSum.push(barWidth);
+                    if (barWidth > audioFreqAvg && barWidth > 80) {
                         isTalking = true;
-                        canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',255,60)';
+                        canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',255,60)';
                     } else {
                         isTalking = false;
-                        canvasCtx.fillStyle = 'rgb(' + (barHeight + 100) + ',60,60)';
+                        canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',60,60)';
                     }
                 }
-                canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
-
-                x += barWidth + 1;
             }
+            canvasCtx.fillRect(0, 0, WIDTH * barWidthSum.reduce((a, b) => a + b) / (barWidthSum.length - 1) / 255, HEIGHT);
 
             /*
-             * Update talkDataArray and draw
+             * Update talkDataArray
              */
             talkDataArray.shift();
             if (isTalking) {
@@ -156,33 +153,7 @@ function initTalkVisualizer() {
             } else {
                 talkDataArray.push(0);
             }
-            talkCanvasCxt.fillStyle = 'rgb(200, 200, 200)';
-            talkCanvasCxt.fillRect(0, 0, WIDTH, HEIGHT);
 
-            talkCanvasCxt.lineWidth = 2;
-            talkCanvasCxt.strokeStyle = 'rgb(0, 0, 0)';
-
-            talkCanvasCxt.beginPath();
-
-            const sliceWidth = WIDTH * 1.0 / talkDataArray.length;
-            let x2 = 0;
-
-            for (let i = 0; i < talkDataArray.length; i++) {
-
-                const v = talkDataArray[i] / 256.0;
-                const y = (1 - v) * HEIGHT;
-
-                if (i === 0) {
-                    talkCanvasCxt.moveTo(x2, y);
-                } else {
-                    talkCanvasCxt.lineTo(x2, y);
-                }
-
-                x2 += sliceWidth;
-            }
-
-            talkCanvasCxt.lineTo(talkCanvas.width, talkCanvas.height / 2);
-            talkCanvasCxt.stroke();
 
             /*
              * Update talkDataSendTrigger
@@ -191,10 +162,38 @@ function initTalkVisualizer() {
             if (talkDataSendTrigger[0] === 1) {
                 const talkDataAvg = talkDataArray.reduce((a, b) => a + b) / talkDataArray.length;
                 sendTalkDataToFirebase(talkDataAvg);
-                console.log("trigger! Your talkDataAvg: ", Math.round(talkDataAvg));
-
                 talkDataSendTrigger.push(1);
-                getTalkDataFromFirebase();
+                getTalkDataFromFirebase().then(value => {
+                    const talkHeight = talkCanvas.height;
+                    const usernameArray = value.userNames;
+                    const talksums = value.sums;
+
+                    talkCanvasCtx.clearRect(0, 0, WIDTH, talkHeight);
+
+                    talkCanvasCtx.fillStyle = 'rgb(38, 38, 38)';
+                    talkCanvasCtx.fillRect(0, 0, WIDTH, talkHeight);
+
+                    /*
+                     * TODO: More frexible code needed!! 
+                     */
+                    let sum = talksums.reduce((a, b) => a + b);
+                    // console.log(talksums);
+                    console.log("sum ", sum);
+                    let deltaWidth = WIDTH / sum;
+                    let x = 0;
+                    for (let i = 0; i < talksums.length; i++) {
+                        const width = deltaWidth * talksums[i];
+
+                        talkCanvasCtx.fillStyle = 'rgb(' + (60 * i + 50) + ',' + (-60 * i + 250) + ',' + (30 * i + 150) + ')';
+                        talkCanvasCtx.fillRect(x, 0, width, HEIGHT);
+
+                        talkCanvasCtx.font = '12px serif';
+                        talkCanvasCtx.fillStyle = 'rgb(255, 255, 255)';
+                        talkCanvasCtx.fillText(usernameArray[i], x, 40, width);
+
+                        x += width;
+                    }
+                });
             } else {
                 talkDataSendTrigger.push(0);
             }
@@ -233,14 +232,20 @@ function sendTalkDataToFirebase(value) {
     const timestamp = firebase.firestore.Timestamp.now();
     const userName = $("#userName").val();
 
-    db.collection(syncBgmCollection).add({
-        timestamp: timestamp,
-        talkValue: value,
-        userName: userName
-    })
+    db.collection(syncTalkdataCollection).add({
+            timestamp: timestamp,
+            talkValue: value,
+            userName: userName
+        })
+        .then(function() {
+            console.log("log: talkdata sent", Math.round(value), userName);
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
 }
 
-function getTalkDataFromFirebase() {
+async function getTalkDataFromFirebase() {
     const myUserName = $("#userName").val();
 
     /*
@@ -251,23 +256,21 @@ function getTalkDataFromFirebase() {
     // console.log("player name: ", playerNames);
 
     const userNames = ["Ryutaro Suda", "Yusuke Hakamaya", "Natsumi Aoyama"];
+    const querySnapshot = await db.collection(syncTalkdataCollection).orderBy("timestamp", "desc").limit(10).get()
+
     let sums = new Array(userNames.length).fill(0);
-    db.collection(syncTalkdataCollection).orderBy("timestamp", "desc")
-        .limit(10)
-        .get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                for (let i = 0; i < userNames.length; i++) {
-                    if (doc.data().userName === userNames[i]) {
-                        sums[i] += doc.data().talkValue;
-                    }
-                }
-            })
-            for (let i = 0; i < userNames.length; i++) {
-                console.log(userNames[i], " : ", Math.round(sums[i]));
+    querySnapshot.forEach((doc) => {
+        for (let i = 0; i < userNames.length; i++) {
+            if (doc.data().userName === userNames[i]) {
+                sums[i] += doc.data().talkValue;
             }
-        })
-        .catch((error) => {
-            console.log("Error getting documents: ", error);
-        });
+        }
+    })
+    for (let i = 0; i < userNames.length; i++) {
+        console.log(userNames[i], " : ", Math.round(sums[i]));
+    }
+    return {
+        userNames,
+        sums
+    };
 }
