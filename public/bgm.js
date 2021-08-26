@@ -17,7 +17,7 @@ const syncBgmCollection = "sync-bgm-beta";
 const audioSetCollection = "audioSet";
 
 /*
- * Stop BGM when left
+ * Stop BGM when left.
  */
 $("#leave").click(function(e) {
     audioElm.pause();
