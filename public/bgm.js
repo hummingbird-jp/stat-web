@@ -11,6 +11,7 @@ const selectorObj = $("#bgm-selector")[0];
 const playButton = $("#play-button")[0];
 const stopButton = $("#stop-button")[0];
 const playbackSpan = $("#playback-span")[0];
+const volumeSlider = $("#bgm-volume")[0];
 
 const syncBgmCollection = "sync-bgm-beta";
 const audioSetCollection = "audioSet";
@@ -18,14 +19,14 @@ const audioSetCollection = "audioSet";
 /*
  * Stop BGM when left.
  */
-$("#leave").click(function (e) {
+$("#leave").click(function(e) {
 	audioElm.pause();
 });
 
 /*
  * Send BGM status to database (Firestore)
  */
-playButton.addEventListener('click', function () {
+playButton.addEventListener('click', function() {
 
 	const currentTime = audioElm.currentTime;
 
@@ -48,9 +49,14 @@ playButton.addEventListener('click', function () {
 
 }, false);
 
-stopButton.addEventListener("click", function () {
+stopButton.addEventListener("click", function() {
 	configureControlPanelDefault();
 });
+
+/*
+ * Change local volume (BGM only)
+ */
+$(volumeSlider).on("input", (e) => setAudioVolume(e.target.value));
 
 function listenBgm() {
 	db.collection(syncBgmCollection).doc(meetingId) // listen to "currentTrackId"
@@ -169,4 +175,8 @@ function changeTrackTo(uri, currentTime) {
 function changeSelectorTo(value) {
 	selectorObj.value = value;
 	selectorObj.disabled = true;
+}
+
+function setAudioVolume(value) {
+	audioElm.volume = value;
 }
