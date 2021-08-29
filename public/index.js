@@ -41,7 +41,7 @@ $("#join-form").submit(async function (e) {
 	$("#join").attr("disabled", true);
 
 	try {
-		options.appid = $("#appid").val();
+		// options.appid = $("#appid").val();
 		options.token = $("#token").val();
 		options.channel = $("#channel").val();
 		options.uid = $("#uid").val();
@@ -101,7 +101,7 @@ function initAgora() {
 		audioTrack: null
 	};
 
-	remoteUsers = {};
+	remoteUsers = { };
 
 	options = {
 		appid: "adaa9fb7675e4ca19ca80a6762e44dd2",
@@ -120,8 +120,7 @@ async function join() {
 
 	listenAgenda();
 	listenBgm();
-	// TODO: implement functionality
-	// listenTimer();
+	listenTimer();
 
 	// Add an event listener to play remote tracks when remote user publishes.
 	client.on("user-published", handleUserPublished);
@@ -168,7 +167,7 @@ async function leave() {
 	}
 
 	// Remove remote users and player views.
-	remoteUsers = {};
+	remoteUsers = { };
 	$("#remote-playerlist").html("");
 
 	// leave the channel
@@ -218,7 +217,7 @@ async function subscribe(user, mediaType) {
 function generateMeetingId() {
 	const token = options.token;
 
-	return token.replace('/', '');
+	return token.replaceAll('/', '');
 }
 
 /*
