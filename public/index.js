@@ -13,22 +13,22 @@ initAgora();
  * attempts to join a Video Call channel using those parameters.
  */
 $(() => {
-	var urlParams = new URL(location.href).searchParams;
+    var urlParams = new URL(location.href).searchParams;
 
-	// App ID is now pre-set
-	//options.appid = urlParams.get("appid");
+    // App ID is now pre-set
+    //options.appid = urlParams.get("appid");
 
-	options.channel = urlParams.get("channel");
-	options.token = urlParams.get("token");
-	options.uid = urlParams.get("uid");
+    options.channel = urlParams.get("channel");
+    options.token = urlParams.get("token");
+    options.uid = urlParams.get("uid");
 
-	if (options.appid && options.channel) {
-		$("#uid").val(options.uid);
-		$("#appid").val(options.appid);
-		$("#token").val(options.token);
-		$("#channel").val(options.channel);
-		$("#join-form").submit();
-	}
+    if (options.appid && options.channel) {
+        $("#uid").val(options.uid);
+        $("#appid").val(options.appid);
+        $("#token").val(options.token);
+        $("#channel").val(options.channel);
+        $("#join-form").submit();
+    }
 });
 
 /*
@@ -36,6 +36,7 @@ $(() => {
  * entered in the form and calls join asynchronously. The UI is updated to match the options entered
  * by the user.
  */
+
 $("#join-form").submit(async function (e) {
 	e.preventDefault();
 	$("#join").attr("disabled", true);
@@ -65,51 +66,51 @@ $("#join-form").submit(async function (e) {
 /*
  * Called when a user clicks Leave in order to exit a channel.
  */
-$("#leave").click(function (e) {
-	leave();
+$("#leave").click(function(e) {
+    leave();
 });
 
 // Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
-$("#unpublish").on("click", async function () {
-	if (published === true) {
-		await client.unpublish(Object.values(localTracks));
-		published = false;
-		$("#unpublish").text("You're now muted and off-camera");
-	} else {
-		await client.publish(Object.values(localTracks));
-		published = true;
-		$("#unpublish").html(`<img src="images/mute.svg" alt="" class="material-icons">`);
-	}
+$("#unpublish").on("click", async function() {
+    if (published === true) {
+        await client.unpublish(Object.values(localTracks));
+        published = false;
+        $("#unpublish").text("You're now muted and off-camera");
+    } else {
+        await client.publish(Object.values(localTracks));
+        published = true;
+        $("#unpublish").html(`<img src="images/mute.svg" alt="" class="material-icons">`);
+    }
 });
 
 function initScreen() {
-	$(".meeting-area").hide();
+    $(".meeting-area").hide();
 
-	if (typeof audioElm != "undefined") {
-		audioElm.pause();
-		configureDefaultControlPanel(); // bgm buttons default setting
-	}
+    if (typeof audioElm != "undefined") {
+        audioElm.pause();
+        configureDefaultControlPanel(); // bgm buttons default setting
+    }
 }
 
 function initAgora() {
-	published = false;
+    published = false;
 
-	client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+    client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
-	localTracks = {
-		videoTrack: null,
-		audioTrack: null
-	};
+    localTracks = {
+        videoTrack: null,
+        audioTrack: null
+    };
 
-	remoteUsers = { };
+	  remoteUsers = { };
 
-	options = {
-		appid: "adaa9fb7675e4ca19ca80a6762e44dd2",
-		channel: null,
-		uid: null,
-		token: null,
-		userName: null,
-	};
+    options = {
+        appid: "adaa9fb7675e4ca19ca80a6762e44dd2",
+        channel: null,
+        uid: null,
+        token: null,
+        userName: null,
+    };
 }
 
 /*
@@ -151,6 +152,7 @@ async function join() {
 	$(".join-area").hide();
 	$(".meeting-area").fadeIn();
 	$("#join").text("Join");
+
 }
 
 /*
@@ -195,29 +197,29 @@ async function leave() {
  * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
  */
 async function subscribe(user, mediaType) {
-	const uid = user.uid;
-	// subscribe to a remote user
-	await client.subscribe(user, mediaType);
-	console.log("subscribe success");
-	if (mediaType === 'video') {
-		const player = $(`
+    const uid = user.uid;
+    // subscribe to a remote user
+    await client.subscribe(user, mediaType);
+    console.log("subscribe success");
+    if (mediaType === 'video') {
+        const player = $(`
 		<div id="player-wrapper-${uid}">
 			<p class="player-name">${uid}</p>
 			<div id="player-${uid}" class="player"></div>
 		</div>
     `);
-		$("#remote-playerlist").append(player);
-		user.videoTrack.play(`player-${uid}`);
-	}
-	if (mediaType === 'audio') {
-		user.audioTrack.play();
-	}
+        $("#remote-playerlist").append(player);
+        user.videoTrack.play(`player-${uid}`);
+    }
+    if (mediaType === 'audio') {
+        user.audioTrack.play();
+    }
 }
 
 function generateMeetingId() {
-	const token = options.token;
+    const token = options.token;
 
-	return token.replaceAll('/', '');
+	  return token.replaceAll('/', '');
 }
 
 /*
@@ -227,9 +229,9 @@ function generateMeetingId() {
  * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
  */
 function handleUserPublished(user, mediaType) {
-	const id = user.uid;
-	remoteUsers[id] = user;
-	subscribe(user, mediaType);
+    const id = user.uid;
+    remoteUsers[id] = user;
+    subscribe(user, mediaType);
 }
 
 /*
@@ -238,7 +240,7 @@ function handleUserPublished(user, mediaType) {
  * @param  {string} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to remove.
  */
 function handleUserUnpublished(user) {
-	const id = user.uid;
-	delete remoteUsers[id];
-	$(`#player-wrapper-${id}`).remove();
+    const id = user.uid;
+    delete remoteUsers[id];
+    $(`#player-wrapper-${id}`).remove();
 }
