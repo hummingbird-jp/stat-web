@@ -36,30 +36,31 @@ $(() => {
  * entered in the form and calls join asynchronously. The UI is updated to match the options entered
  * by the user.
  */
-$("#join-form").submit(async function(e) {
-    e.preventDefault();
-    $("#join").attr("disabled", true);
 
-    try {
-        // options.appid = $("#appid").val();
-        options.token = $("#token").val();
-        options.channel = $("#channel").val();
-        options.uid = $("#uid").val();
-        options.userName = $("#userName").val();
+$("#join-form").submit(async function (e) {
+	e.preventDefault();
+	$("#join").attr("disabled", true);
 
-        await join();
+	try {
+		// options.appid = $("#appid").val();
+		options.token = $("#token").val();
+		options.channel = $("#channel").val();
+		options.uid = $("#uid").val();
+		options.userName = $("#userName").val();
 
-        if (options.token) {
-            $("#success-alert-with-token").css("display", "block");
-        } else {
-            $("#success-alert a").attr("href", `index.html?appid=${options.appid}&channel=${options.channel}&token=${options.token}`);
-            $("#success-alert").css("display", "block");
-        }
-    } catch (error) {
-        console.error(error);
-    } finally {
-        $("#leave").attr("disabled", false);
-    }
+		await join();
+
+		if (options.token) {
+			$("#success-alert-with-token").css("display", "block");
+		} else {
+			$("#success-alert a").attr("href", `index.html?appid=${options.appid}&channel=${options.channel}&token=${options.token}`);
+			$("#success-alert").css("display", "block");
+		}
+	} catch (error) {
+		console.error(error);
+	} finally {
+		$("#leave").attr("disabled", false);
+	}
 });
 
 /*
@@ -101,7 +102,7 @@ function initAgora() {
         audioTrack: null
     };
 
-    remoteUsers = {};
+	  remoteUsers = { };
 
     options = {
         appid: "adaa9fb7675e4ca19ca80a6762e44dd2",
@@ -116,77 +117,77 @@ function initAgora() {
  * Join a channel, then create local video and audio tracks and publish them to the channel.
  */
 async function join() {
-    meetingId = generateMeetingId();
+	meetingId = generateMeetingId();
 
-    listenAgenda();
-    listenBgm();
-    // TODO: implement functionality
-    // listenTimer();
+	listenAgenda();
+	listenBgm();
+	listenTimer();
 
-    // Add an event listener to play remote tracks when remote user publishes.
-    client.on("user-published", handleUserPublished);
-    client.on("user-unpublished", handleUserUnpublished);
+	// Add an event listener to play remote tracks when remote user publishes.
+	client.on("user-published", handleUserPublished);
+	client.on("user-unpublished", handleUserUnpublished);
 
-    // hide join panel; show up #leave button
-    $("#join").text("Joining...");
+	// hide join panel; show up #leave button
+	$("#join").text("Joining...");
 
-    // Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
-    [options.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
-        // Join the channel.
-        client.join(options.appid, options.channel, options.token || null, options.uid || null),
-        // Create tracks to the local microphone and camera.
-        AgoraRTC.createMicrophoneAudioTrack(),
-        AgoraRTC.createCameraVideoTrack()
-    ]);
+	// Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
+	[options.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
+		// Join the channel.
+		client.join(options.appid, options.channel, options.token || null, options.uid || null),
+		// Create tracks to the local microphone and camera.
+		AgoraRTC.createMicrophoneAudioTrack(),
+		AgoraRTC.createCameraVideoTrack()
+	]);
 
-    // Play the local video track to the local browser and update the UI with the user ID.
-    localTracks.videoTrack.play("local-player");
-    $("#local-player-name").text(`${options.userName} (You)`);
+	// Play the local video track to the local browser and update the UI with the user ID.
+	localTracks.videoTrack.play("local-player");
+	$("#local-player-name").text(`${options.userName} (You)`);
 
 
-    // Publish the local video and audio tracks to the channel.
-    await client.publish(Object.values(localTracks));
-    published = true;
-    console.log("publish success");
+	// Publish the local video and audio tracks to the channel.
+	await client.publish(Object.values(localTracks));
+	published = true;
+	console.log("publish success");
 
-    $(".join-area").hide();
-    $(".meeting-area").fadeIn();
-    $("#join").text("Join");
+	$(".join-area").hide();
+	$(".meeting-area").fadeIn();
+	$("#join").text("Join");
+
 }
 
 /*
  * Stop all local and remote tracks then leave the channel.
  */
 async function leave() {
-    for (trackName in localTracks) {
-        var track = localTracks[trackName];
-        if (track) {
-            track.stop();
-            track.close();
-            localTracks[trackName] = undefined;
-        }
-    }
+	for (trackName in localTracks) {
+		var track = localTracks[trackName];
+		if (track) {
+			track.stop();
+			track.close();
+			localTracks[trackName] = undefined;
+		}
+	}
 
-    // Remove remote users and player views.
-    remoteUsers = {};
-    $("#remote-playerlist").html("");
+	// Remove remote users and player views.
+	remoteUsers = { };
+	$("#remote-playerlist").html("");
 
-    // leave the channel
-    await client.leave();
+	// leave the channel
+	await client.leave();
 
-    $("#local-player-name").text("");
-    $("#join").attr("disabled", false);
-    $("#leave").attr("disabled", true);
-    console.log("client leaves channel success");
+	$("#local-player-name").text("");
+	$("#join").attr("disabled", false);
+	$("#leave").attr("disabled", true);
+	console.log("client leaves channel success");
 
-    $("#leave").text("Leaving...");
+	$("#leave").text("Leaving...");
 
-    // timeout is unnecessary of course, but for better UX
-    setTimeout(() => {
-        $(".join-area").fadeIn();
-        $(".meeting-area").hide();
-        $("#leave").text("Leave");
-    }, 1000);
+	// timeout is unnecessary of course, but for better UX
+	setTimeout(() => {
+		$(".join-area").fadeIn();
+		$(".meeting-area").hide();
+		$("#leave").text("Leave");
+	}, 1000);
 }
 
 /*
@@ -218,7 +219,7 @@ async function subscribe(user, mediaType) {
 function generateMeetingId() {
     const token = options.token;
 
-    return token.replace('/', '');
+	  return token.replaceAll('/', '');
 }
 
 /*
