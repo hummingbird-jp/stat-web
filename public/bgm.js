@@ -10,7 +10,7 @@ configureAudioDefault(audioElm);
 const selectorObj = $("#bgm-selector")[0];
 const playButton = $("#play-button")[0];
 const stopButton = $("#stop-button")[0];
-const playbackSpan = $("#playback-span")[0];
+const playbackIcon = $("#playback-icon")[0];
 const volumeSlider = $("#bgm-volume")[0];
 
 const syncBgmCollection = "sync-bgm-beta";
@@ -19,14 +19,14 @@ const audioSetCollection = "audioSet";
 /*
  * Stop BGM when left.
  */
-$("#leave").click(function(e) {
+$("#leave").click(function (e) {
 	audioElm.pause();
 });
 
 /*
  * Send BGM status to database (Firestore)
  */
-playButton.addEventListener('click', function() {
+playButton.addEventListener('click', function () {
 
 	const currentTime = audioElm.currentTime;
 
@@ -49,7 +49,7 @@ playButton.addEventListener('click', function() {
 
 }, false);
 
-stopButton.addEventListener("click", function() {
+stopButton.addEventListener("click", function () {
 	configureControlPanelDefault();
 });
 
@@ -145,19 +145,19 @@ function configureControlPanelDefault() {
 	stopButton.disabled = true;
 	selectorObj.disabled = false;
 	selectorObj.value = "default";
-	playbackSpan.textContent = "Play";
+	$(playbackIcon).attr("src", "icons/play_arrow_black_24dp.svg");
 	playButton.dataset.playing = "preSelect";
 }
 
 function configureControlPanelPlaying() {
-	playbackSpan.textContent = "Pause";
+	$(playbackIcon).attr("src", "icons/pause_black_24dp.svg");
 	playButton.dataset.playing = 'true';
 	stopButton.disabled = true;
 	selectorObj.disabled = true;
 }
 
 function configureControlPanelPaused() {
-	playbackSpan.textContent = "Play";
+	$(playbackIcon).attr("src", "icons/play_arrow_black_24dp.svg");
 	playButton.dataset.playing = 'false';
 	stopButton.disabled = false;
 	selectorObj.disabled = true;
