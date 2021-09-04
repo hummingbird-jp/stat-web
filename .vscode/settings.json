@@ -1,0 +1,31 @@
+{
+	"diffEditor.ignoreTrimWhitespace": true,
+	"editor.suggestSelection": "first",
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.comments.insertSpace": false,
+	"editor.renderWhitespace": "all",
+	"files.trimTrailingWhitespace": true,
+	"files.insertFinalNewline": true,
+	"git.autofetch": true,
+	"git.enableSmartCommit": true,
+	"git.confirmSync": false,
+	"liveServer.settings.donotShowInfoMsg": true,
+	"liveServer.settings.donotVerifyTags": true,
+	"[html]": {
+		"editor.defaultFormatter": "vscode.html-language-features"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
+	"json.schemaDownload.enable": false,
+	"debug.onTaskErrors": "showErrors",
+	"liveServer.settings.CustomBrowser": "chrome",
+	"editor.inlineSuggest.enabled": true,
+	"javascript.suggest.completeFunctionCalls": true,
+	"javascript.format.insertSpaceAfterConstructor": true,
+	"editor.formatOnSave": true,
+}
