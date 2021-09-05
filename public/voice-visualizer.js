@@ -138,12 +138,18 @@ function initTalkVisualizer() {
 
 				if (i > Math.ceil(100 / freqRes) && i < Math.ceil(400 / freqRes) + 1) {
 					barWidthSum.push(barWidth);
-					if (barWidth > audioFreqAvg && barWidth > 80) {
+					if (barWidth > audioFreqAvg && barWidth > 90) {
 						isTalking = true;
 						canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',255,60)';
+						$(".video-wrapper").css({
+							'background-color': '#5FD93D'
+						})
 					} else {
 						isTalking = false;
 						canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',60,60)';
+						$(".video-wrapper").css({
+							'background-color': '#0D0D0D'
+						})
 					}
 				}
 			}
