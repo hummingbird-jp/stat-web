@@ -4,7 +4,7 @@ $("#join").click(function () {
 	initTalkVisualizer();
 });
 
-function initTalkVisualizer() {
+function initTalkVisualizer () {
 
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {
@@ -93,7 +93,7 @@ function initTalkVisualizer() {
 		console.log('getUserMedia not supported on your browser!');
 	}
 
-	function visualize() {
+	function visualize () {
 		const WIDTH = canvas.width;
 		const HEIGHT = canvas.height;
 
@@ -133,12 +133,18 @@ function initTalkVisualizer() {
 
 				if (i > Math.ceil(100 / freqRes) && i < Math.ceil(400 / freqRes) + 1) {
 					barWidthSum.push(barWidth);
-					if (barWidth > audioFreqAvg && barWidth > 80) {
+					if (barWidth > audioFreqAvg && barWidth > 90) {
 						isTalking = true;
 						canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',255,60)';
+						$(".video-wrapper").css({
+							'background-color': '#5FD93D'
+						})
 					} else {
 						isTalking = false;
 						canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',60,60)';
+						$(".video-wrapper").css({
+							'background-color': '#0D0D0D'
+						})
 					}
 				}
 			}
@@ -228,7 +234,7 @@ function initTalkVisualizer() {
 
 }
 
-function sendTalkDataToFirebase(value) {
+function sendTalkDataToFirebase (value) {
 	const timestamp = firebase.firestore.Timestamp.now();
 	const userName = options.userName;
 
