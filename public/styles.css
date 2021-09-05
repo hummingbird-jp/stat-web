@@ -40,6 +40,19 @@ hr {
 	margin: 2rem 1rem;
 }
 
+.horizontal-line {
+	width: 100%;
+	text-align: center;
+	border-bottom: 1px solid aliceblue;
+	line-height: 0.1rem;
+	margin: 50px 0;
+}
+
+.text-on-line {
+	background: #0d0d0d;
+	padding: 0 10px;
+}
+
 .form {
 	margin-top: 1rem;
 }
@@ -146,10 +159,14 @@ input[type=range]:focus::-ms-fill-upper {
 	background: #F0F8FF;
 }
 
+.meeting-info-group {
+	color: #0D0D0D;
+}
+
 .btn {
 	margin-top: 1rem;
 	background-color: #8F35FF;
-	color: #0D0D0D;
+	color: aliceblue;
 	border: none;
 }
 
@@ -164,7 +181,7 @@ input[type=range]:focus::-ms-fill-upper {
 	position: fixed;
 	left: 50%;
 	transform: translate(-50%);
-	bottom: 1rem;
+	bottom: 2rem;
 }
 
 #unpublish {
@@ -278,4 +295,49 @@ input {
 /* BGM */
 #bgm-group {
 	position: relative;
+}
+
+/* Copy text to clipboard */
+.meeting-info-group {
+	position: fixed;
+	left: 10%;
+	bottom: 2rem;
+}
+
+.btn-with-tooltip {
+	position: relative;
+	display: inline-block;
+}
+
+.btn-with-tooltip .tooltiptext {
+	visibility: hidden;
+	width: 140px;
+	background-color: #555;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px;
+	position: absolute;
+	z-index: 1;
+	bottom: 150%;
+	left: 50%;
+	margin-left: -75px;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.btn-with-tooltip .tooltiptext::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: #555 transparent transparent transparent;
+}
+
+.btn-with-tooltip:hover .tooltiptext {
+	visibility: visible;
+	opacity: 1;
 }

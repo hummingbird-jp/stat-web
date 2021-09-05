@@ -42,26 +42,70 @@ $("#join-form").submit(async function (e) {
 	$("#join").attr("disabled", true);
 
 	try {
-		// options.appid = $("#appid").val();
-		options.token = $("#token").val();
-		options.channel = $("#channel").val();
-		options.uid = $("#uid").val();
+		options.token = $("#token").val();;
+		options.channel = $("#channel").val();;
 		options.userName = $("#userName").val();
 
-		await join();
+		await joinOrCreate(options.token);
+	} catch (error) {
+		console.error(error);
+		// TODO: show error and clear form
+	} finally {
+		$("#leave").attr("disabled", false);
+	}
+});
 
-		if (options.token) {
-			$("#success-alert-with-token").css("display", "block");
-		} else {
-			$("#success-alert a").attr("href", `index.html?appid=${options.appid}&channel=${options.channel}&token=${options.token}`);
-			$("#success-alert").css("display", "block");
-		}
+// Create a new meeting
+$("#create-form").submit(async function (e) {
+	e.preventDefault();
+	$("#create").attr("disabled", true);
+
+	try {
+		const channelName = generateRandomChannelName(20);
+
+		options.channel = channelName;
+		options.userName = $("#userName").val();
+		options.token = await fetchNewTokenWithChannelName(channelName);
+
+		await joinOrCreate(options.token);
 	} catch (error) {
 		console.error(error);
 	} finally {
 		$("#leave").attr("disabled", false);
 	}
 });
+
+
+async function fetchNewTokenWithChannelName(channelName) {
+	const uid = 1234;
+	let token;
+
+	await $.getJSON(`https://stat-web.herokuapp.com/access_token?channel=${channelName}`,
+		function (data) {
+			token = data.token;
+		}
+	);
+
+	console.log(`uid: ${uid}`);
+	console.log(`channelName: ${channelName}`);
+	console.log(`token: ${token}`);
+
+	return token;
+}
+
+function generateRandomChannelName(length) {
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	const charactersLength = characters.length;
+
+	let result = '';
+
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() *
+			charactersLength));
+	}
+
+	return result;
+}
 
 /*
  * Called when a user clicks Leave in order to exit a channel.
@@ -116,8 +160,8 @@ function initAgora() {
 /*
  * Join a channel, then create local video and audio tracks and publish them to the channel.
  */
-async function join() {
-	meetingId = generateMeetingId();
+async function joinOrCreate(token) {
+	meetingId = generateMeetingId(token);
 
 	listenAgenda();
 	listenBgm();
@@ -129,6 +173,7 @@ async function join() {
 
 	// hide join panel; show up #leave button
 	$("#join").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
+	$("#create").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 
 	// Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
 	[options.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
@@ -143,6 +188,11 @@ async function join() {
 	localTracks.videoTrack.play("local-player");
 	$("#local-player-name").text(`${options.userName} (You)`);
 
+	// Show token and password
+	const shortenedToken = truncate(options.token, 10);
+	const shortenedChannelName = truncate(options.channel, 10);
+
+	$("#token-and-password").html(`Token: ${shortenedToken}<br>Password: ${shortenedChannelName}`);
 
 	// Publish the local video and audio tracks to the channel.
 	await client.publish(Object.values(localTracks));
@@ -152,8 +202,12 @@ async function join() {
 	$(".join-area").hide();
 	$(".meeting-area").fadeIn();
 	$("#join").text("Join");
-
+	$("#create").text("Create");
 }
+
+function truncate(str, n) {
+	return (str.length > n) ? `${str.substr(0, n - 1)} &hellip;` : str;
+};
 
 /*
  * Stop all local and remote tracks then leave the channel.
@@ -218,9 +272,7 @@ async function subscribe(user, mediaType) {
 	}
 }
 
-function generateMeetingId() {
-	const token = options.token;
-
+function generateMeetingId(token) {
 	return token.replaceAll('/', '');
 }
 
@@ -245,4 +297,33 @@ function handleUserUnpublished(user) {
 	const id = user.uid;
 	delete remoteUsers[id];
 	$(`#player-wrapper-${id}`).remove();
+}
+
+// Meeting Info card
+$("#copy-infos-to-clipboard").click(function (e) {
+	e.preventDefault();
+
+	copyTextToClipboard();
+});
+
+$("#copy-infos-to-clipboard").mouseout(function () {
+	mouseOut();
+});
+
+function copyTextToClipboard() {
+	const text = `Token: ${options.token}\nPassword: ${options.channel}`;
+
+	navigator.clipboard.writeText(text);
+
+	const tooltip = $("#meeting-infos-tooltip")[0];
+	const shortenedToken = truncate(options.token, 10);
+	const shortenedChannelName = truncate(options.channel, 10);
+
+	$(tooltip).html(`Copied: "Token: ${shortenedToken}\nPassword: ${shortenedChannelName}"`);
+}
+
+function mouseOut() {
+	const tooltip = $("#meeting-infos-tooltip")[0];
+
+	$(tooltip).html("Copy");
 }
