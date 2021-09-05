@@ -1,10 +1,10 @@
 const syncTalkdataCollection = "sync-talkdata-beta";
 
-$("#join").click(function() {
+$("#join").click(function () {
 	initTalkVisualizer();
 });
 
-function initTalkVisualizer() {
+function initTalkVisualizer () {
 
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {
@@ -16,7 +16,7 @@ function initTalkVisualizer() {
 	// with getUserMedia as it would overwrite existing properties.
 	// Here, we will just add the getUserMedia property if it's missing.
 	if (navigator.mediaDevices.getUserMedia === undefined) {
-		navigator.mediaDevices.getUserMedia = function(constraints) {
+		navigator.mediaDevices.getUserMedia = function (constraints) {
 
 			// First get ahold of the legacy getUserMedia, if present
 			const getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -28,7 +28,7 @@ function initTalkVisualizer() {
 			}
 
 			// Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				getUserMedia.call(navigator, constraints, resolve, reject);
 			});
 		}
@@ -37,7 +37,7 @@ function initTalkVisualizer() {
 	// set up forked web audio context, for multiple browsers
 	// window. is needed otherwise Safari explodes
 
-	const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+	const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 	console.log("Sampling rate: ", audioCtx.sampleRate);
 
@@ -83,17 +83,17 @@ function initTalkVisualizer() {
 		const constraints = { audio: true }
 		navigator.mediaDevices.getUserMedia(constraints)
 			.then(
-				function(stream) {
+				function (stream) {
 					source = audioCtx.createMediaStreamSource(stream);
 					source.connect(analyser);
 					visualize();
 				})
-			.catch(function(err) { console.log('The following gUM error occured: ' + err); })
+			.catch(function (err) { console.log('The following gUM error occured: ' + err); })
 	} else {
 		console.log('getUserMedia not supported on your browser!');
 	}
 
-	function visualize() {
+	function visualize () {
 		const WIDTH = canvas.width;
 		const HEIGHT = canvas.height;
 
@@ -105,7 +105,7 @@ function initTalkVisualizer() {
 
 		canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
 
-		const draw = function() {
+		const draw = function () {
 			drawVisual = requestAnimationFrame(draw);
 
 			/*
@@ -133,12 +133,18 @@ function initTalkVisualizer() {
 
 				if (i > Math.ceil(100 / freqRes) && i < Math.ceil(400 / freqRes) + 1) {
 					barWidthSum.push(barWidth);
-					if (barWidth > audioFreqAvg && barWidth > 80) {
+					if (barWidth > audioFreqAvg && barWidth > 90) {
 						isTalking = true;
 						canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',255,60)';
+						$(".video-wrapper").css({
+							'background-color': '#5FD93D'
+						})
 					} else {
 						isTalking = false;
 						canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',60,60)';
+						$(".video-wrapper").css({
+							'background-color': '#0D0D0D'
+						})
 					}
 				}
 			}
@@ -174,7 +180,7 @@ function initTalkVisualizer() {
 					talkCanvasCtx.fillRect(0, 0, WIDTH, talkHeight);
 
 					/*
-					 * TODO: More frexible code needed!! 
+					 * TODO: More frexible code needed!!
 					 */
 					let sum = talksums.reduce((a, b) => a + b);
 					// console.log(talksums);
@@ -203,8 +209,8 @@ function initTalkVisualizer() {
 
 	}
 
-	$("#leave").on("click", function() {
-		audioCtx.close().then(function() {
+	$("#leave").on("click", function () {
+		audioCtx.close().then(function () {
 			console.log("Audio Context was closed. ");
 		});
 		shouldContinue = false;
@@ -216,28 +222,28 @@ function initTalkVisualizer() {
 		 */
 		navigator.mediaDevices.getUserMedia(constraints)
 			.then(
-				function(stream) {
+				function (stream) {
 					const tracks = stream.getTracks();
-					tracks.forEach(function(track) {
+					tracks.forEach(function (track) {
 						track.stop();
 						console.log("log : track stopped")
 					});
 				})
-			.catch(function(err) { console.log('The following gUM error occured: ' + err); })
+			.catch(function (err) { console.log('The following gUM error occured: ' + err); })
 	});
 
 }
 
-function sendTalkDataToFirebase(value) {
+function sendTalkDataToFirebase (value) {
 	const timestamp = firebase.firestore.Timestamp.now();
 	const userName = $("#userName").val();
 
 	db.collection(syncTalkdataCollection).add({
-			timestamp: timestamp,
-			talkValue: value,
-			userName: userName
-		})
-		.then(function() {
+		timestamp: timestamp,
+		talkValue: value,
+		userName: userName
+	})
+		.then(function () {
 			console.log("log: talkdata sent", Math.round(value), userName);
 		})
 		.catch((error) => {
@@ -245,7 +251,7 @@ function sendTalkDataToFirebase(value) {
 		});
 }
 
-async function getTalkDataFromFirebase() {
+async function getTalkDataFromFirebase () {
 	const myUserName = $("#userName").val();
 
 	/*
