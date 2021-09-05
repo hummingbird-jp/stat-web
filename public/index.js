@@ -8,35 +8,7 @@ let meetingId;
 initScreen();
 initAgora();
 
-/*
- * When this page is called with parameters in the URL, this procedure
- * attempts to join a Video Call channel using those parameters.
- */
-$(() => {
-	var urlParams = new URL(location.href).searchParams;
-
-	// App ID is now pre-set
-	//options.appid = urlParams.get("appid");
-
-	options.channel = urlParams.get("channel");
-	options.token = urlParams.get("token");
-	options.uid = urlParams.get("uid");
-
-	if (options.appid && options.channel) {
-		$("#uid").val(options.uid);
-		$("#appid").val(options.appid);
-		$("#token").val(options.token);
-		$("#channel").val(options.channel);
-		$("#join-form").submit();
-	}
-});
-
-/*
- * When a user clicks Join or Leave in the HTML form, this procedure gathers the information
- * entered in the form and calls join asynchronously. The UI is updated to match the options entered
- * by the user.
- */
-
+// Join existing meeting
 $("#join-form").submit(async function (e) {
 	e.preventDefault();
 	$("#join").attr("disabled", true);
@@ -70,6 +42,7 @@ $("#create-form").submit(async function (e) {
 		await joinOrCreate(options.token);
 	} catch (error) {
 		console.error(error);
+		// TODO: show error and clear form
 	} finally {
 		$("#leave").attr("disabled", false);
 	}
