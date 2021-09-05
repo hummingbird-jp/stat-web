@@ -75,11 +75,11 @@ $("#unpublish").on("click", async function () {
 	if (published === true) {
 		await client.unpublish(Object.values(localTracks));
 		published = false;
-		$("#unpublish").text("You're now muted and off-camera");
+		$("#unpublish").html(`<img src="icons/mic_black_24dp.svg" alt="" class="material-icons">`);
 	} else {
 		await client.publish(Object.values(localTracks));
 		published = true;
-		$("#unpublish").html(`<img src="images/mute.svg" alt="" class="material-icons">`);
+		$("#unpublish").html(`<img src="icons/mic_off_black_24dp.svg" alt="" class="material-icons">`);
 	}
 });
 
@@ -128,7 +128,7 @@ async function join() {
 	client.on("user-unpublished", handleUserUnpublished);
 
 	// hide join panel; show up #leave button
-	$("#join").text("Joining...");
+	$("#join").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 
 	// Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
 	[options.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
@@ -180,13 +180,13 @@ async function leave() {
 	$("#leave").attr("disabled", true);
 	console.log("client leaves channel success");
 
-	$("#leave").text("Leaving...");
+	$("#leave").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 
 	// timeout is unnecessary of course, but for better UX
 	setTimeout(() => {
 		$(".join-area").fadeIn();
 		$(".meeting-area").hide();
-		$("#leave").text("Leave");
+		$("#leave").html(`<img src="icons/call_end_black_24dp.svg" alt="" class="material-icons">`)
 	}, 1000);
 }
 

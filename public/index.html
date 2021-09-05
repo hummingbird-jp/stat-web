@@ -81,7 +81,8 @@
 					<div class="col-md-8 mx-auto main-controller">
 						<input class="form form-control" id="agenda-in" type="text" placeholder="Agenda" required>
 						<div class="button-group d-grid gap-2">
-							<button id="set-agenda" class="btn btn-primary">Set Agenda!</button>
+							<button id="set-agenda" class="btn btn-primary"><img src="icons/send_black_24dp.svg" alt=""
+									class="material-icons"></button>
 						</div>
 					</div>
 
@@ -108,11 +109,11 @@
 						</div>
 						<div class="button-group d-grid gap-2">
 							<button id="start-timer" class="btn btn-primary" onclick="startTimer()">
-								Start
+								<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">
 							</button>
 							<button id="stop-timer" class="btn btn-primary" onclick="stopTimer()"
 								style="display: none;">
-								Stop
+								<img src="icons/restart_alt_black_24dp.svg" alt="" class="material-icons">
 							</button>
 						</div>
 					</div>
@@ -135,10 +136,10 @@
 						</div>
 						<button id="play-button" class="btn btn-primary" data-playing="preSelect" role="switch"
 							aria-checked="false">
-							<span id="playback-span">Play</span>
+							<img src="icons/play_arrow_black_24dp.svg" id="playback-icon" alt="" class="material-icons">
 						</button>
 						<button id="stop-button" class="btn btn-primary" disabled>
-							<span>Stop</span>
+							<img src="icons/stop_black_24dp.svg" alt="" class="material-icons">
 						</button>
 					</div>
 				</div>
@@ -165,12 +166,12 @@
 			<div class="row control-button-group">
 				<div class="col-sm">
 					<button id="unpublish" type="button" class="btn btn-danger btn-md">
-						<img src="images/mute.svg" alt="" class="material-icons">
+						<img src="icons/mic_off_black_24dp.svg" alt="" class="material-icons">
 					</button>
 				</div>
 				<div class="col-sm">
 					<button id="leave" type="button" class="btn btn-danger btn-md">
-						<img src="images/call-end.svg" alt="" class="material-icons">
+						<img src="icons/call_end_black_24dp.svg" alt="" class="material-icons">
 					</button>
 				</div>
 			</div>
