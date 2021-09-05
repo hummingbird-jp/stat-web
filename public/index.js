@@ -37,12 +37,6 @@ $("#create-form").submit(async function (e) {
 
 		options.channel = channelName;
 		options.userName = $("#userNameCreate").val();
-<<<<<<< HEAD
-
-		console.log(`Created. Your userName: ${options.userName}`);
-
-=======
->>>>>>> d889cc98bcd87f0311cf9f3168fde7957dc155e4
 		options.token = await fetchNewTokenWithChannelName(channelName);
 
 		await joinOrCreate(options.token);
