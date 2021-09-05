@@ -4,7 +4,12 @@ $("#join").click(function () {
 	initTalkVisualizer();
 });
 
-function initTalkVisualizer () {
+$("#create").click(function () {
+	initTalkVisualizer();
+});
+
+
+function initTalkVisualizer() {
 
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {
@@ -93,7 +98,7 @@ function initTalkVisualizer () {
 		console.log('getUserMedia not supported on your browser!');
 	}
 
-	function visualize () {
+	function visualize() {
 		const WIDTH = canvas.width;
 		const HEIGHT = canvas.height;
 
@@ -234,9 +239,9 @@ function initTalkVisualizer () {
 
 }
 
-function sendTalkDataToFirebase (value) {
+function sendTalkDataToFirebase(value) {
 	const timestamp = firebase.firestore.Timestamp.now();
-	const userName = $("#userName").val();
+	const userName = options.userName;
 
 	db.collection(syncTalkdataCollection).add({
 		timestamp: timestamp,
@@ -251,8 +256,8 @@ function sendTalkDataToFirebase (value) {
 		});
 }
 
-async function getTalkDataFromFirebase () {
-	const myUserName = $("#userName").val();
+async function getTalkDataFromFirebase() {
+	const myUserName = options.userName;
 
 	/*
 	 * Note: Player names are given in this version.
@@ -261,7 +266,7 @@ async function getTalkDataFromFirebase () {
 	// const playerNames = $(".player-name").text();
 	// console.log("player name: ", playerNames);
 
-	const userNames = ["Ryutaro Suda", "Yusuke Hakamaya", "Natsumi Aoyama", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+	const userNames = ["user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9"];
 	const querySnapshot = await db.collection(syncTalkdataCollection).orderBy("timestamp", "desc").limit(10).get()
 
 	let sums = new Array(userNames.length).fill(0);
