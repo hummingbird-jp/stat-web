@@ -14,9 +14,9 @@ $("#join-form").submit(async function (e) {
 	$("#join").attr("disabled", true);
 
 	try {
-		options.token = $("#token").val();;
-		options.channel = $("#channel").val();;
-		options.userName = $("#userName").val();
+		options.token = $("#token").val();
+		options.channel = $("#channel").val();
+		options.userName = $("#userNameJoin").val();
 
 		await joinOrCreate(options.token);
 	} catch (error) {
@@ -36,7 +36,10 @@ $("#create-form").submit(async function (e) {
 		const channelName = generateRandomChannelName(20);
 
 		options.channel = channelName;
-		options.userName = $("#userName").val();
+		options.userName = $("#userNameCreate").val();
+
+		console.log(`Created. Your userName: ${options.userName}`);
+
 		options.token = await fetchNewTokenWithChannelName(channelName);
 
 		await joinOrCreate(options.token);
