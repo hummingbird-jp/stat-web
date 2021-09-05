@@ -195,9 +195,17 @@ input {
 	margin-bottom: 2px;
 }
 
-.player {
-	width: 240px;
+.video-wrapper {
+	width: 168px;
 	height: 160px;
+	background-color: #8F35FF;
+	clip-path: circle(50%);
+}
+
+.player {
+	width: 160px;
+	height: 160px;
+	clip-path: circle(50%);
 }
 
 .player-name {
@@ -207,8 +215,9 @@ input {
 
 @media (max-width: 640px) {
 	.player {
-		width: 320px;
+		width: 240px;
 		height: 240px;
+		clip-path: circle(50%);
 	}
 }
 
