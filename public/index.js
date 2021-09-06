@@ -1,5 +1,4 @@
-//const appUrl = 'https://stat-web-6372a.web.app/';
-const appUrl = 'http://127.0.0.1:5500/public/index.html';
+const appUrl = 'https://stat-web-6372a.web.app/';
 
 let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 let published = false;
