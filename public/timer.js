@@ -71,6 +71,8 @@ function listenTimer () {
 
 // Start Timer
 function startTimer (endTime) {
+	lockObj = false;
+
 	initTimer('clockdiv', endTime);
 
 	$("#timer-slider").css("visibility", "hidden");
