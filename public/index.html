@@ -46,14 +46,9 @@
 			<div style="height: 3rem;"></div>
 
 			<!-- Join Meeting -->
-			<form id="join-form">
+			<form id="join-form" style="display: none;">
 				<div class="row join-info-group">
 					<div class="col-lg-4 col-md-6 mx-auto">
-						<input class="form form-control" id="token" type="text" placeholder="Token" required
-							autocomplete="off" autofocus>
-						<input class="form form-control" id="channel" type="text" placeholder="Password" required
-							autocomplete="off">
-						<p class="tips">Ask your meeting host for Token and Password.</p>
 						<input class="form form-control" id="userNameJoin" type="text" placeholder="User Name" required
 							autocomplete="off">
 						<p class="tips">User Name is temporary.</p>
@@ -64,14 +59,8 @@
 				</div>
 			</form>
 
-			<div class="row">
-				<div class="col-lg-3 col-md-4 mx-auto">
-					<p class="horizontal-line"><span class="text-on-line">OR</span></p>
-				</div>
-			</div>
-
 			<!-- Create a new Meeting -->
-			<form id="create-form">
+			<form id="create-form" style="display: none;">
 				<div class="row join-info-group">
 					<div class="col-lg-4 col-md-6 mx-auto">
 						<input class="form form-control" id="userNameCreate" type="text" placeholder="User Name"
@@ -162,8 +151,8 @@
 				</div>
 
 				<!-- Talkdata Visualizer -->
-				<div class="col-md-6 mx-auto mt-3">
-					<canvas id="voice-visualizer" class="mb-3" height="20" style="display: none;"></canvas>
+				<div class="col-md-6 mx-auto mt-3 voice-visualizer-group" style="display: none;">
+					<canvas id="voice-visualizer" class="mb-3" height="20"></canvas>
 					<canvas id="talk-amount-visualizer" height="100"></canvas>
 				</div>
 			</div>
@@ -197,8 +186,6 @@
 			<div class="card meeting-info-group" style="width: 18rem;">
 				<div class="card-body">
 					<h5 class="card-title">Meeting Info</h5>
-					<h6 class="card-subtitle mb-2 text-muted">Share Token and Password!</h6>
-					<p class="card-text" id="token-and-password"></p>
 
 					<button class="btn btn-with-tooltip" id="copy-infos-to-clipboard">
 						<span class="tooltiptext" id="meeting-infos-tooltip">Copy to

@@ -1,3 +1,6 @@
+//const appUrl = 'https://stat-web-6372a.web.app/';
+const appUrl = 'http://127.0.0.1:5500/public/index.html';
+
 let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 let published = false;
 let localTracks;
@@ -8,14 +11,31 @@ let meetingId;
 initScreen();
 initAgora();
 
+$(() => {
+	var urlParams = new URL(location.href).searchParams;
+
+	options.token = urlParams.get("token");
+	options.channel = urlParams.get("channel");
+	options.uid = urlParams.get("uid");
+
+	if (options.token && options.channel) {
+		options.appid = urlParams.get("appid");
+		options.uid = generateUid();
+
+		// Show #userNameJoin
+		$("#join-form").css("display", "unset");
+	} else {
+		// Show #userNameCreate
+		$("#create-form").css("display", "unset");
+	}
+});
+
 // Join existing meeting
 $("#join-form").submit(async function (e) {
 	e.preventDefault();
 	$("#join").attr("disabled", true);
 
 	try {
-		options.token = $("#token").val();
-		options.channel = $("#channel").val();
 		options.userName = $("#userNameJoin").val();
 
 		await joinOrCreate(options.token);
@@ -225,6 +245,7 @@ async function leave() {
  */
 async function subscribe(user, mediaType) {
 	const uid = user.uid;
+
 	// subscribe to a remote user
 	await client.subscribe(user, mediaType);
 	console.log("subscribe success");
@@ -284,15 +305,22 @@ $("#copy-infos-to-clipboard").mouseout(function () {
 });
 
 function copyTextToClipboard() {
-	const text = `Token: ${options.token}\nPassword: ${options.channel}`;
+	const text = generateShareUrl();
+	const tooltip = $("#meeting-infos-tooltip")[0];
 
 	navigator.clipboard.writeText(text);
 
-	const tooltip = $("#meeting-infos-tooltip")[0];
-	const shortenedToken = truncate(options.token, 10);
-	const shortenedChannelName = truncate(options.channel, 10);
+	$(tooltip).html(`Copied: ${truncate(text, 10)}`);
+}
 
-	$(tooltip).html(`Copied: "Token: ${shortenedToken}\nPassword: ${shortenedChannelName}"`);
+function generateShareUrl() {
+	return `${appUrl}?appid=${options.appid}&token=${options.token}&channel=${options.channel}`;
+}
+
+function generateUid() {
+	let uid = '0000000000';
+
+	return parseInt((uid + Math.floor(Math.random() * 1000000000)).slice(-10));
 }
 
 function mouseOut() {
