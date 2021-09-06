@@ -16,9 +16,8 @@ $(() => {
 	options.token = urlParams.get("token");
 	options.channel = urlParams.get("channel");
 
-	options.token = options.token.replaceAll(' ', '+');
-
 	if (options.token && options.channel) {
+		options.token = options.token.replaceAll(' ', '+');
 		options.uid = generateUid();
 
 		// Show #userNameJoin
