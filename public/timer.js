@@ -23,10 +23,10 @@ $('#stop-timer').click(function (e) {
 	sendTimer(false, endTime)
 });
 
-setCurrentValue(timerSlider.value);
+setCurrentValue($("#timer-duration").val());
 
 // Firestore
-function sendTimer(isRunning, endTime) {
+function sendTimer (isRunning, endTime) {
 	const timerRef = db.collection(syncTimerCollection).doc(meetingId);
 
 	console.log(`isRunning: ${isRunning}`);
@@ -45,7 +45,7 @@ function sendTimer(isRunning, endTime) {
 	});
 }
 
-function listenTimer() {
+function listenTimer () {
 	console.log(`Started listening timer status...`);
 
 	db.collection(syncTimerCollection).doc(meetingId).onSnapshot((doc) => {
@@ -70,7 +70,7 @@ function listenTimer() {
 }
 
 // Start Timer
-function startTimer(endTime) {
+function startTimer (endTime) {
 	initTimer('clockdiv', endTime);
 
 	$("#timer-slider").css("visibility", "hidden");
@@ -81,7 +81,7 @@ function startTimer(endTime) {
 }
 
 // Stop Timer
-function stopTimer() {
+function stopTimer () {
 	lockObj = true;
 
 	$("#timer-slider").css("visibility", "visible");
@@ -92,26 +92,24 @@ function stopTimer() {
 }
 
 // Timer Utils
-function initTimer(id, endTime) {
+function initTimer (id, endTime) {
 	const timer = document.getElementById(id);
 
 	const minutesSpan = timer.querySelector('.minutes');
 	const secondsSpan = timer.querySelector('.seconds');
 
-	//$('#stop-timer').css('display', 'none');
-	timer.classList.remove("flashTimer");
-
-	function updateTimer() {
-		if (lockObj === true) {
-			clearInterval(timeinterval);
-			lockObj = false;
-			return 0;
-		}
+	function updateTimer () {
 
 		const t = getTimeRemaining(endTime);
 
 		$(minutesSpan).text(('0' + t.minutes).slice(-2));
 		$(secondsSpan).text(('0' + t.seconds).slice(-2));
+
+		if (lockObj === true) {
+			clearInterval(timeinterval);
+			lockObj = false;
+			return 0;
+		}
 
 		if (t.total <= 0) {
 			$(timer).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
@@ -128,7 +126,7 @@ function initTimer(id, endTime) {
 	const timeinterval = setInterval(updateTimer, 1000);
 }
 
-function setCurrentValue(val) {
+function setCurrentValue (val) {
 	const timer = $("#clockdiv")[0];
 
 	const minutesSpan = timer.querySelector('.minutes');
@@ -141,7 +139,7 @@ function setCurrentValue(val) {
 	$(secondsSpan).text(('0' + t.seconds).slice(-2));
 }
 
-function getTimeRemaining(endTime) {
+function getTimeRemaining (endTime) {
 	const total = Date.parse(endTime) - Date.parse(new Date());
 
 	const seconds = Math.floor((total / 1000) % 60);
@@ -158,6 +156,6 @@ function getTimeRemaining(endTime) {
 	};
 }
 
-function getEndTime(val) {
+function getEndTime (val) {
 	return new Date(Date.parse(new Date()) + val * 60 * 1000);
 }
