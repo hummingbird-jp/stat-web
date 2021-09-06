@@ -16,6 +16,8 @@ $(() => {
 	options.token = urlParams.get("token");
 	options.channel = urlParams.get("channel");
 
+	options.token = options.token.replaceAll(' ', '+');
+
 	if (options.token && options.channel) {
 		options.uid = generateUid();
 
@@ -287,6 +289,7 @@ function handleUserPublished(user, mediaType) {
 function handleUserUnpublished(user) {
 	const id = user.uid;
 	delete remoteUsers[id];
+
 	$(`#player-wrapper-${id}`).remove();
 }
 
