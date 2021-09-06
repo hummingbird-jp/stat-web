@@ -12,10 +12,16 @@ body {
 	margin-top: 5rem;
 }
 
+#feedback-icon {
+	position: fixed;
+	bottom: 2rem;
+	right: 6rem;
+}
+
 #github-icon {
 	position: fixed;
-	bottom: 1rem;
-	right: 1rem;
+	bottom: 2rem;
+	right: 2rem;
 }
 
 h1 {
