@@ -15,10 +15,8 @@ $(() => {
 
 	options.token = urlParams.get("token");
 	options.channel = urlParams.get("channel");
-	options.uid = urlParams.get("uid");
 
 	if (options.token && options.channel) {
-		options.appid = urlParams.get("appid");
 		options.uid = generateUid();
 
 		// Show #userNameJoin
@@ -313,7 +311,7 @@ function copyTextToClipboard() {
 }
 
 function generateShareUrl() {
-	return `${appUrl}?appid=${options.appid}&token=${options.token}&channel=${options.channel}`;
+	return `${appUrl}?token=${options.token}&channel=${options.channel}`;
 }
 
 function generateUid() {
