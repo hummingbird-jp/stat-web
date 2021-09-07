@@ -9,7 +9,7 @@ $("#create").click(function () {
 });
 
 
-function initTalkVisualizer() {
+function initTalkVisualizer () {
 
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {
@@ -98,7 +98,7 @@ function initTalkVisualizer() {
 		console.log('getUserMedia not supported on your browser!');
 	}
 
-	function visualize() {
+	function visualize () {
 		const WIDTH = canvas.width;
 		const HEIGHT = canvas.height;
 
@@ -239,38 +239,41 @@ function initTalkVisualizer() {
 
 }
 
-function sendTalkDataToFirebase(value) {
-	const timestamp = firebase.firestore.Timestamp.now();
-	const userName = options.userName;
+function sendTalkDataToFirebase (value) {
+	const docRef = db.collection("meetings").doc(meetingId);
 
-	db.collection(syncTalkdataCollection).add({
-		timestamp: timestamp,
-		talkValue: value,
-		userName: userName
+	docRef.collection("talkData").add({
+		userName: options.userName,
+		uid: options.uid,
+		timestamp: firebase.firestore.Timestamp.now(),
+		talkValue: value
 	})
 		.then(function () {
-			console.log("log: talkdata sent", Math.round(value), userName);
+			console.log("log: talkdata sent", Math.round(value), options.userName);
 		})
-		.catch((error) => {
-			console.error("Error adding document: ", error);
+		.catch((err) => {
+			console.error("Error adding document: ", err);
 		});
 }
 
-async function getTalkDataFromFirebase() {
-	const myUserName = options.userName;
-
+async function getTalkDataFromFirebase () {
+	const dbRootRef = db.collection("meetings").doc(meetingId);
 	/*
 	 * Note: Player names are given in this version.
 	 * TODO: We should share and unify user names between agora and Firestore.
 	 */
 	// const playerNames = $(".player-name").text();
 	// console.log("player name: ", playerNames);
+	let userNames = [];
+	const querySnapshotUser = await dbRootRef.collection("user").get()
+	querySnapshotUser.forEach((doc) => {
+		userNames.push(doc.data().userName)
+	});
 
-	const userNames = ["user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9"];
-	const querySnapshot = await db.collection(syncTalkdataCollection).orderBy("timestamp", "desc").limit(10).get()
+	const querySnapshotTalkData = await dbRootRef.collection("talkData").orderBy("timestamp", "desc").limit(10).get()
 
 	let sums = new Array(userNames.length).fill(0);
-	querySnapshot.forEach((doc) => {
+	querySnapshotTalkData.forEach((doc) => {
 		for (let i = 0; i < userNames.length; i++) {
 			if (doc.data().userName === userNames[i]) {
 				sums[i] += doc.data().talkValue;
@@ -284,4 +287,5 @@ async function getTalkDataFromFirebase() {
 		userNames,
 		sums
 	};
+	//const userNames = ["user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9"];
 }

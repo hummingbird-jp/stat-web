@@ -1,5 +1,4 @@
 const setAgendaButton = $('#set-agenda')[0];
-const syncAgendaCollection = "sync-agenda-beta";
 
 $(setAgendaButton).click(function (e) {
 	const agenda = $("#agenda-in").val();
@@ -8,12 +7,13 @@ $(setAgendaButton).click(function (e) {
 	sendAgenda(agenda);
 });
 
-// Send agenda to Firestore > sync-agenda-beta collection
-function sendAgenda(agenda) {
-	const agendaRef = db.collection(syncAgendaCollection).doc(meetingId);
+// Send agenda to Firestore
+function sendAgenda (agenda) {
 
-	agendaRef.set({
+	dbRootRef.collection(agendasCollection).add({
 		agenda: agenda,
+		timeSet: firebase.firestore.Timestamp.now(),
+		setBy: options.userName
 	}).then(() => {
 		console.log(`Agenda successfully sent!`);
 	}).catch((err) => {
@@ -22,11 +22,19 @@ function sendAgenda(agenda) {
 }
 
 // Listen to sync-agenda-beta collection; code below will be run
-// when something has changed on Firestore > sync-agenda-beta
-function listenAgenda() {
-	db.collection(syncAgendaCollection).doc(meetingId).onSnapshot((doc) => {
-		const newAgenda = doc.data().agenda;
+// when something has changed on Firestore > "agendas"
+function listenAgenda () {
 
-		$('#agenda-out').text(newAgenda);
+	dbRootRef.collection(agendasCollection).onSnapshot((snapshot) => {
+		snapshot.docChanges().forEach((change) => {
+			if (change.type === "added") {
+				const newAgenda = change.doc.data().agenda;
+				$('#agenda-out').text(newAgenda);
+			}
+			// Memo: other usecases
+			//if (change.type === "modified") {}
+			//if (change.type === "removed") {}
+
+		});
 	});
 }
