@@ -67,7 +67,7 @@ $("#create-form").submit(async function (e) {
 });
 
 
-async function fetchNewTokenWithChannelName (channelName) {
+async function fetchNewTokenWithChannelName(channelName) {
 	const uid = 1234;
 	let token;
 
@@ -84,7 +84,7 @@ async function fetchNewTokenWithChannelName (channelName) {
 	return token;
 }
 
-function generateRandomChannelName (length) {
+function generateRandomChannelName(length) {
 	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	const charactersLength = characters.length;
 
@@ -118,7 +118,7 @@ $("#unpublish").on("click", async function () {
 	}
 });
 
-function initScreen () {
+function initScreen() {
 	$(".meeting-area").hide();
 
 	if (typeof audioElm != "undefined") {
@@ -127,7 +127,7 @@ function initScreen () {
 	}
 }
 
-function initAgora () {
+function initAgora() {
 	published = false;
 
 	client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -151,7 +151,7 @@ function initAgora () {
 /*
  * Join a channel, then create local video and audio tracks and publish them to the channel.
  */
-async function joinOrCreate (token) {
+async function joinOrCreate(token) {
 	meetingId = generateMeetingId(token);
 
 	// Add an event listener to play remote tracks when remote user publishes.
@@ -190,20 +190,20 @@ async function joinOrCreate (token) {
 	$(".meeting-area").fadeIn();
 	$("#join").text("Join");
 	$("#create").text("Create");
-
+	$("#create").attr("disabled", false);
+  
 	// Firestore Init (including listners)
 	initFirestore();
-
 }
 
-function truncate (str, n) {
+function truncate(str, n) {
 	return (str.length > n) ? `${str.substr(0, n - 1)} &hellip;` : str;
 };
 
 /*
  * Stop all local and remote tracks then leave the channel.
  */
-async function leave () {
+async function leave() {
 	for (trackName in localTracks) {
 		var track = localTracks[trackName];
 		if (track) {
@@ -241,7 +241,7 @@ async function leave () {
  * @param  {IAgoraRTCRemoteUser} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to add.
  * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
  */
-async function subscribe (user, mediaType) {
+async function subscribe(user, mediaType) {
 	const uid = user.uid;
 
 	// subscribe to a remote user
@@ -267,7 +267,7 @@ async function subscribe (user, mediaType) {
 	}
 }
 
-function generateMeetingId (token) {
+function generateMeetingId(token) {
 	return token.replaceAll('/', '');
 }
 
@@ -277,7 +277,7 @@ function generateMeetingId (token) {
  * @param  {IAgoraRTCRemoteUser} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to add.
  * @param {trackMediaType - The {@link https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/itrack.html#trackmediatype | media type} to add.
  */
-function handleUserPublished (user, mediaType) {
+function handleUserPublished(user, mediaType) {
 	const id = user.uid;
 	remoteUsers[id] = user;
 	subscribe(user, mediaType);
@@ -288,7 +288,7 @@ function handleUserPublished (user, mediaType) {
  *
  * @param  {string} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to remove.
  */
-function handleUserUnpublished (user) {
+function handleUserUnpublished(user) {
 	const id = user.uid;
 	delete remoteUsers[id];
 
@@ -306,7 +306,7 @@ $("#copy-infos-to-clipboard").mouseout(function () {
 	mouseOut();
 });
 
-function copyTextToClipboard () {
+function copyTextToClipboard() {
 	const text = generateShareUrl();
 	const tooltip = $("#meeting-infos-tooltip")[0];
 
@@ -315,17 +315,17 @@ function copyTextToClipboard () {
 	$(tooltip).html(`Copied: ${truncate(text, 10)}`);
 }
 
-function generateShareUrl () {
+function generateShareUrl() {
 	return `${appUrl}?token=${options.token}&channel=${options.channel}`;
 }
 
-function generateUid () {
+function generateUid() {
 	let uid = '0000000000';
 
 	return parseInt((uid + Math.floor(Math.random() * 1000000000)).slice(-10));
 }
 
-function mouseOut () {
+function mouseOut() {
 	const tooltip = $("#meeting-infos-tooltip")[0];
 
 	$(tooltip).html("Copy");
