@@ -154,10 +154,6 @@ function initAgora () {
 async function joinOrCreate (token) {
 	meetingId = generateMeetingId(token);
 
-	listenAgenda();
-	listenBgm();
-	listenTimer();
-
 	// Add an event listener to play remote tracks when remote user publishes.
 	client.on("user-published", handleUserPublished);
 	client.on("user-unpublished", handleUserUnpublished);
@@ -194,6 +190,10 @@ async function joinOrCreate (token) {
 	$(".meeting-area").fadeIn();
 	$("#join").text("Join");
 	$("#create").text("Create");
+
+	// Firestore Init (including listners)
+	initFirestore();
+
 }
 
 function truncate (str, n) {
@@ -247,6 +247,9 @@ async function subscribe (user, mediaType) {
 	// subscribe to a remote user
 	await client.subscribe(user, mediaType);
 	console.log("subscribe success");
+
+	const querySnapshot = await dbRootRef.collection("users").get();
+
 	if (mediaType === 'video') {
 		const player = $(`
 		<div class="col">

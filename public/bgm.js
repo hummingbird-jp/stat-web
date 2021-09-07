@@ -13,9 +13,6 @@ const stopButton = $("#stop-button")[0];
 const playbackIcon = $("#playback-icon")[0];
 const volumeSlider = $("#bgm-volume")[0];
 
-const syncBgmCollection = "sync-bgm-beta";
-const audioSetCollection = "audioSet";
-
 /*
  * Stop BGM when left.
  */
@@ -58,12 +55,9 @@ stopButton.addEventListener("click", function () {
  */
 $(volumeSlider).on("input", (e) => setAudioVolume(e.target.value));
 
-function listenBgm() {
-	db.collection(syncBgmCollection).doc(meetingId) // listen to "currentTrackId"
+function listenBgm () {
+	dbRootRef.collection(bgmCollection).doc("temp")
 		.onSnapshot((doc) => {
-
-			// Only for debugging
-			// console.log("Current data: ", doc.data());
 
 			const currentTrackId = doc.data().currentTrackId;
 			const currentTime = doc.data().currentTime;
@@ -78,10 +72,6 @@ function listenBgm() {
 
 					docRef.get().then((doc) => {
 						if (doc.exists) {
-
-							// Only for debugging
-							// console.log("audioSet data: ", doc.data());
-
 							changeTrackTo(doc.data().uri, currentTime);
 							changeSelectorTo(doc.data().category);
 							configureControlPanelPlaying();
@@ -105,11 +95,8 @@ function listenBgm() {
 		});
 }
 
-function sendBgmStatus(currentTime, isChanged, isPlaying) {
+function sendBgmStatus (currentTime, isChanged, isPlaying) {
 	const category = selectorObj.value;
-
-	// Only for debugging
-	// console.log("category: ", category);
 
 	db.collection(audioSetCollection).where("category", "==", category)
 		.limit(1)
@@ -117,11 +104,8 @@ function sendBgmStatus(currentTime, isChanged, isPlaying) {
 		.then((querySnapshot) => {
 			querySnapshot.forEach((doc) => {
 
-				// Only for debugging
-				// console.log(doc.id, " => ", doc.data());
-
 				const currentTrackId = doc.id;
-				db.collection(syncBgmCollection).doc(meetingId).set({
+				dbRootRef.collection(bgmCollection).doc("temp").set({
 					currentTime: currentTime,
 					currentTrackId: currentTrackId,
 					isChanged: isChanged,
@@ -134,14 +118,14 @@ function sendBgmStatus(currentTime, isChanged, isPlaying) {
 		});
 }
 
-function configureAudioDefault(audioElm) {
+function configureAudioDefault (audioElm) {
 	audioElm.preload = 'none';
 	audioElm.loop = true;
 	audioElm.autoplay = false;
 	audioElm.volume = 0.05;
 }
 
-function configureControlPanelDefault() {
+function configureControlPanelDefault () {
 	stopButton.disabled = true;
 	selectorObj.disabled = false;
 	selectorObj.value = "default";
@@ -149,21 +133,21 @@ function configureControlPanelDefault() {
 	playButton.dataset.playing = "preSelect";
 }
 
-function configureControlPanelPlaying() {
+function configureControlPanelPlaying () {
 	$(playbackIcon).attr("src", "icons/pause_black_24dp.svg");
 	playButton.dataset.playing = 'true';
 	stopButton.disabled = true;
 	selectorObj.disabled = true;
 }
 
-function configureControlPanelPaused() {
+function configureControlPanelPaused () {
 	$(playbackIcon).attr("src", "icons/play_arrow_black_24dp.svg");
 	playButton.dataset.playing = 'false';
 	stopButton.disabled = false;
 	selectorObj.disabled = true;
 }
 
-function changeTrackTo(uri, currentTime) {
+function changeTrackTo (uri, currentTime) {
 	audioElm.src = uri;
 	audioElm.pause();
 	audioElm.load();
@@ -172,11 +156,11 @@ function changeTrackTo(uri, currentTime) {
 	audioElm.play();
 }
 
-function changeSelectorTo(value) {
+function changeSelectorTo (value) {
 	selectorObj.value = value;
 	selectorObj.disabled = true;
 }
 
-function setAudioVolume(value) {
+function setAudioVolume (value) {
 	audioElm.volume = value;
 }

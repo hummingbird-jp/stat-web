@@ -9,7 +9,7 @@ $("#create").click(function () {
 });
 
 
-function initTalkVisualizer() {
+function initTalkVisualizer () {
 
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {
@@ -98,7 +98,7 @@ function initTalkVisualizer() {
 		console.log('getUserMedia not supported on your browser!');
 	}
 
-	function visualize() {
+	function visualize () {
 		const WIDTH = canvas.width;
 		const HEIGHT = canvas.height;
 
@@ -174,33 +174,29 @@ function initTalkVisualizer() {
 				const talkDataAvg = talkDataArray.reduce((a, b) => a + b) / talkDataArray.length;
 				sendTalkDataToFirebase(talkDataAvg);
 				talkDataSendTrigger.push(1);
-				getTalkDataFromFirebase().then(value => {
+				getTalkDataFromFirebase().then(result => {
 					const talkHeight = talkCanvas.height;
-					const usernameArray = value.userNames;
-					const talksums = value.sums;
 
 					talkCanvasCtx.clearRect(0, 0, WIDTH, talkHeight);
 
-					talkCanvasCtx.fillStyle = 'rgb(38, 38, 38)';
+					talkCanvasCtx.fillStyle = '#0D0D0D';
 					talkCanvasCtx.fillRect(0, 0, WIDTH, talkHeight);
 
-					/*
-					 * TODO: More frexible code needed!!
-					 */
-					let sum = talksums.reduce((a, b) => a + b);
-					// console.log(talksums);
-					console.log("sum ", sum);
+					let sum;
+					for (let i = 0; i < result.length; i++) {
+						sum += result[i].talkSum;
+					}
 					let deltaWidth = WIDTH / sum;
 					let x = 0;
-					for (let i = 0; i < talksums.length; i++) {
-						const width = deltaWidth * talksums[i];
+					for (let i = 0; i < result.length; i++) {
+						const width = deltaWidth * result[i].talkSum;
 
 						talkCanvasCtx.fillStyle = 'rgb(' + (60 * i + 50) + ',' + (-60 * i + 250) + ',' + (30 * i + 150) + ')';
 						talkCanvasCtx.fillRect(x, 0, width, HEIGHT);
 
 						talkCanvasCtx.font = '12px serif';
 						talkCanvasCtx.fillStyle = 'rgb(255, 255, 255)';
-						talkCanvasCtx.fillText(usernameArray[i], x, 40, width);
+						talkCanvasCtx.fillText(result[i].userName, x, 40, width);
 
 						x += width;
 					}
@@ -239,49 +235,44 @@ function initTalkVisualizer() {
 
 }
 
-function sendTalkDataToFirebase(value) {
-	const timestamp = firebase.firestore.Timestamp.now();
-	const userName = options.userName;
+function sendTalkDataToFirebase (value) {
 
-	db.collection(syncTalkdataCollection).add({
-		timestamp: timestamp,
-		talkValue: value,
-		userName: userName
+	docRef.collection(talkDataCollection).add({
+		userName: options.userName,
+		uid: options.uid,
+		timestamp: firebase.firestore.Timestamp.now(),
+		talkValue: value
 	})
 		.then(function () {
-			console.log("log: talkdata sent", Math.round(value), userName);
+			console.log("log: talkdata sent", Math.round(value), options.userName);
 		})
-		.catch((error) => {
-			console.error("Error adding document: ", error);
+		.catch((err) => {
+			console.error("Error adding document: ", err);
 		});
 }
 
-async function getTalkDataFromFirebase() {
-	const myUserName = options.userName;
+async function getTalkDataFromFirebase () {
+	let members = [];
+	const querySnapshotUser = await dbRootRef.collection(usersCollection).get()
+	querySnapshotUser.forEach((doc) => {
+		members.push({
+			"userName": doc.data().userName,
+			"uid": doc.data().uid,
+			"talkSum": 0
+		})
+	});
 
-	/*
-	 * Note: Player names are given in this version.
-	 * TODO: We should share and unify user names between agora and Firestore.
-	 */
-	// const playerNames = $(".player-name").text();
-	// console.log("player name: ", playerNames);
+	const querySnapshotTalkData = await dbRootRef.collection(talkDataCollection).orderBy("timestamp", "desc").limit(10).get()
 
-	const userNames = ["user1", "user2", "user3", "user4", "user5", "user6", "user7", "user8", "user9"];
-	const querySnapshot = await db.collection(syncTalkdataCollection).orderBy("timestamp", "desc").limit(10).get()
-
-	let sums = new Array(userNames.length).fill(0);
-	querySnapshot.forEach((doc) => {
-		for (let i = 0; i < userNames.length; i++) {
-			if (doc.data().userName === userNames[i]) {
-				sums[i] += doc.data().talkValue;
+	querySnapshotTalkData.forEach((doc) => {
+		for (let i = 0; i < members.length; i++) {
+			if (doc.data().uid === members[i].uid) {
+				members[i].talkSum += doc.data().talkValue;
 			}
 		}
 	})
-	for (let i = 0; i < userNames.length; i++) {
-		console.log(userNames[i], " : ", Math.round(sums[i]));
-	}
-	return {
-		userNames,
-		sums
-	};
+
+	console.log("talk data: ", members);
+
+	return members;
 }

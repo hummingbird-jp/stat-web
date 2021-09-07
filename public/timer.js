@@ -27,14 +27,8 @@ setCurrentValue($("#timer-duration").val());
 
 // Firestore
 function sendTimer (isRunning, endTime) {
-	const timerRef = db.collection(syncTimerCollection).doc(meetingId);
 
-	console.log(`isRunning: ${isRunning}`);
-	console.log(`endTime: ${endTime}`);
-
-	console.log(`meetingId: ${meetingId}`);
-
-	timerRef.set({
+	dbRootRef.collection(timerCollection).doc("temp").set({
 		isRunning: isRunning,
 		// Timestamp data type for Firestore
 		endTime: firebase.firestore.Timestamp.fromDate(endTime),
@@ -46,9 +40,8 @@ function sendTimer (isRunning, endTime) {
 }
 
 function listenTimer () {
-	console.log(`Started listening timer status...`);
 
-	db.collection(syncTimerCollection).doc(meetingId).onSnapshot((doc) => {
+	dbRootRef.collection(timerCollection).doc("temp").onSnapshot((doc) => {
 		const isTimerRunningOnOthers = doc.data().isRunning;
 		const endTime = doc.data().endTime.toDate();
 
