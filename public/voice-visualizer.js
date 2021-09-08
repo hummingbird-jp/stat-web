@@ -197,32 +197,34 @@ function sendTalkDataToFirebase(value) {
 }
 
 async function getTalkDataFromFirebase() {
-	let members = [];
+	let users = [];
 	const querySnapshotUser = await dbRootRef.collection(usersCollection).get()
 	querySnapshotUser.forEach((doc) => {
-		members.push({
-			"userName": doc.data().userName,
-			"uid": doc.data().uid,
-			"talkSum": 0
-		})
+		if (doc.data().isActive) {
+			users.push({
+				"userName": doc.data().userName,
+				"uid": doc.data().uid,
+				"talkSum": 0
+			});
+		}
 	});
 
 	const querySnapshotTalkData = await dbRootRef.collection(talkDataCollection).orderBy("timestamp", "desc").limit(10).get()
 
 	querySnapshotTalkData.forEach((doc) => {
-		for (let i = 0; i < members.length; i++) {
-			if (doc.data().uid === members[i].uid) {
-				members[i].talkSum += doc.data().talkValue;
+		for (let i = 0; i < users.length; i++) {
+			if (doc.data().uid === users[i].uid) {
+				users[i].talkSum += doc.data().talkValue;
 			}
 		}
 	})
 
 	// reorder by talkSum
-	members.sort(function (a, b) {
+	users.sort(function (a, b) {
 		return b.talkSum - a.talkSum;
 	});
 
-	return members;
+	return users;
 }
 
 function updateTalkBar() {
