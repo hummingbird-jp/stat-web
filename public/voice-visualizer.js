@@ -53,8 +53,6 @@ function initTalkVisualizer() {
 	/*
 	 * Variables for talk amount observer
 	 */
-	const canvas = document.getElementById("talk-amount-visualizer");
-	const canvasCtx = canvas.getContext("2d");
 
 	const talkDataBufferLength = 1024;
 	const talkDataArray = new Array(talkDataBufferLength).fill(0);
@@ -146,37 +144,8 @@ function initTalkVisualizer() {
 				const talkDataAvg = talkDataArray.reduce((a, b) => a + b) / talkDataArray.length;
 				sendTalkDataToFirebase(talkDataAvg);
 
-				getTalkDataFromFirebase().then(result => {
-					let sum = 0;
-					for (let i = 0; i < result.length; i++) {
-						sum += result[i].talkSum;
-					}
-					canvas.setAttribute("width", $('#voice-visualizer-group').first().innerWidth());
-					const WIDTH = canvas.width;
-					const HEIGHT = canvas.height;
+				updateTalkBar();
 
-					canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-
-					canvasCtx.fillStyle = '#0D0D0D';
-					canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-					let deltaWidth = WIDTH / sum;
-
-					let x = 0;
-					for (let i = 0; i < result.length; i++) {
-						const width = deltaWidth * result[i].talkSum;
-						const height = HEIGHT / 5;
-
-						canvasCtx.fillStyle = colorPalette[i % colorPalette.length];
-						canvasCtx.fillRect(x, 0, width, height);
-
-						canvasCtx.font = '0.9em sans-serif';
-						canvasCtx.fillStyle = '#FFFFFF';
-						canvasCtx.fillText(result[i].userName, x, height + 20, width);
-
-						x += width;
-					}
-				});
 			} else {
 				talkDataSendTrigger.push(0);
 			}
@@ -228,30 +197,69 @@ function sendTalkDataToFirebase(value) {
 }
 
 async function getTalkDataFromFirebase() {
-	let members = [];
+	let users = [];
 	const querySnapshotUser = await dbRootRef.collection(usersCollection).get()
 	querySnapshotUser.forEach((doc) => {
-		members.push({
-			"userName": doc.data().userName,
-			"uid": doc.data().uid,
-			"talkSum": 0
-		})
+		if (doc.data().isActive) {
+			users.push({
+				"userName": doc.data().userName,
+				"uid": doc.data().uid,
+				"talkSum": 0
+			});
+		}
 	});
 
 	const querySnapshotTalkData = await dbRootRef.collection(talkDataCollection).orderBy("timestamp", "desc").limit(10).get()
 
 	querySnapshotTalkData.forEach((doc) => {
-		for (let i = 0; i < members.length; i++) {
-			if (doc.data().uid === members[i].uid) {
-				members[i].talkSum += doc.data().talkValue;
+		for (let i = 0; i < users.length; i++) {
+			if (doc.data().uid === users[i].uid) {
+				users[i].talkSum += doc.data().talkValue;
 			}
 		}
 	})
 
 	// reorder by talkSum
-	members.sort(function (a, b) {
+	users.sort(function (a, b) {
 		return b.talkSum - a.talkSum;
 	});
 
-	return members;
+	return users;
+}
+
+function updateTalkBar() {
+	const canvas = document.getElementById("talk-amount-visualizer");
+	const canvasCtx = canvas.getContext("2d");
+	getTalkDataFromFirebase().then(result => {
+		let sum = 0;
+		for (let i = 0; i < result.length; i++) {
+			sum += result[i].talkSum;
+		}
+		canvas.setAttribute("width", $('#voice-visualizer-group').first().innerWidth());
+		const WIDTH = canvas.width;
+		const HEIGHT = canvas.height;
+
+		canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+
+		canvasCtx.fillStyle = '#0D0D0D';
+		canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+		let deltaWidth = WIDTH / sum;
+
+		let x = 0;
+		let width;
+		const height = HEIGHT / 5;
+		for (let i = 0; i < result.length; i++) {
+			width = deltaWidth * result[i].talkSum;
+
+			canvasCtx.fillStyle = colorPalette[i % colorPalette.length];
+			canvasCtx.fillRect(x, 0, width, height);
+
+			canvasCtx.font = '0.9em sans-serif';
+			canvasCtx.fillStyle = '#FFFFFF';
+			canvasCtx.fillText(result[i].userName, x, height + 20, width);
+
+			x += width;
+		}
+	});
 }
