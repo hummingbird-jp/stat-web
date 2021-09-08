@@ -194,6 +194,7 @@ async function joinOrCreate(token) {
 
 	// Firestore Init (including listners)
 	initFirestore();
+	initTalkVisualizer();
 }
 
 function truncate(str, n) {

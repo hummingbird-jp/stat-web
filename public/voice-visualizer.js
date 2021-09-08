@@ -1,13 +1,4 @@
-const syncTalkdataCollection = "sync-talkdata-beta";
-
-$("#join").click(function () {
-	initTalkVisualizer();
-});
-
-$("#create").click(function () {
-	initTalkVisualizer();
-});
-
+const colorPalette = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
 
 function initTalkVisualizer() {
 
@@ -57,28 +48,20 @@ function initTalkVisualizer() {
 	analyser.maxDecibels = -10;
 	analyser.smoothingTimeConstant = 0.85;
 
-	// set up canvas context for visualizer
-
-	const canvas = document.getElementById("voice-visualizer");
-	const canvasCtx = canvas.getContext("2d");
-
-	const intendedWidth = document.querySelector('.col-md-6').clientWidth;
-	canvas.setAttribute('width', intendedWidth);
-
 	let drawVisual;
 
 	/*
 	 * Variables for talk amount observer
 	 */
-	const talkCanvas = document.getElementById("talk-amount-visualizer");
-	const talkCanvasCtx = talkCanvas.getContext("2d");
+	const canvas = document.getElementById("talk-amount-visualizer");
+	const canvasCtx = canvas.getContext("2d");
+
 	const talkDataBufferLength = 1024;
 	const talkDataArray = new Array(talkDataBufferLength).fill(0);
 	const talkDataSendTrigger = new Array(talkDataBufferLength).fill(0);
 	let isTalking = false;
 	let shouldContinue = true;
 
-	talkCanvas.setAttribute("width", intendedWidth);
 	talkDataSendTrigger[talkDataSendTrigger.length - 1] = 1;
 
 	//main block for doing the audio recording
@@ -99,16 +82,12 @@ function initTalkVisualizer() {
 	}
 
 	function visualize() {
-		const WIDTH = canvas.width;
-		const HEIGHT = canvas.height;
 
 		analyser.fftSize = 256;
 
 		const bufferLengthAlt = analyser.frequencyBinCount;
 		const freqRes = (audioCtx.sampleRate / 2) / bufferLengthAlt;
-		const dataArrayAlt = new Uint8Array(bufferLengthAlt);
-
-		canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+		const dataArray = new Uint8Array(bufferLengthAlt);
 
 		const draw = function () {
 			drawVisual = requestAnimationFrame(draw);
@@ -120,40 +99,32 @@ function initTalkVisualizer() {
 				cancelAnimationFrame(drawVisual);
 			}
 
-			analyser.getByteFrequencyData(dataArrayAlt);
-
-			canvasCtx.fillStyle = 'rgb(0, 0, 0)';
-			canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+			analyser.getByteFrequencyData(dataArray);
 
 			let barWidth;
-			let barWidthSum = new Array(1).fill(0);
 
-			const audioFreqAvg = dataArrayAlt.reduce((a, b) => a + b) / bufferLengthAlt;
+			const audioFreqAvg = dataArray.reduce((a, b) => a + b) / bufferLengthAlt;
 			const start = Math.ceil(100 / freqRes);
 			const end = Math.ceil(400 / freqRes)
-			const voiceVolume = dataArrayAlt.slice(start, end).reduce((a, b) => a + b) / (end - start);
+			const voiceVolume = dataArray.slice(start, end).reduce((a, b) => a + b) / (end - start);
 
 			for (let i = 0; i < bufferLengthAlt; i++) {
-				barWidth = dataArrayAlt[i];
+				barWidth = dataArray[i];
 
 				if (i > Math.ceil(100 / freqRes) && i < Math.ceil(400 / freqRes) + 1) {
-					barWidthSum.push(barWidth);
 					if (barWidth > audioFreqAvg && barWidth > 90) {
 						isTalking = true;
-						canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',255,60)';
 						$(".video-wrapper").css({
 							'background-color': '#5FD93D'
 						})
 					} else {
 						isTalking = false;
-						canvasCtx.fillStyle = 'rgb(' + (barWidth + 100) + ',60,60)';
 						$(".video-wrapper").css({
 							'background-color': '#0D0D0D'
 						})
 					}
 				}
 			}
-			canvasCtx.fillRect(0, 0, WIDTH * barWidthSum.reduce((a, b) => a + b) / (barWidthSum.length - 1) / 255, HEIGHT);
 
 			/*
 			 * Update talkDataArray
@@ -165,38 +136,44 @@ function initTalkVisualizer() {
 				talkDataArray.push(0);
 			}
 
-
 			/*
 			 * Update talkDataSendTrigger
 			 */
 			talkDataSendTrigger.shift();
 			if (talkDataSendTrigger[0] === 1) {
+				talkDataSendTrigger.push(1);
+
 				const talkDataAvg = talkDataArray.reduce((a, b) => a + b) / talkDataArray.length;
 				sendTalkDataToFirebase(talkDataAvg);
-				talkDataSendTrigger.push(1);
+
 				getTalkDataFromFirebase().then(result => {
-					const talkHeight = talkCanvas.height;
-
-					talkCanvasCtx.clearRect(0, 0, WIDTH, talkHeight);
-
-					talkCanvasCtx.fillStyle = '#0D0D0D';
-					talkCanvasCtx.fillRect(0, 0, WIDTH, talkHeight);
-
-					let sum;
+					let sum = 0;
 					for (let i = 0; i < result.length; i++) {
 						sum += result[i].talkSum;
 					}
+					const MAXWIDTH = $('#voice-visualizer-group').first().innerWidth();
+					canvas.setAttribute("width", MAXWIDTH / 500 * sum);
+					const WIDTH = canvas.width;
+					const HEIGHT = canvas.height;
+
+					canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
+
+					canvasCtx.fillStyle = '#0D0D0D';
+					canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
 					let deltaWidth = WIDTH / sum;
+
 					let x = 0;
 					for (let i = 0; i < result.length; i++) {
 						const width = deltaWidth * result[i].talkSum;
+						const height = HEIGHT / 5;
 
-						talkCanvasCtx.fillStyle = 'rgb(' + (60 * i + 50) + ',' + (-60 * i + 250) + ',' + (30 * i + 150) + ')';
-						talkCanvasCtx.fillRect(x, 0, width, HEIGHT);
+						canvasCtx.fillStyle = colorPalette[i % colorPalette.length];
+						canvasCtx.fillRect(x, 0, width, height);
 
-						talkCanvasCtx.font = '12px serif';
-						talkCanvasCtx.fillStyle = 'rgb(255, 255, 255)';
-						talkCanvasCtx.fillText(result[i].userName, x, 40, width);
+						canvasCtx.font = '0.9em sans-serif';
+						canvasCtx.fillStyle = '#FFFFFF';
+						canvasCtx.fillText(result[i].userName, x, height + 20, width);
 
 						x += width;
 					}
@@ -272,7 +249,10 @@ async function getTalkDataFromFirebase() {
 		}
 	})
 
-	console.log("talk data: ", members);
+	// reorder by talkSum
+	members.sort(function (a, b) {
+		return b.talkSum - a.talkSum;
+	});
 
 	return members;
 }
