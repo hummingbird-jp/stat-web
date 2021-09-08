@@ -200,14 +200,11 @@ async function getTalkDataFromFirebase() {
 	let members = [];
 	const querySnapshotUser = await dbRootRef.collection(usersCollection).get()
 	querySnapshotUser.forEach((doc) => {
-		if (doc.data().isActive) {
-
-			members.push({
-				"userName": doc.data().userName,
-				"uid": doc.data().uid,
-				"talkSum": 0
-			});
-		}
+		members.push({
+			"userName": doc.data().userName,
+			"uid": doc.data().uid,
+			"talkSum": 0
+		})
 	});
 
 	const querySnapshotTalkData = await dbRootRef.collection(talkDataCollection).orderBy("timestamp", "desc").limit(10).get()
