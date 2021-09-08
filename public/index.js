@@ -191,7 +191,7 @@ async function joinOrCreate(token) {
 	$("#join").text("Join");
 	$("#create").text("Create");
 	$("#create").attr("disabled", false);
-  
+
 	// Firestore Init (including listners)
 	initFirestore();
 }
@@ -248,17 +248,13 @@ async function subscribe(user, mediaType) {
 	await client.subscribe(user, mediaType);
 	console.log("subscribe success");
 
-	const querySnapshot = await dbRootRef.collection("users").get();
-
 	if (mediaType === 'video') {
 		const player = $(`
-		<div class="col">
-			<div id="player-wrapper-${uid}">
-				<p class="player-name">${uid}</p>
-				<div id="player-${uid}" class="player mx-auto"></div>
-			</div>
-		</div>
-    `);
+				<div id="player-wrapper-${uid}" class="col">
+					<p class="player-name">${uid}</p>
+					<div id="player-${uid}" class="player mx-auto"></div>
+				</div>
+		`);
 		$("#video-group").append(player);
 		user.videoTrack.play(`player-${uid}`);
 	}
