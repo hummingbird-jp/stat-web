@@ -22,9 +22,11 @@ $(() => {
 
 		// Show #userNameJoin
 		$("#join-form").css("display", "unset");
+		$('#userNameJoin').focus();
 	} else {
 		// Show #userNameCreate
 		$("#create-form").css("display", "unset");
+		$('#userNameCreate').focus();
 	}
 });
 
