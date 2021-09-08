@@ -9,7 +9,7 @@ $("#create").click(function () {
 });
 
 
-function initTalkVisualizer () {
+function initTalkVisualizer() {
 
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {
@@ -98,7 +98,7 @@ function initTalkVisualizer () {
 		console.log('getUserMedia not supported on your browser!');
 	}
 
-	function visualize () {
+	function visualize() {
 		const WIDTH = canvas.width;
 		const HEIGHT = canvas.height;
 
@@ -235,9 +235,9 @@ function initTalkVisualizer () {
 
 }
 
-function sendTalkDataToFirebase (value) {
+function sendTalkDataToFirebase(value) {
 
-	docRef.collection(talkDataCollection).add({
+	dbRootRef.collection(talkDataCollection).add({
 		userName: options.userName,
 		uid: options.uid,
 		timestamp: firebase.firestore.Timestamp.now(),
@@ -251,7 +251,7 @@ function sendTalkDataToFirebase (value) {
 		});
 }
 
-async function getTalkDataFromFirebase () {
+async function getTalkDataFromFirebase() {
 	let members = [];
 	const querySnapshotUser = await dbRootRef.collection(usersCollection).get()
 	querySnapshotUser.forEach((doc) => {
