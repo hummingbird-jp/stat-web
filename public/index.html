@@ -85,7 +85,8 @@
 					<h2 id="agenda-out"></h2>
 
 					<div class="col-md-8 mx-auto main-controller">
-						<input class="form form-control" id="agenda-in" type="text" placeholder="Agenda" required>
+						<input class="form form-control" id="agenda-in" type="text" placeholder="Agenda" required
+							autocomplete="off">
 						<div class="button-group d-grid gap-2">
 							<button id="set-agenda" class="btn btn-primary"><img src="icons/send_black_24dp.svg" alt=""
 									class="material-icons"></button>
@@ -118,7 +119,7 @@
 								<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">
 							</button>
 							<button id="stop-timer" class="btn btn-primary" style="display: none;">
-								<img src="icons/restart_alt_black_24dp.svg" alt="" class="material-icons">
+								<img src="icons/stop_black_24dp.svg" alt="" class="material-icons">
 							</button>
 						</div>
 					</div>
@@ -150,9 +151,8 @@
 				</div>
 
 				<!-- Talkdata Visualizer -->
-				<div class="col-md-6 mx-auto mt-3 voice-visualizer-group" style="display: none;">
-					<canvas id="voice-visualizer" class="mb-3" height="20"></canvas>
-					<canvas id="talk-amount-visualizer" height="100"></canvas>
+				<div class="col-md-9 mx-auto mt-5" id="voice-visualizer-group">
+					<canvas id="talk-amount-visualizer" height="60"></canvas>
 				</div>
 			</div>
 
@@ -203,7 +203,7 @@
 		</a>
 
 		<!-- View Source on GitHub -->
-		<a href="https://github.com/hummingbird-jp/stat-web" target="_blank" rel="noopener noreferrer">
+		<a href="https://github.com/hummingbird-jp/stat-web#readme" target="_blank" rel="noopener noreferrer">
 			<svg id="github-icon" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
 				fill="aliceblue">
 				<path
@@ -228,6 +228,7 @@
 	<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-firestore.js" defer></script>
 	<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js" defer></script>
 	<script src="./firebase/init.js" defer></script>
+	<script src="./firebase/user-info.js" defer></script>
 
 	<!-- Scripts -->
 	<script src="./index.js" defer></script>
