@@ -236,6 +236,9 @@ async function leave() {
 		$(".meeting-area").hide();
 		$("#leave").html(`<img src="icons/call_end_black_24dp.svg" alt="" class="material-icons">`)
 	}, 1000);
+
+	// Firestore
+	deactivateUser(options.uid);
 }
 
 /*

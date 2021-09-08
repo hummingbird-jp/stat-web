@@ -1,5 +1,5 @@
 function addMyUserInfo() {
-	dbRootRef.collection(usersCollection).add({
+	dbRootRef.collection(usersCollection).doc(options.uid.toString()).set({
 		uid: options.uid,
 		userName: options.userName,
 		timeJoined: firebase.firestore.Timestamp.now(),
@@ -22,6 +22,12 @@ function listenUserInfo() {
 				$(`#player-wrapper-${uid}`).children('p').text(userName);
 			}
 
+			if (change.type === "modified") {
+				const isActive = change.doc.data().isActive;
+				if (!isActive) {
+					updateTalkBar();
+				}
+			}
 			/*
 			 * Todo: User name changalbe (such as "rename" funciton)
 			 */
@@ -33,4 +39,17 @@ function listenUserInfo() {
 			//}
 		})
 	})
+}
+
+function deactivateUser(uid) {
+	const docRef = dbRootRef.collection(usersCollection).doc(uid.toString());
+	docRef.get().then((doc) => {
+		if (doc.exists) {
+			docRef.update({
+				isActive: false
+			})
+		} else {
+			console.error(`Error: user ${uid} does not exists!`)
+		}
+	});
 }
