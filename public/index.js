@@ -112,11 +112,13 @@ $("#unpublish").on("click", async function () {
 	if (published === true) {
 		await client.unpublish(Object.values(localTracks));
 		published = false;
-		$("#unpublish").html(`<img src="icons/mic_black_24dp.svg" alt="" class="material-icons">`);
+		$('#local-player-name').hide();
+		$('#local-player').hide();
 	} else {
 		await client.publish(Object.values(localTracks));
 		published = true;
-		$("#unpublish").html(`<img src="icons/mic_off_black_24dp.svg" alt="" class="material-icons">`);
+		$('#local-player-name').show();
+		$('#local-player').show();
 	}
 });
 
