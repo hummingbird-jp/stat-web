@@ -26,7 +26,7 @@ const bgmCollection = "bgm";
 const talkDataCollection = "talkData";
 
 
-function initFirestore () {
+function initFirestore() {
 	/*
 	 * "meetingId" must be defined beforehand.
 	 */
@@ -36,17 +36,10 @@ function initFirestore () {
 		lastTimeActive: firebase.firestore.Timestamp.now()
 	})
 
-	dbRootRef.collection(usersCollection).add({
-		uid: options.uid,
-		userName: options.userName,
-		timeJoined: firebase.firestore.Timestamp.now()
-	}).then(() => {
-		console.log(`User data sent.`);
-	}).catch((err) => {
-		console.error(`Error: ${err}`);
-	});
+	addMyUserInfo();
 
 	listenAgenda();
 	listenBgm();
 	listenTimer();
+	listenUserInfo();
 }
