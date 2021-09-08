@@ -1,4 +1,4 @@
-const colorPalett = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
+const colorPalette = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
 
 function initTalkVisualizer() {
 
@@ -168,7 +168,7 @@ function initTalkVisualizer() {
 						const width = deltaWidth * result[i].talkSum;
 						const height = HEIGHT / 5;
 
-						canvasCtx.fillStyle = colorPalett[i % colorPalett.length];
+						canvasCtx.fillStyle = colorPalette[i % colorPalette.length];
 						canvasCtx.fillRect(x, 0, width, height);
 
 						canvasCtx.font = '0.9em sans-serif';
