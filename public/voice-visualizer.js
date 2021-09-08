@@ -151,8 +151,7 @@ function initTalkVisualizer() {
 					for (let i = 0; i < result.length; i++) {
 						sum += result[i].talkSum;
 					}
-					const MAXWIDTH = $('#voice-visualizer-group').first().innerWidth();
-					canvas.setAttribute("width", MAXWIDTH / 500 * sum);
+					canvas.setAttribute("width", $('#voice-visualizer-group').first().innerWidth());
 					const WIDTH = canvas.width;
 					const HEIGHT = canvas.height;
 
