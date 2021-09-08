@@ -151,8 +151,7 @@ function initTalkVisualizer() {
 					for (let i = 0; i < result.length; i++) {
 						sum += result[i].talkSum;
 					}
-					const MAXWIDTH = $('#voice-visualizer-group').first().innerWidth();
-					canvas.setAttribute("width", MAXWIDTH / 500 * sum);
+					canvas.setAttribute("width", $('#voice-visualizer-group').first().innerWidth());
 					const WIDTH = canvas.width;
 					const HEIGHT = canvas.height;
 
@@ -232,11 +231,14 @@ async function getTalkDataFromFirebase() {
 	let members = [];
 	const querySnapshotUser = await dbRootRef.collection(usersCollection).get()
 	querySnapshotUser.forEach((doc) => {
-		members.push({
-			"userName": doc.data().userName,
-			"uid": doc.data().uid,
-			"talkSum": 0
-		})
+		if (doc.data().isActive) {
+
+			members.push({
+				"userName": doc.data().userName,
+				"uid": doc.data().uid,
+				"talkSum": 0
+			});
+		}
 	});
 
 	const querySnapshotTalkData = await dbRootRef.collection(talkDataCollection).orderBy("timestamp", "desc").limit(10).get()
@@ -255,4 +257,8 @@ async function getTalkDataFromFirebase() {
 	});
 
 	return members;
+}
+
+function updateTalkVisualizer() {
+
 }
