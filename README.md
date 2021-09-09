@@ -22,7 +22,7 @@
     3. [Set BGM](#set-bgm) 🎵
     4. [Who's chatter?](#whos-chatter) 😏
 4. [More tips](#4-more-tips)
-    1. [Can I mute myself?]
+    1. Can I mute myself?
     2. Can I change my User Name?
 
 ## 1. Create a new meeting
@@ -69,15 +69,11 @@ There are lots of fun tricks to make your meeting better!
 <img width="720" alt="Screen Shot 2021-09-09 at 13 50 06" src="https://user-images.githubusercontent.com/62736166/132624521-65e9f6b7-00fe-4434-b2b1-589ff7cb2ac7.png">
 
 ## 4. More tips
-1. Can I mute myself?
-
-Not yet. Instead, you can stop your entire stream; You can't mute or turn the camera off separately.
-
+Q. Can I mute myself?  
+A. Not yet. Instead, you can stop your entire stream; You can't mute or turn the camera off separately.
 <img width="258" alt="Screen Shot 2021-09-09 at 13 44 52" src="https://user-images.githubusercontent.com/62736166/132624028-225a9026-7621-4235-b171-7874d0257458.png">
-
 - Left button → stop your stream
 - Right button → leave a meeting
 
-2. Can I change my name?
-
-Yes. Click your name and change it!
+Q. Can I change my name?  
+A. Yes. Click your name and change it!
