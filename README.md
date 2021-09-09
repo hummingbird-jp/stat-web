@@ -18,7 +18,7 @@
     2. Can I change my User Name? >> No, but comming soon.
 
 ## 1. Create a new meeting
-1. Go to our [web app](https://stat-web-6372a.web.app)
+1. Open [Stat!](https://stat-web-6372a.web.app)
 2. Type your user name.
 3. Click `Create` to start your meeting room.
 4. Copy and share `Meeting Info` to invite people to your room!
@@ -34,7 +34,7 @@
 ## 3. Functions to make a meeting productive and creative!
 There are lots of fun tricks to make your meeting better!
 
-[Let us know](https://forms.gle/5prf8vyS73KygvdL9) if you have any suggestion for new features! 
+[Let us know](https://forms.gle/5prf8vyS73KygvdL9) if you have any suggestions for new features! 
 [<img width="720" alt="Screen Shot 2021-09-09 at 13 39 04" src="https://user-images.githubusercontent.com/62736166/132623462-3f64bca6-d8bb-4efa-ba83-7d84ab1f0b8b.png">](https://forms.gle/5prf8vyS73KygvdL9)
 
 ### Set Agenda
@@ -67,7 +67,7 @@ Yes you can. The app will stop streaming your video and audio.
 
 <img width="258" alt="Screen Shot 2021-09-09 at 13 44 52" src="https://user-images.githubusercontent.com/62736166/132624028-225a9026-7621-4235-b171-7874d0257458.png">
 
-- Left => mute
+- Left => mute and camera off
 - Right => leave meeting
 
 2. Can I change my name?
