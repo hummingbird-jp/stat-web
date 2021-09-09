@@ -7,8 +7,9 @@
 ## Constraints
 🚨 Wait! 🚨 We're in the early stage, which means **Stat! is not perfect**. Please read these constraints carefully:
 - **DO use your desktop or laptop.** Please do **NOT** use Stat! on mobile devices, or you'll see chaos... ☠️
-- **DO use Chrome or Safari.** We haven't tested on other browsers 🤷‍♂️ .
 - **DO allow camera and mic both.** Otherwise, your screen will be (seems to be) stuck because we don't have any error messages 😵 .
+- **You can NOT share your screen.** If you desire screen sharing, give us [feedback](https://forms.gle/5prf8vyS73KygvdL9).
+- **DO use Chrome or Safari.** We haven't tested on other browsers 🤷‍♂️ .
 - **Shared link expires within 24 hours.** You can't use Stat! for a recurring meeting.
 - **You have to show your face.** We're working hard to implement camera off functionality, so please show your face until then 😉 .
 ## Index
