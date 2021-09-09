@@ -24,13 +24,15 @@ function listenUserInfo() {
 
 			if (change.type === "modified") {
 				const isActive = change.doc.data().isActive;
-				if (!isActive) {
-					updateTalkBar();
+				if (isActive) {
+					// userName changed
+					const uid = change.doc.data().uid;
+					const userName = change.doc.data().userName;
+					$(`#player-wrapper-${uid}`).children('p').text(userName);
 				}
+				updateTalkBar();
 			}
-			/*
-			 * Todo: User name changalbe (such as "rename" funciton)
-			 */
+
 			//if (change.type === "modified") {
 			//	console.log("User modified! ", change.doc.data());
 			//}
@@ -38,6 +40,20 @@ function listenUserInfo() {
 			//	console.log("User removed! ", change.doc.data());
 			//}
 		})
+	})
+
+	$("#local-player-name").click(function () {
+		const oldUserName = options.userName;
+		let newUserName = prompt("Please enter your name:", oldUserName);
+		if (newUserName == null || newUserName == "") {
+			newUserName = oldUserName;
+		} else {
+			dbRootRef.collection(usersCollection).doc(options.uid.toString()).update({
+				userName: newUserName
+			});
+		}
+		options.userName = newUserName;
+		$("#local-player-name").text(`${newUserName} (You)`);
 	})
 }
 

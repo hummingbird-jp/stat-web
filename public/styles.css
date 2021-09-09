@@ -244,6 +244,10 @@ input {
 	}
 }
 
+#local-player-name {
+	cursor: pointer;
+}
+
 /* integrated from styles-timer.css */
 #clockdiv {
 	color: aliceblue;
