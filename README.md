@@ -3,15 +3,16 @@
 - Open Stat! [here](https://stat-web-6372a.web.app) 🔗 .
 - Let us hear your comments and suggestions [here](https://forms.gle/5prf8vyS73KygvdL9) 🔗 .
 
-# Usage
-## Constraints
+# Constraints
 🚨 Wait! 🚨 We're in the early stage, which means **Stat! is not perfect**. Please read these constraints carefully:
-- **DO use your desktop or laptop.** Please do **NOT** use Stat! on mobile devices, or you'll see chaos... ☠️
+- **DO use your desktop or laptop.** Please do **NOT** use Stat! on mobile devices, or you'll see chaos... ☠️ .
 - **DO allow camera and mic both.** Otherwise, your screen will be (seems to be) stuck because we don't have any error messages 😵 .
 - **You can NOT share your screen.** If you desire screen sharing, give us [feedback](https://forms.gle/5prf8vyS73KygvdL9).
 - **DO use Chrome or Safari.** We haven't tested on other browsers 🤷‍♂️ .
 - **Shared link expires within 24 hours.** You can't use Stat! for a recurring meeting.
 - **You have to show your face.** We're working hard to implement camera off functionality, so please show your face until then 😉 .
+
+# Usage
 ## Index
 1. [Create a new meeting](#1-create-a-new-meeting)
 2. [Join an existing meeting](#2-join-an-existing-meeting)
