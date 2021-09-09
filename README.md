@@ -56,6 +56,7 @@ There are lots of fun tricks to make your meeting better!
 ### Visualize Conversation
 - A color bar in the middle shows the ratio of how much each participants has talked.
 - The bar updates about every 30 seconds.
+<img width="720" alt="Screen Shot 2021-09-09 at 13 50 06" src="https://user-images.githubusercontent.com/62736166/132624521-65e9f6b7-00fe-4434-b2b1-589ff7cb2ac7.png">
 
 ## 4. More tips
 1. Can I mute myself?
