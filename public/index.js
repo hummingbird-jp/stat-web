@@ -199,6 +199,7 @@ async function joinOrCreate(token) {
 	// Firestore Init (including listners)
 	initFirestore();
 	initTalkVisualizer();
+	initReactionDetecotr();
 }
 
 function truncate(str, n) {
@@ -259,6 +260,7 @@ async function subscribe(user, mediaType) {
 	if (mediaType === 'video') {
 		const player = $(`
 				<div id="player-wrapper-${uid}" class="col">
+					<p id="player-reaction-${uid}" class="reaction-text">😀</p>
 					<p class="player-name">${uid}</p>
 					<div id="player-${uid}" class="player mx-auto"></div>
 				</div>

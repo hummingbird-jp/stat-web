@@ -3,7 +3,8 @@ function addMyUserInfo() {
 		uid: options.uid,
 		userName: options.userName,
 		timeJoined: firebase.firestore.Timestamp.now(),
-		isActive: true
+		isActive: true,
+		reaction: "😀"
 	}).then(() => {
 		console.log(`User data sent.`);
 	}).catch((err) => {
@@ -11,26 +12,44 @@ function addMyUserInfo() {
 	});
 }
 
+function sendMyReaction(text) {
+	dbRootRef.collection(usersCollection).doc(options.uid.toString()).update({
+		reaction: text
+	})
+}
+
 function listenUserInfo() {
 	dbRootRef.collection(usersCollection).onSnapshot((snapshot) => {
 		snapshot.docChanges().forEach((change) => {
-			if (change.type === "added") {
-				console.log("User added! ", change.doc.data());
+			const uid = change.doc.data().uid;
+			const userName = change.doc.data().userName;
+			const reaction = change.doc.data().reaction;
 
-				const uid = change.doc.data().uid;
-				const userName = change.doc.data().userName;
-				$(`#player-wrapper-${uid}`).children('p').text(userName);
+			if (change.type === "added") {
+				$(`#player-wrapper-${uid}`).children('.player-name').text(userName);
 			}
 
 			if (change.type === "modified") {
-				const isActive = change.doc.data().isActive;
-				if (isActive) {
-					// userName changed
-					const uid = change.doc.data().uid;
-					const userName = change.doc.data().userName;
-					$(`#player-wrapper-${uid}`).children('p').text(userName);
+
+				// Listen to reaction change
+				const currentUserReaction = $(`#player-reaction-${uid}`).text();
+				if (reaction != currentUserReaction) {
+
+					$(`#player-reaction-${uid}`).text(reaction);
+
+				} else {
+
+					const isActive = change.doc.data().isActive;
+					if (isActive) {
+						// userName changed
+						const uid = change.doc.data().uid;
+						const userName = change.doc.data().userName;
+						$(`#player-wrapper-${uid}`).children('.player-name').text(userName);
+					}
+					// If user deactivated, it will be automatically updated.
+					updateTalkBar();
+
 				}
-				updateTalkBar();
 			}
 
 			//if (change.type === "modified") {
