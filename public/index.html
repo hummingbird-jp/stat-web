@@ -72,7 +72,6 @@
 					</div>
 				</div>
 			</form>
-
 		</div>
 
 		<!-- Meeting Area shows up after user joined meeting -->
@@ -152,15 +151,15 @@
 
 				<!-- Talkdata Visualizer -->
 				<div class="col-md-9 mx-auto mt-5" id="voice-visualizer-group">
-					<canvas id="talk-amount-visualizer" height="60"></canvas>
+					<canvas id="talk-amount-visualizer" height="40"></canvas>
 				</div>
 			</div>
 
 			<!-- This local media player is enabled when the user has successfully joined a Video Call channel. -->
 			<div id="video-group" class="row">
 				<div class="col">
+					<p id="local-player-reaction" class="reaction-text">😀</p>
 					<p id="local-player-name" class="player-name"></p>
-					<!-- TODO: mask video player to circular -->
 					<div class="video-wrapper mx-auto">
 						<div id="local-player" class="player mx-auto"></div>
 					</div>
@@ -236,6 +235,11 @@
 	<script src="./agenda.js" defer></script>
 	<script src="./bgm.js" defer></script>
 	<script src="./voice-visualizer.js" defer></script>
+	<script src="./reaction.js" defer></script>
+
+	<!-- Tensorflow -->
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface" defer></script>
 
 </body>
 

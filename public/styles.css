@@ -221,7 +221,7 @@ input {
 .video-wrapper {
 	width: 168px;
 	height: 160px;
-	background-color: #8F35FF;
+	background-color: #0D0D0D;
 	clip-path: circle(50%);
 }
 
@@ -248,6 +248,10 @@ input {
 	cursor: pointer;
 }
 
+.reaction-text{
+	margin: 0px;
+	font-size: 1.5rem;
+}
 /* integrated from styles-timer.css */
 #clockdiv {
 	color: aliceblue;
