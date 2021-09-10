@@ -248,7 +248,7 @@ input {
 	cursor: pointer;
 }
 
-p.reaction-text{
+.reaction-text{
 	margin: 0px;
 	font-size: 1.5rem;
 }
