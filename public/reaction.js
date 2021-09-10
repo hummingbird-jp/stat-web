@@ -26,18 +26,18 @@ var reactionModule = (function () {
 		shouldContinue = true;
 
 		// For test visualizer
-		const canvas = document.querySelector('.visualizer');
-		const canvasCtx = canvas.getContext("2d");
-		const WIDTH = canvas.width;
-		const HEIGHT = canvas.height;
+		//const canvas = document.querySelector('.visualizer');
+		//const canvasCtx = canvas.getContext("2d");
+		//const WIDTH = canvas.width;
+		//const HEIGHT = canvas.height;
 		const bufferLength = 32;
-		const dataArrayX = new Array(bufferLength).fill(0);
-		const dataArrayY = new Array(bufferLength).fill(0);
+		const dataArrayX = new Array(bufferLength).fill(0); // 左右 = "No"
+		const dataArrayY = new Array(bufferLength).fill(0); // 上下 = "Yes" Nodding
 		// For the detector
 		let eyeMovedLog = [];
 		let detector = 0;
-		const threshold = 3;
-		const windowSize = 256;
+		const threshold = 3; // 閾値 "Are you nodding?"判定が3回でうなずいたことになる
+		const windowSize = 256; // 更新時間
 		let nodWindow = windowSize;
 
 		videoElm.play();
@@ -69,38 +69,38 @@ var reactionModule = (function () {
 			}
 
 			// Normalize data (each_data - average)
-			const arrayX = normalize(dataArrayX);
+			//const arrayX = normalize(dataArrayX);
 			const arrayY = normalize(dataArrayY);
 
-			canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-			canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+			//canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+			//canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
-			const drawTimeSeries = function (array) {
-				canvasCtx.lineWidth = 2;
-				canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+			//const drawTimeSeries = function (array) {
+			//	canvasCtx.lineWidth = 2;
+			//	canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
 
-				canvasCtx.beginPath();
+			//	canvasCtx.beginPath();
 
-				const sliceWidth = WIDTH * 1.0 / array.length;
-				const center = HEIGHT / 2;
-				let x = 0;
+			//	const sliceWidth = WIDTH * 1.0 / array.length;
+			//	const center = HEIGHT / 2;
+			//	let x = 0;
 
-				for (var i = 0; i < array.length; i++) {
-					const y = center + array[i] / 2;
-					if (i === 0) {
-						canvasCtx.moveTo(x, y);
-					} else {
-						canvasCtx.lineTo(x, y);
-					}
-					x += sliceWidth;
-				}
+			//	for (var i = 0; i < array.length; i++) {
+			//		const y = center + array[i] / 2;
+			//		if (i === 0) {
+			//			canvasCtx.moveTo(x, y);
+			//		} else {
+			//			canvasCtx.lineTo(x, y);
+			//		}
+			//		x += sliceWidth;
+			//	}
 
-				canvasCtx.lineTo(canvas.width, canvas.height / 2);
-				canvasCtx.stroke();
-			};
+			//	canvasCtx.lineTo(canvas.width, canvas.height / 2);
+			//	canvasCtx.stroke();
+			//};
 
-			drawTimeSeries(arrayX);
-			drawTimeSeries(arrayY);
+			//drawTimeSeries(arrayX);
+			//drawTimeSeries(arrayY);
 
 			// Judge nodding
 			Fx = fft0(arrayY);
