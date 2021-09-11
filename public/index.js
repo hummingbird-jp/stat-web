@@ -116,6 +116,10 @@ $("#unpublish").on("click", async function () {
 
 		$('.available-only-published').attr('disabled', true);
 		$('.visible-only-published').hide();
+
+		// Show toast message
+		$('#published-message').toast('hide');
+		$('#unpublished-message').toast('show');
 	} else {
 		// Publish the user
 		await client.publish(Object.values(localTracks));
@@ -123,12 +127,18 @@ $("#unpublish").on("click", async function () {
 
 		$('.available-only-published').attr('disabled', false);
 		$('.visible-only-published').show();
+
+		// Show toast message
+		$('#unpublished-message').toast('hide');
+		$('#published-message').toast('show');
 	}
 });
 
 function initScreen() {
 	$(".meeting-area").hide();
 	$(".control-button-group").hide();
+
+	$('.toast').toast({ animation: true, autohide: true, delay: 5000 });
 
 	if (typeof audioElm != "undefined") {
 		audioElm.pause();
