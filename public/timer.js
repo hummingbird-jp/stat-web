@@ -10,6 +10,17 @@ $(timerSlider).on("input", (e) => {
 $('#start-timer').click(function (e) {
 	e.preventDefault();
 
+	$('#start-timer').attr('disabled', true);
+	$("#start-timer").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
+
+	setTimeout(() => {
+		$("#timer-slider").css("visibility", "hidden");
+		$("#start-timer").css("display", "none");
+		$("#stop-timer").css("display", "inline");
+		$('#start-timer').html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
+		$('#start-timer').attr('disabled', false);
+	}, 1000);
+
 	const duration = $("#timer-duration").val();
 	const endTime = getEndTime(duration);
 	sendTimer(true, endTime);
@@ -17,6 +28,17 @@ $('#start-timer').click(function (e) {
 
 $('#stop-timer').click(function (e) {
 	e.preventDefault();
+
+	$('#stop-timer').attr('disabled', true);
+	$("#stop-timer").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`)
+
+	setTimeout(() => {
+		$('#stop-timer').html(`<img src="icons/stop_black_24dp.svg" alt="" class="material-icons">`);
+		$("#timer-slider").css("visibility", "visible");
+		$("#stop-timer").css("display", "none");
+		$("#start-timer").css("display", "inline");
+		$('#stop-timer').attr('disabled', false);
+	}, 1000);
 
 	const duration = $("#timer-duration").val();
 	const endTime = getEndTime(duration);
@@ -26,7 +48,7 @@ $('#stop-timer').click(function (e) {
 setCurrentValue($("#timer-duration").val());
 
 // Firestore
-function sendTimer (isRunning, endTime) {
+function sendTimer(isRunning, endTime) {
 
 	dbRootRef.collection(timerCollection).doc("temp").set({
 		isRunning: isRunning,
@@ -39,7 +61,7 @@ function sendTimer (isRunning, endTime) {
 	});
 }
 
-function listenTimer () {
+function listenTimer() {
 
 	dbRootRef.collection(timerCollection).doc("temp").onSnapshot((doc) => {
 		const isTimerRunningOnOthers = doc.data().isRunning;
@@ -63,37 +85,27 @@ function listenTimer () {
 }
 
 // Start Timer
-function startTimer (endTime) {
+function startTimer(endTime) {
 	lockObj = false;
-
 	initTimer('clockdiv', endTime);
-
-	$("#timer-slider").css("visibility", "hidden");
-	$("#start-timer").css("display", "none");
-	$("#stop-timer").css("display", "inline");
-
 	isTimerRunningLocally = true;
 }
 
 // Stop Timer
-function stopTimer () {
+function stopTimer() {
 	lockObj = true;
-
-	$("#timer-slider").css("visibility", "visible");
-	$("#stop-timer").css("display", "none");
-	$("#start-timer").css("display", "inline");
 
 	isTimerRunningLocally = false;
 }
 
 // Timer Utils
-function initTimer (id, endTime) {
+function initTimer(id, endTime) {
 	const timer = document.getElementById(id);
 
 	const minutesSpan = timer.querySelector('.minutes');
 	const secondsSpan = timer.querySelector('.seconds');
 
-	function updateTimer () {
+	function updateTimer() {
 
 		const t = getTimeRemaining(endTime);
 
@@ -121,7 +133,7 @@ function initTimer (id, endTime) {
 	const timeinterval = setInterval(updateTimer, 1000);
 }
 
-function setCurrentValue (val) {
+function setCurrentValue(val) {
 	const timer = $("#clockdiv")[0];
 
 	const minutesSpan = timer.querySelector('.minutes');
@@ -134,7 +146,7 @@ function setCurrentValue (val) {
 	$(secondsSpan).text(('0' + t.seconds).slice(-2));
 }
 
-function getTimeRemaining (endTime) {
+function getTimeRemaining(endTime) {
 	const total = Date.parse(endTime) - Date.parse(new Date());
 
 	const seconds = Math.floor((total / 1000) % 60);
@@ -151,6 +163,6 @@ function getTimeRemaining (endTime) {
 	};
 }
 
-function getEndTime (val) {
+function getEndTime(val) {
 	return new Date(Date.parse(new Date()) + val * 60 * 1000);
 }

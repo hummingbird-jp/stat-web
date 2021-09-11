@@ -23,12 +23,18 @@ $("#leave").click(function (e) {
 /*
  * Send BGM status to database (Firestore)
  */
-playButton.addEventListener('click', function () {
+$(playButton).click(function (e) {
+	e.preventDefault();
+
+	$(playButton).attr('disabled', true);
+	$(playButton).html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 
 	const currentTime = audioElm.currentTime;
 
 	if (this.dataset.playing === "preSelect") {
 		if (selectorObj.value === "default") {
+			$(playButton).html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
+			$(playButton).attr('disabled', false);
 			console.log("BGM not selected.");
 		} else {
 			sendBgmStatus(0, true, true);
@@ -43,8 +49,7 @@ playButton.addEventListener('click', function () {
 
 	let state = this.getAttribute('aria-checked') === "true" ? true : false;
 	this.setAttribute('aria-checked', state ? "false" : "true");
-
-}, false);
+});
 
 stopButton.addEventListener("click", function () {
 	configureControlPanelDefault();
@@ -55,7 +60,7 @@ stopButton.addEventListener("click", function () {
  */
 $(volumeSlider).on("input", (e) => setAudioVolume(e.target.value));
 
-function listenBgm () {
+function listenBgm() {
 	dbRootRef.collection(bgmCollection).doc("temp")
 		.onSnapshot((doc) => {
 
@@ -95,7 +100,7 @@ function listenBgm () {
 		});
 }
 
-function sendBgmStatus (currentTime, isChanged, isPlaying) {
+function sendBgmStatus(currentTime, isChanged, isPlaying) {
 	const category = selectorObj.value;
 
 	db.collection(audioSetCollection).where("category", "==", category)
@@ -118,14 +123,14 @@ function sendBgmStatus (currentTime, isChanged, isPlaying) {
 		});
 }
 
-function configureAudioDefault (audioElm) {
+function configureAudioDefault(audioElm) {
 	audioElm.preload = 'none';
 	audioElm.loop = true;
 	audioElm.autoplay = false;
 	audioElm.volume = 0.05;
 }
 
-function configureControlPanelDefault () {
+function configureControlPanelDefault() {
 	stopButton.disabled = true;
 	selectorObj.disabled = false;
 	selectorObj.value = "default";
@@ -133,21 +138,29 @@ function configureControlPanelDefault () {
 	playButton.dataset.playing = "preSelect";
 }
 
-function configureControlPanelPlaying () {
-	$(playbackIcon).attr("src", "icons/pause_black_24dp.svg");
+function configureControlPanelPlaying() {
+	setTimeout(() => {
+		$(playButton).html(`<img src="icons/pause_black_24dp.svg" alt="" class="material-icons">`);
+		$(playButton).attr('disabled', false);
+	}, 1000);
+
 	playButton.dataset.playing = 'true';
 	stopButton.disabled = true;
 	selectorObj.disabled = true;
 }
 
-function configureControlPanelPaused () {
-	$(playbackIcon).attr("src", "icons/play_arrow_black_24dp.svg");
+function configureControlPanelPaused() {
+	setTimeout(() => {
+		$(playButton).html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
+		$(playButton).attr('disabled', false);
+	}, 1000);
+
 	playButton.dataset.playing = 'false';
 	stopButton.disabled = false;
 	selectorObj.disabled = true;
 }
 
-function changeTrackTo (uri, currentTime) {
+function changeTrackTo(uri, currentTime) {
 	audioElm.src = uri;
 	audioElm.pause();
 	audioElm.load();
@@ -156,11 +169,11 @@ function changeTrackTo (uri, currentTime) {
 	audioElm.play();
 }
 
-function changeSelectorTo (value) {
+function changeSelectorTo(value) {
 	selectorObj.value = value;
 	selectorObj.disabled = true;
 }
 
-function setAudioVolume (value) {
+function setAudioVolume(value) {
 	audioElm.volume = value;
 }
