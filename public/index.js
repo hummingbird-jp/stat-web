@@ -124,6 +124,7 @@ $("#unpublish").on("click", async function () {
 
 function initScreen() {
 	$(".meeting-area").hide();
+	$(".control-button-group").hide();
 
 	if (typeof audioElm != "undefined") {
 		audioElm.pause();
@@ -192,6 +193,7 @@ async function joinOrCreate(token) {
 
 	$(".join-area").hide();
 	$(".meeting-area").fadeIn();
+	$(".control-button-group").fadeIn();
 	$("#join").text("Join");
 	$("#create").text("Create");
 	$("#create").attr("disabled", false);
@@ -236,6 +238,7 @@ async function leave() {
 	setTimeout(() => {
 		$(".join-area").fadeIn();
 		$(".meeting-area").hide();
+		$(".control-button-group").hide();
 		$("#leave").html(`<img src="icons/call_end_black_24dp.svg" alt="" class="material-icons">`)
 	}, 1000);
 
