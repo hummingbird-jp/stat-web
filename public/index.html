@@ -10,7 +10,7 @@
 	<meta property="og:title" content="Stat! Web" />
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://stat-web-6372a.web.app" />
-	<meta property="og:image" content="https://stat-web-6372a.web.app/favicon.png" />
+	<meta property="og:image" content="https://stat-web-6372a.web.app/images/favicon.png" />
 	<meta property="og:site_name" content="Stat! Web" />
 	<meta property="og:description" content="Stat! Web is a Web RTC project made by hummingbird with ❤️." />
 
@@ -18,10 +18,10 @@
 	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:site" content="@yhakamay" />
 
-	<title>Stat! Web</title>
+	<title>Stat!</title>
 
 	<!-- Favicon -->
-	<link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+	<link rel="shortcut icon" href="images/favicon.png" type="image/x-icon">
 
 	<!-- Fonts -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,7 @@
 		integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 
 	<!-- Stylesheets -->
-	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="stylesheets/styles.css">
 </head>
 
 <body>
@@ -42,11 +42,12 @@
 
 		<!-- Join Area will dissapear once user joined meeting -->
 		<div class="join-area">
-			<img src="favicon.png" alt="" class="mx-auto d-block logo">
-			<div style="height: 3rem;"></div>
+			<img src="images/favicon.png" alt="" class="mx-auto d-block logo">
+
+			<div class="vertical-spacer-3rem"></div>
 
 			<!-- Join Meeting -->
-			<form id="join-form" style="display: none;">
+			<form id="join-form">
 				<div class="row join-info-group">
 					<div class="col-lg-4 col-md-6 mx-auto">
 						<input class="form form-control" id="userNameJoin" type="text" placeholder="User Name" required
@@ -60,14 +61,16 @@
 			</form>
 
 			<!-- Create a new Meeting -->
-			<form id="create-form" style="display: none;">
+			<form id="create-form">
 				<div class="row join-info-group">
 					<div class="col-lg-4 col-md-6 mx-auto">
 						<input class="form form-control" id="userNameCreate" type="text" placeholder="User Name"
 							required autocomplete="off">
 						<p class="tips">User Name is temporary.</p>
 						<div class="button-group d-grid gap-2">
-							<button id="create" type="submit" class="btn btn-primary">Create</button>
+							<button id="create" type="submit" class="btn btn-primary">
+								Create
+							</button>
 						</div>
 					</div>
 				</div>
@@ -157,7 +160,7 @@
 				</div>
 			</div>
 
-			<!-- This local media player is enabled when the user has successfully joined a Video Call channel. -->
+			<!-- Video Group -->
 			<div id="video-group" class="row">
 				<div class="col">
 					<p id="local-player-reaction" class="reaction-text visible-only-published">😀</p>
@@ -168,30 +171,29 @@
 				</div>
 			</div>
 
-
 		</div>
 
-		<!-- Control button group -->
+		<!-- Control Button Group -->
 		<div class="row control-button-group">
 			<div class="col-sm">
 				<button class="btn btn-with-tooltip" id="copy-infos-to-clipboard">
-					<span class="tooltiptext" id="meeting-infos-tooltip">
-						Copy to clipboard
+					<span class="tooltiptext meeting-infos-tooltip">
+						Copy
 					</span>
 					<img src="icons/share_black_24dp.svg" alt="" class="material-icons">
 				</button>
 			</div>
 			<div class="col-sm">
 				<button id="unpublish" type="button" class="btn btn-with-tooltip">
-					<span class="tooltiptext" id="meeting-infos-tooltip">
-						Stop your mic and camera
+					<span class="tooltiptext meeting-infos-tooltip">
+						Turn off your mic and camera
 					</span>
 					<img src="icons/block_black_24dp.svg" alt="" class="material-icons">
 				</button>
 			</div>
 			<div class="col-sm">
 				<button id="leave" type="button" class="btn btn-with-tooltip">
-					<span class="tooltiptext" id="meeting-infos-tooltip">
+					<span class="tooltiptext meeting-infos-tooltip">
 						Leave this meeting
 					</span>
 					<img src="icons/call_end_black_24dp.svg" alt="" class="material-icons">
@@ -208,7 +210,7 @@
 				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
 			</div>
 			<div class="toast-body">
-				You're invisible from others! Click the button again to rejoin them.
+				You're muted and invisible from others! Click the button again to rejoin them.
 			</div>
 		</div>
 
@@ -220,7 +222,7 @@
 				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
 			</div>
 			<div class="toast-body">
-				Hi again! Did you enjoy your break?
+				Hi again! Did you enjoy your break? Say hi to others 👋
 			</div>
 		</div>
 
@@ -231,8 +233,8 @@
 
 		<!-- View Source on GitHub -->
 		<a href="https://github.com/hummingbird-jp/stat-web#readme" target="_blank" rel="noopener noreferrer">
-			<svg id="github-icon" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
-				fill="aliceblue">
+			<svg id="github-icon" class="icons" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+				viewBox="0 0 24 24">
 				<path
 					d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
 			</svg>
@@ -262,12 +264,12 @@
 	<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface" defer></script>
 
 	<!-- Scripts -->
-	<script src="./index.js" defer></script>
-	<script src="./timer.js" defer></script>
-	<script src="./agenda.js" defer></script>
-	<script src="./bgm.js" defer></script>
-	<script src="./voice-visualizer.js" defer></script>
-	<script src="./reaction.js" defer></script>
+	<script src="scripts/index.js" defer></script>
+	<script src="scripts/timer.js" defer></script>
+	<script src="scripts/agenda.js" defer></script>
+	<script src="scripts/bgm.js" defer></script>
+	<script src="scripts/voice-visualizer.js" defer></script>
+	<script src="scripts/reaction.js" defer></script>
 
 </body>
 
