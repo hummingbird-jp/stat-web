@@ -370,3 +370,15 @@ input {
 	visibility: visible;
 	opacity: 1;
 }
+
+/* Toast Message */
+.toast {
+	position: absolute;
+	top: 2rem;
+	right: 2rem;
+}
+
+.toast-body {
+	text-align: left;
+	color: #0d0d0d;
+}
