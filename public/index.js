@@ -110,15 +110,19 @@ $("#leave").click(function (e) {
 // Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
 $("#unpublish").on("click", async function () {
 	if (published === true) {
+		// Unpublish the user
 		await client.unpublish(Object.values(localTracks));
 		published = false;
-		$('#local-player-name').hide();
-		$('#local-player').hide();
+
+		$('.available-only-published').attr('disabled', true);
+		$('.visible-only-published').hide();
 	} else {
+		// Publish the user
 		await client.publish(Object.values(localTracks));
 		published = true;
-		$('#local-player-name').show();
-		$('#local-player').show();
+
+		$('.available-only-published').attr('disabled', false);
+		$('.visible-only-published').show();
 	}
 });
 
