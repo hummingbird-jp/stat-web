@@ -33,6 +33,8 @@ $(playButton).click(function (e) {
 
 	if (this.dataset.playing === "preSelect") {
 		if (selectorObj.value === "default") {
+			$(playButton).html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
+			$(playButton).attr('disabled', false);
 			console.log("BGM not selected.");
 		} else {
 			sendBgmStatus(0, true, true);
@@ -139,7 +141,6 @@ function configureControlPanelDefault() {
 function configureControlPanelPlaying() {
 	setTimeout(() => {
 		$(playButton).html(`<img src="icons/pause_black_24dp.svg" alt="" class="material-icons">`);
-		//$(playbackIcon).attr("src", "icons/pause_black_24dp.svg");
 		$(playButton).attr('disabled', false);
 	}, 1000);
 
@@ -151,7 +152,6 @@ function configureControlPanelPlaying() {
 function configureControlPanelPaused() {
 	setTimeout(() => {
 		$(playButton).html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
-		//$(playbackIcon).attr("src", "icons/play_arrow_black_24dp.svg");
 		$(playButton).attr('disabled', false);
 	}, 1000);
 

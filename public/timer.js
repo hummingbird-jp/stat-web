@@ -33,7 +33,7 @@ $('#stop-timer').click(function (e) {
 	$("#stop-timer").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`)
 
 	setTimeout(() => {
-		$('#stop-timer').html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
+		$('#stop-timer').html(`<img src="icons/stop_black_24dp.svg" alt="" class="material-icons">`);
 		$("#timer-slider").css("visibility", "visible");
 		$("#stop-timer").css("display", "none");
 		$("#start-timer").css("display", "inline");
