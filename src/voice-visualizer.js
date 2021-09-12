@@ -145,7 +145,7 @@ export function initTalkVisualizer(dbRootRef, uid, userName) {
 				const talkDataAvg = talkDataArray.reduce((a, b) => a + b) / talkDataArray.length;
 				sendTalkDataToFirebase(dbRootRef, talkDataAvg, uid, userName);
 
-				updateTalkBar();
+				updateTalkBar(dbRootRef);
 
 			} else {
 				talkDataSendTrigger.push(0);
@@ -197,7 +197,7 @@ function sendTalkDataToFirebase(dbRootRef, value, uid, userName) {
 		});
 }
 
-async function getTalkDataFromFirebase() {
+async function getTalkDataFromFirebase(dbRootRef) {
 	let users = [];
 	const querySnapshotUser = await dbRootRef.collection(usersCollection).get()
 	querySnapshotUser.forEach((doc) => {
@@ -231,7 +231,7 @@ async function getTalkDataFromFirebase() {
 function updateTalkBar() {
 	const canvas = document.getElementById("talk-amount-visualizer");
 	const canvasCtx = canvas.getContext("2d");
-	getTalkDataFromFirebase().then(result => {
+	getTalkDataFromFirebase(dbRootRef).then(result => {
 		let sum = 0;
 		for (let i = 0; i < result.length; i++) {
 			sum += result[i].talkSum;
