@@ -39,6 +39,9 @@ $("#join-form").submit(async function (e) {
 		options.userName = $("#userNameJoin").val();
 
 		await joinOrCreate(options.token);
+		initFirestore();
+		initTalkVisualizer();
+		initReactionDetector();
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
@@ -60,6 +63,9 @@ $("#create-form").submit(async function (e) {
 		options.token = await fetchNewTokenWithChannelName(channelName);
 
 		await joinOrCreate(options.token);
+		initFirestore();
+		initTalkVisualizer();
+		initReactionDetector();
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
@@ -135,6 +141,9 @@ $("#unpublish").on("click", async function () {
 });
 
 function initScreen() {
+	$('#join-form').css('display', 'none');
+	$('#create-form').css('display', 'none');
+
 	$(".meeting-area").hide();
 	$(".control-button-group").hide();
 
@@ -211,11 +220,6 @@ async function joinOrCreate(token) {
 	$("#join").text("Join");
 	$("#create").text("Create");
 	$("#create").attr("disabled", false);
-
-	// Firestore Init (including listners)
-	initFirestore();
-	initTalkVisualizer();
-	initReactionDetector();
 }
 
 function truncate(str, n) {
@@ -331,11 +335,11 @@ $("#copy-infos-to-clipboard").mouseout(function () {
 
 function copyTextToClipboard() {
 	const text = generateShareUrl();
-	const tooltip = $("#meeting-infos-tooltip")[0];
+	const tooltip = $(".meeting-infos-tooltip")[0];
 
 	navigator.clipboard.writeText(text);
 
-	$(tooltip).html(`Copied: ${truncate(text, 10)}`);
+	$(tooltip).html(`Share it to others!`);
 }
 
 function generateShareUrl() {
@@ -349,7 +353,7 @@ function generateUid() {
 }
 
 function mouseOut() {
-	const tooltip = $("#meeting-infos-tooltip")[0];
+	const tooltip = $(".meeting-infos-tooltip")[0];
 
 	$(tooltip).html("Copy");
 }
