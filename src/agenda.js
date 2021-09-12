@@ -1,12 +1,12 @@
 const agendasCollection = "agendas";
 
 // Send agenda to Firestore
-export function sendAgenda(agenda) {
+export function sendAgenda(dbRootRef, agenda, userName) {
 
 	dbRootRef.collection(agendasCollection).add({
 		agenda: agenda,
 		timeSet: firebase.firestore.Timestamp.now(),
-		setBy: options.userName
+		setBy: userName
 	}).then(() => {
 		console.log(`Agenda successfully sent!`);
 	}).catch((err) => {

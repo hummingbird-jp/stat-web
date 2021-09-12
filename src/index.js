@@ -9,6 +9,8 @@ import { initReactionDetector } from "./reaction";
 
 const appUrl = 'https://stat-web-6372a.web.app/';
 
+let dbRootRef;
+
 let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 let published = false;
 let localTracks;
@@ -50,7 +52,7 @@ $("#join-form").on('submit', async function (e) {
 
 		await joinOrCreate(options.token);
 
-		const dbRootRef = initFirestore(meetingId);
+		dbRootRef = initFirestore(meetingId);
 
 		addMyUserInfo(dbRootRef, usersCollection, options.uid, options.userName);
 
@@ -69,16 +71,6 @@ $("#join-form").on('submit', async function (e) {
 	}
 });
 
-
-const setAgendaButton = $('#set-agenda')[0];
-
-$(setAgendaButton).on('click', function (e) {
-	const agenda = $("#agenda-in").val();
-
-	$("#agenda-out").text(agenda);
-	sendAgenda(agenda);
-});
-
 // Create a new meeting
 $("#create-form").on('submit', async function (e) {
 	e.preventDefault();
@@ -93,7 +85,7 @@ $("#create-form").on('submit', async function (e) {
 
 		await joinOrCreate(options.token);
 
-		const dbRootRef = initFirestore(meetingId);
+		dbRootRef = initFirestore(meetingId);
 
 		addMyUserInfo(dbRootRef, options.uid, options.userName);
 
@@ -112,7 +104,17 @@ $("#create-form").on('submit', async function (e) {
 	}
 });
 
+// Agenda
+const setAgendaButton = $('#set-agenda')[0];
 
+$(setAgendaButton).on('click', function (e) {
+	const agenda = $("#agenda-in").val();
+
+	$("#agenda-out").text(agenda);
+	sendAgenda(dbRootRef, agenda, options.userName);
+});
+
+// Share to Others
 async function fetchNewTokenWithChannelName(channelName) {
 	const uid = 1234;
 	let token;
@@ -143,13 +145,6 @@ function generateRandomChannelName(length) {
 
 	return result;
 }
-
-/*
- * Called when a user clicks Leave in order to exit a channel.
- */
-$("#leave").click(function (e) {
-	leave();
-});
 
 // Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
 $("#unpublish").on("click", async function () {
@@ -398,3 +393,9 @@ function mouseOut() {
 
 	$(tooltip).html("Copy");
 }
+
+// Leave
+$("#leave").on('click', function (e) {
+	leave();
+});
+
