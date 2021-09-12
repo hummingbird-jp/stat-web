@@ -1,6 +1,7 @@
 const colorPalette = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
+const talkDataCollection = "talkData";
 
-function initTalkVisualizer() {
+export function initTalkVisualizer(dbRootRef, uid, userName) {
 
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {
@@ -142,7 +143,7 @@ function initTalkVisualizer() {
 				talkDataSendTrigger.push(1);
 
 				const talkDataAvg = talkDataArray.reduce((a, b) => a + b) / talkDataArray.length;
-				sendTalkDataToFirebase(talkDataAvg);
+				sendTalkDataToFirebase(dbRootRef, talkDataAvg, uid, userName);
 
 				updateTalkBar();
 
@@ -180,16 +181,16 @@ function initTalkVisualizer() {
 
 }
 
-function sendTalkDataToFirebase(value) {
+function sendTalkDataToFirebase(dbRootRef, value, uid, userName) {
 
 	dbRootRef.collection(talkDataCollection).add({
-		userName: options.userName,
-		uid: options.uid,
+		userName: userName,
+		uid: uid,
 		timestamp: firebase.firestore.Timestamp.now(),
 		talkValue: value
 	})
 		.then(function () {
-			console.log("log: talkdata sent", Math.round(value), options.userName);
+			console.log("log: talkdata sent", Math.round(value), userName);
 		})
 		.catch((err) => {
 			console.error("Error adding document: ", err);

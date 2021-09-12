@@ -1,5 +1,5 @@
 const timerSlider = $("#timer-duration")[0];
-const syncTimerCollection = 'sync-timer-beta';
+const timerCollection = "timer";
 let isTimerRunningLocally = false;
 let lockObj = false;
 
@@ -48,7 +48,7 @@ $('#stop-timer').click(function (e) {
 setCurrentValue($("#timer-duration").val());
 
 // Firestore
-function sendTimer(isRunning, endTime) {
+export function sendTimer(dbRootRef, isRunning, endTime) {
 
 	dbRootRef.collection(timerCollection).doc("temp").set({
 		isRunning: isRunning,
@@ -61,7 +61,7 @@ function sendTimer(isRunning, endTime) {
 	});
 }
 
-function listenTimer() {
+export function listenTimer(dbRootRef) {
 
 	dbRootRef.collection(timerCollection).doc("temp").onSnapshot((doc) => {
 		const isTimerRunningOnOthers = doc.data().isRunning;

@@ -1,14 +1,7 @@
-const setAgendaButton = $('#set-agenda')[0];
-
-$(setAgendaButton).click(function (e) {
-	const agenda = $("#agenda-in").val();
-
-	$("#agenda-out").text(agenda);
-	sendAgenda(agenda);
-});
+const agendasCollection = "agendas";
 
 // Send agenda to Firestore
-function sendAgenda (agenda) {
+export function sendAgenda(agenda) {
 
 	dbRootRef.collection(agendasCollection).add({
 		agenda: agenda,
@@ -23,7 +16,7 @@ function sendAgenda (agenda) {
 
 // Listen to sync-agenda-beta collection; code below will be run
 // when something has changed on Firestore > "agendas"
-function listenAgenda () {
+export function listenAgenda(dbRootRef) {
 
 	dbRootRef.collection(agendasCollection).onSnapshot((snapshot) => {
 		snapshot.docChanges().forEach((change) => {

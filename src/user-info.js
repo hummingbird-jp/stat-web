@@ -1,7 +1,9 @@
-function addMyUserInfo() {
-	dbRootRef.collection(usersCollection).doc(options.uid.toString()).set({
-		uid: options.uid,
-		userName: options.userName,
+const usersCollection = "users";
+
+export function addMyUserInfo(dbRootRef, uid, userName) {
+	dbRootRef.collection(usersCollection).doc(uid.toString()).set({
+		uid: uid,
+		userName: userName,
 		timeJoined: firebase.firestore.Timestamp.now(),
 		isActive: true,
 		reaction: "😀"
@@ -12,13 +14,13 @@ function addMyUserInfo() {
 	});
 }
 
-function sendMyReaction(text) {
-	dbRootRef.collection(usersCollection).doc(options.uid.toString()).update({
+export function sendMyReaction(dbRootRef, uid, text) {
+	dbRootRef.collection(usersCollection).doc(uid.toString()).update({
 		reaction: text
 	})
 }
 
-function listenUserInfo() {
+export function listenUserInfo(dbRootRef) {
 	dbRootRef.collection(usersCollection).onSnapshot((snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			const uid = change.doc.data().uid;
@@ -76,7 +78,7 @@ function listenUserInfo() {
 	})
 }
 
-function deactivateUser(uid) {
+export function deactivateUser(dbRootRef, uid) {
 	const docRef = dbRootRef.collection(usersCollection).doc(uid.toString());
 	docRef.get().then((doc) => {
 		if (doc.exists) {

@@ -1,7 +1,5 @@
-/*
- * Need to allocate uri to Audio element when created.
- * So one of the BGMs is allocated as default, but it is not played.
- */
+const audioSetCollection = "audioSet";
+const bgmCollection = "bgm";
 const uriAudioDefault = "https://firebasestorage.googleapis.com/v0/b/stat-web-6372a.appspot.com/o/bgm%2Fnature_sound.mp3?alt=media&token=aff3df2f-787d-43e6-be5f-2a51cae2abef";
 
 const audioElm = new Audio(uriAudioDefault);
@@ -16,14 +14,11 @@ const volumeSlider = $("#bgm-volume")[0];
 /*
  * Stop BGM when left.
  */
-$("#leave").click(function (e) {
-	audioElm.pause();
-});
 
 /*
  * Send BGM status to database (Firestore)
  */
-$(playButton).click(function (e) {
+$(playButton).on('click', function (e) {
 	e.preventDefault();
 
 	$(playButton).attr('disabled', true);
@@ -60,7 +55,7 @@ stopButton.addEventListener("click", function () {
  */
 $(volumeSlider).on("input", (e) => setAudioVolume(e.target.value));
 
-function listenBgm() {
+export function listenBgm(dbRootRef) {
 	dbRootRef.collection(bgmCollection).doc("temp")
 		.onSnapshot((doc) => {
 

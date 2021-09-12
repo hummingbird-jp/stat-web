@@ -1,3 +1,12 @@
+import { initFirestore } from "./firebase";
+import { Toast } from "bootstrap";
+import { addMyUserInfo, listenUserInfo } from "./user-info";
+import { listenAgenda, sendAgenda } from "./agenda";
+import { listenBgm } from "./bgm";
+import { listenTimer } from "./timer";
+import { initTalkVisualizer } from "./voice-visualizer";
+import { initReactionDetector } from "./reaction";
+
 const appUrl = 'https://stat-web-6372a.web.app/';
 
 let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -9,6 +18,7 @@ let meetingId;
 
 initScreen();
 initAgora();
+
 
 $(() => {
 	var urlParams = new URL(location.href).searchParams;
@@ -31,7 +41,7 @@ $(() => {
 });
 
 // Join existing meeting
-$("#join-form").submit(async function (e) {
+$("#join-form").on('submit', async function (e) {
 	e.preventDefault();
 	$("#join").attr("disabled", true);
 
@@ -39,8 +49,17 @@ $("#join-form").submit(async function (e) {
 		options.userName = $("#userNameJoin").val();
 
 		await joinOrCreate(options.token);
-		initFirestore();
-		initTalkVisualizer();
+
+		const dbRootRef = initFirestore(meetingId);
+
+		addMyUserInfo(dbRootRef, usersCollection, options.uid, options.userName);
+
+		listenAgenda(dbRootRef);
+		listenBgm(dbRootRef);
+		listenTimer(dbRootRef);
+		listenUserInfo(dbRootRef);
+
+		initTalkVisualizer(dbRootRef, options.uid, options.userName);
 		initReactionDetector();
 	} catch (error) {
 		console.error(error);
@@ -50,8 +69,18 @@ $("#join-form").submit(async function (e) {
 	}
 });
 
+
+const setAgendaButton = $('#set-agenda')[0];
+
+$(setAgendaButton).on('click', function (e) {
+	const agenda = $("#agenda-in").val();
+
+	$("#agenda-out").text(agenda);
+	sendAgenda(agenda);
+});
+
 // Create a new meeting
-$("#create-form").submit(async function (e) {
+$("#create-form").on('submit', async function (e) {
 	e.preventDefault();
 	$("#create").attr("disabled", true);
 
@@ -63,8 +92,17 @@ $("#create-form").submit(async function (e) {
 		options.token = await fetchNewTokenWithChannelName(channelName);
 
 		await joinOrCreate(options.token);
-		initFirestore();
-		initTalkVisualizer();
+
+		const dbRootRef = initFirestore(meetingId);
+
+		addMyUserInfo(dbRootRef, options.uid, options.userName);
+
+		listenAgenda(dbRootRef);
+		listenBgm(dbRootRef);
+		listenTimer(dbRootRef);
+		listenUserInfo(dbRootRef);
+
+		initTalkVisualizer(dbRootRef, options.uid, options.userName);
 		initReactionDetector();
 	} catch (error) {
 		console.error(error);
@@ -147,7 +185,10 @@ function initScreen() {
 	$(".meeting-area").hide();
 	$(".control-button-group").hide();
 
-	$('.toast').toast({ animation: true, autohide: true, delay: 5000 });
+	const toastOptions = { animation: true, autohide: true, delay: 5000 };
+	const toastList = $('.toast').map(function (toastEl) {
+		return new Toast(toastEl, toastOptions);
+	});
 
 	if (typeof audioElm != "undefined") {
 		audioElm.pause();

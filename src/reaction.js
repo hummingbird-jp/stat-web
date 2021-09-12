@@ -168,7 +168,7 @@ var reactionModule = (function () {
 // TODO: use buttons or other controller to init and begin.
 reactionModule.init();
 
-function initReactionDetector() {
+export function initReactionDetector() {
 	reactionModule.begin();
 }
 
