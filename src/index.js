@@ -162,6 +162,10 @@ function generateRandomChannelName(length) {
 
 // Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
 $("#unpublish").on("click", async function () {
+	const toastOptions = { animation: true, autohide: true, delay: 3000 };
+	const unpublishedMessageElement = new Toast($('#unpublished-message'), toastOptions);
+	const publishedMessageElement = new Toast($('#published-message'), toastOptions);
+
 	if (published === true) {
 		// Unpublish the user
 		await client.unpublish(Object.values(localTracks));
@@ -171,8 +175,8 @@ $("#unpublish").on("click", async function () {
 		$('.visible-only-published').hide();
 
 		// Show toast message
-		$('#published-message').toast('hide');
-		$('#unpublished-message').toast('show');
+		unpublishedMessageElement.show();
+		publishedMessageElement.hide();
 	} else {
 		// Publish the user
 		await client.publish(Object.values(localTracks));
@@ -182,8 +186,8 @@ $("#unpublish").on("click", async function () {
 		$('.visible-only-published').show();
 
 		// Show toast message
-		$('#unpublished-message').toast('hide');
-		$('#published-message').toast('show');
+		unpublishedMessageElement.hide();
+		publishedMessageElement.show();
 	}
 });
 
@@ -193,11 +197,6 @@ function initScreen() {
 
 	$(".meeting-area").hide();
 	$(".control-button-group").hide();
-
-	const toastOptions = { animation: true, autohide: true, delay: 5000 };
-	const toastList = $('.toast').map(function (toastEl) {
-		return new Toast(toastEl, toastOptions);
-	});
 
 	if (typeof audioElm != "undefined") {
 		audioElm.pause();
