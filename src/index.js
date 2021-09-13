@@ -308,7 +308,7 @@ function truncate(str, n) {
  * Stop all local and remote tracks then leave the channel.
  */
 async function leave() {
-	for (trackName in localTracks) {
+	for (const trackName in localTracks) {
 		var track = localTracks[trackName];
 		if (track) {
 			track.stop();
