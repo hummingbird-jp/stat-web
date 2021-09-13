@@ -4,10 +4,10 @@ import { options } from "./index";
 
 // Send agenda to Firestore
 export async function sendAgenda(agenda) {
-	const docRef = collection(statFirestore.dbRootRef, statFirestore.agendasCollection);
+	const collectionRef = collection(statFirestore.dbRootRef, statFirestore.agendasCollection);
 
 	// addDoc instead of setDoc, because no need to specify doc ID
-	await addDoc(docRef, {
+	await addDoc(collectionRef, {
 		agenda: agenda,
 		timeSet: Timestamp.now(),
 		setBy: options.userName,
