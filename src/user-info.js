@@ -1,7 +1,8 @@
-import { doc, setDoc, onSnapshot } from "@firebase/firestore";
+import { doc, collection, setDoc, onSnapshot } from "@firebase/firestore";
 
 export async function addMyUserInfo(statFirestore, uid, userName) {
-	await setDoc(doc(statFirestore.db, statFirestore.usersCollection, uid), {
+
+	await setDoc(doc(statFirestore.dbRootRef, "users", uid), {
 		uid: uid,
 		userName: userName,
 		timeJoined: firebase.firestore.Timestamp.now(),

@@ -12,6 +12,7 @@ const appUrl = 'https://stat-web-6372a.web.app/';
 const statFirestore = {
 	db: null,
 	dbRootRef: null,
+	usersCollectionRef: null,
 	usersCollection: 'users',
 	timerCollection: 'timer',
 	// TODO: add more collections
@@ -58,17 +59,18 @@ $("#join-form").on('submit', async function (e) {
 
 		await joinOrCreate(options.token);
 
-		statFirestore = initFirestore(meetingId);
+		[statFirestore.db, statFirestore.dbRootRef] = initFirestore(meetingId);
+		//console.log("debug: ", initFirestore(meetingId));
 
 		addMyUserInfo(statFirestore, options.uid, options.userName);
 
-		listenAgenda(statFirestore.dbRootRef);
-		listenBgm(statFirestore.dbRootRef);
-		listenTimer(statFirestore.dbRootRef);
-		listenUserInfo(statFirestore.dbRootRef);
+		listenAgenda(statFirestore);
+		//listenBgm(statFirestore.dbRootRef);
+		//listenTimer(statFirestore.dbRootRef);
+		listenUserInfo(statFirestore);
 
-		initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
-		initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
+		//initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
+		//initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
@@ -91,17 +93,18 @@ $("#create-form").on('submit', async function (e) {
 
 		await joinOrCreate(options.token);
 
-		statFirestore.dbRootRef = initFirestore(meetingId);
+		//[statFirestore.db, statFirestore.dbRootRef] = initFirestore(meetingId);
+		initFirestore(statFirestore, meetingId);
 
 		addMyUserInfo(statFirestore, options.uid, options.userName);
 
-		listenAgenda(statFirestore.dbRootRef);
-		listenBgm(statFirestore.dbRootRef);
-		listenTimer(statFirestore.dbRootRef);
-		listenUserInfo(statFirestore.dbRootRef);
+		listenAgenda(statFirestore);
+		//listenBgm(statFirestore.dbRootRef);
+		//listenTimer(statFirestore.dbRootRef);
+		listenUserInfo(statFirestore);
 
-		initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
-		initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
+		//initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
+		//initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
