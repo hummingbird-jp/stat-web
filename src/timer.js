@@ -1,4 +1,6 @@
 import { doc, setDoc, onSnapshot, Timestamp } from "@firebase/firestore";
+import { statFirestore } from "./firebase";
+import { options } from "./index";
 
 export const timerSlider = $("#timer-duration")[0];
 let isTimerRunningLocally = false;
@@ -9,10 +11,10 @@ export function initTimer() {
 }
 
 // Firestore
-export async function sendTimer(statFirestore, isRunning, endTime) {
-	await setDoc(doc(statFirestore.db, statFirestore.timerCollection, 'temp'), {
+export async function sendTimer(isRunning, endTime) {
+	// Specify doc ID ('temp') to override each time, because no one wants timer log!
+	await setDoc(doc(statFirestore.dbRootRef, statFirestore.timerCollection, 'temp'), {
 		isRunning: isRunning,
-		// Timestamp data type for Firestore
 		endTime: Timestamp.fromDate(endTime),
 	}).then((result) => {
 		console.log(`Timer successfully sent! ${result}`);
@@ -21,12 +23,11 @@ export async function sendTimer(statFirestore, isRunning, endTime) {
 	});
 }
 
-export function listenTimer(statFirestore) {
-	const unsub = onSnapshot(doc(statFirestore.db, statFirestore.timerCollection, 'temp'), (doc) => {
-		const isTimerRunningOnOthers = doc.data().isRunning;
-		const endTime = doc.data().endTime.toDate();
+export function listenTimer() {
+	const unsub = onSnapshot(doc(statFirestore.dbRootRef, statFirestore.timerCollection, 'temp'), (doc) => {
+		const isTimerRunningOnOthers = doc.data() !== undefined ? doc.data().isRunning : false;
+		const endTime = doc.data() !== undefined ? doc.data().endTime.toDate() : undefined;
 
-		// 自分の状態と他クライアントの状態が異なる場合、他クライアントに合わせる
 		if (isTimerRunningLocally !== isTimerRunningOnOthers) {
 			console.log(`Change detected on Firestore; fetching...`);
 
@@ -44,26 +45,6 @@ export function listenTimer(statFirestore) {
 			}
 		}
 	});
-
-	//dbRootRef.collection(timerCollection).doc("temp").onSnapshot((doc) => {
-	//	const isTimerRunningOnOthers = doc.data().isRunning;
-	//	const endTime = doc.data().endTime.toDate();
-
-	//	// 自分の状態と他クライアントの状態が異なる場合、他クライアントに合わせる
-	//	if (isTimerRunningLocally !== isTimerRunningOnOthers) {
-	//		console.log(`Change detected on Firestore; fetching...`);
-
-	//		if (isTimerRunningOnOthers === true) {
-	//			console.log(`Timer on others has started.`);
-	//			startTimer(endTime);
-	//		} else {
-	//			console.log(`Timer on others has stopped.`);
-	//			stopTimer();
-	//		}
-
-	//		console.log(`Successfully changed my timer status!`);
-	//	}
-	//});
 }
 
 // Start Timer
@@ -136,13 +117,7 @@ function getTimeRemaining(endTime) {
 	const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
 	const days = Math.floor(total / (1000 * 60 * 60 * 24));
 
-	return {
-		total,
-		days,
-		hours,
-		minutes,
-		seconds
-	};
+	return { total, days, hours, minutes, seconds };
 }
 
 export function getEndTime(val) {

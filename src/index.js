@@ -3,7 +3,7 @@ import { Toast } from "bootstrap";
 import { addMyUserInfo, listenUserInfo } from "./user-info";
 import { listenAgenda, sendAgenda } from "./agenda";
 import { listenBgm } from "./bgm";
-import { getEndTime, listenTimer, sendTimer, timerSlider } from "./timer";
+import { getEndTime, listenTimer, sendTimer, initTimer, timerSlider, setCurrentValue } from "./timer";
 import { initTalkVisualizer } from "./voice-visualizer";
 import { initReactionDetector } from "./reaction";
 
@@ -56,8 +56,9 @@ $("#join-form").on('submit', async function (e) {
 		addMyUserInfo(statFirestore, options.uid, options.userName);
 
 		listenAgenda();
-		listenBgm(statFirestore.dbRootRef);
-		listenTimer(statFirestore.dbRootRef);
+		//listenBgm(statFirestore.dbRootRef);
+		initTimer();
+		listenTimer();
 		listenUserInfo();
 
 		//initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
@@ -92,8 +93,9 @@ $("#create-form").on('submit', async function (e) {
 
 		listenAgenda(statFirestore);
 		//listenBgm(statFirestore.dbRootRef);
-		//listenTimer(statFirestore.dbRootRef);
-		listenUserInfo(statFirestore);
+		initTimer();
+		listenTimer();
+		listenUserInfo();
 
 		//initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
 		//initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
@@ -134,7 +136,7 @@ $('#start-timer').on('click', function () {
 
 	const duration = $("#timer-duration").val();
 	const endTime = getEndTime(duration);
-	sendTimer(statFirestore, true, endTime);
+	sendTimer(true, endTime);
 });
 
 $('#stop-timer').on('click', function () {
@@ -151,7 +153,7 @@ $('#stop-timer').on('click', function () {
 
 	const duration = $("#timer-duration").val();
 	const endTime = getEndTime(duration);
-	sendTimer(statFirestore, false, endTime);
+	sendTimer(false, endTime);
 });
 
 // Share to Others
