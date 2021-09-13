@@ -1,9 +1,8 @@
-const audioSetCollection = "audioSet";
-const bgmCollection = "bgm";
-const uriAudioDefault = "https://firebasestorage.googleapis.com/v0/b/stat-web-6372a.appspot.com/o/bgm%2Fnature_sound.mp3?alt=media&token=aff3df2f-787d-43e6-be5f-2a51cae2abef";
+import { doc, getDoc, getDocs, setDoc, collection, onSnapshot, query, where, limit, Timestamp } from "@firebase/firestore";
+import { statFirestore } from "./firebase";
+import { options } from "./index";
 
-const audioElm = new Audio(uriAudioDefault);
-configureAudioDefault(audioElm);
+const audioElm = new Audio(statFirestore.uriAudioDefault);
 
 const selectorObj = $("#bgm-selector")[0];
 const playButton = $("#play-button")[0];
@@ -11,9 +10,32 @@ const stopButton = $("#stop-button")[0];
 const playbackIcon = $("#playback-icon")[0];
 const volumeSlider = $("#bgm-volume")[0];
 
-/*
- * Stop BGM when left.
- */
+let isPlayingLocally = false;
+
+export async function initBgm() {
+	configureAudioDefault(audioElm);
+	configureControlPanelDefault();
+
+	const collectionRef = collection(statFirestore.db, statFirestore.audioSetCollection);
+	const q = query(collectionRef, where('uri', '==', statFirestore.uriAudioDefault), limit(1));
+
+	const querySnapshot = await getDocs(q);
+
+	let defaultTrackId = '';
+	querySnapshot.forEach((doc) => {
+		defaultTrackId = doc.id;
+
+	});
+
+	const docRef = doc(statFirestore.dbRootRef, statFirestore.bmgCollection, 'temp');
+	await setDoc(docRef, {
+		currentTime: 0,
+		currentTrackId: defaultTrackId,
+		isChanged: false,
+		isPlaying: false,
+	})
+
+}
 
 /*
  * Send BGM status to database (Firestore)
@@ -25,21 +47,16 @@ $(playButton).on('click', function (e) {
 	$(playButton).html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 
 	const currentTime = audioElm.currentTime;
-
-	if (this.dataset.playing === "preSelect") {
-		if (selectorObj.value === "default") {
-			$(playButton).html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
-			$(playButton).attr('disabled', false);
-			console.log("BGM not selected.");
-		} else {
-			sendBgmStatus(0, true, true);
-		}
-	} else if (this.dataset.playing === 'false') { // when "Play" clicked
-		sendBgmStatus(currentTime, false, true);
-
-	} else if (this.dataset.playing === 'true') { // when "Pause" clicked
+	if (!isPlayingLocally) {
+		// Play/Resume audio
+		$(playButton).html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
+		$(playButton).attr('disabled', false);
+		sendBgmStatus(currentTime, true, true);
+		isPlayingLocally = true;
+	} else {
+		// Pause audio
 		sendBgmStatus(currentTime, false, false);
-
+		isPlayingLocally = false;
 	}
 
 	let state = this.getAttribute('aria-checked') === "true" ? true : false;
@@ -55,28 +72,25 @@ stopButton.addEventListener("click", function () {
  */
 $(volumeSlider).on("input", (e) => setAudioVolume(e.target.value));
 
-export function listenBgm(dbRootRef) {
-	dbRootRef.collection(bgmCollection).doc("temp")
-		.onSnapshot((doc) => {
-
-			const currentTrackId = doc.data().currentTrackId;
-			const currentTime = doc.data().currentTime;
-			const isPlaying = doc.data().isPlaying;
-			const isChanged = doc.data().isChanged;
-
-			if (!$(".meeting-area").is(":hidden")) {
+export function listenBgm() {
+	const unsub = onSnapshot(doc(statFirestore.dbRootRef, statFirestore.bmgCollection, 'temp'), (docSnapshot) => {
+		docSnapshot.docChanges().forEach((change) => {
+			if (change.type === "modified") {
+				const currentTrackId = change.doc.data().currentTrackId;
+				const currentTime = change.doc.data().currentTime;
+				const isPlaying = change.doc.data().isPlaying;
+				const isChanged = change.doc.data().isChanged;
 
 				if (isChanged) {
+					const docRef = doc(statFirestore.db, statFirestore.audioSetCollection, currentTrackId);
 
-					const docRef = db.collection(audioSetCollection).doc(currentTrackId);
-
-					docRef.get().then((doc) => {
-						if (doc.exists) {
+					getDoc(docRef, (doc) => {
+						if (doc.exists()) {
 							changeTrackTo(doc.data().uri, currentTime);
 							changeSelectorTo(doc.data().category);
 							configureControlPanelPlaying();
 						}
-					})
+					});
 				} else {
 					/*
 					 * If audio track is not changed but paused or resumed
@@ -92,30 +106,28 @@ export function listenBgm(dbRootRef) {
 					}
 				}
 			}
-		});
+		})
+	});
 }
 
-function sendBgmStatus(currentTime, isChanged, isPlaying) {
+export async function sendBgmStatus(currentTime, isChanged, isPlaying) {
 	const category = selectorObj.value;
+	const q = query(collection(statFirestore.db, statFirestore.audioSetCollection), where('category', '==', category), limit(1));
+	const docRef = doc(statFirestore.dbRootRef, statFirestore.bmgCollection, 'temp');
+	const querySnapshot = await getDocs(q);
 
-	db.collection(audioSetCollection).where("category", "==", category)
-		.limit(1)
-		.get()
-		.then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
+	querySnapshot.forEach((doc) => {
+		const currentTrackId = doc.id;
 
-				const currentTrackId = doc.id;
-				dbRootRef.collection(bgmCollection).doc("temp").set({
-					currentTime: currentTime,
-					currentTrackId: currentTrackId,
-					isChanged: isChanged,
-					isPlaying: isPlaying
-				});
-			});
-		})
-		.catch((error) => {
-			console.log("Error getting documents: ", error);
+		setDoc(docRef, {
+			currentTime: currentTime,
+			currentTrackId: currentTrackId,
+			isChanged: isChanged,
+			isPlaying: isPlaying,
+		}).catch((err) => {
+			console.error(`Error sending BGM: ${err}`);
 		});
+	});
 }
 
 function configureAudioDefault(audioElm) {

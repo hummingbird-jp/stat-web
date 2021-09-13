@@ -2,7 +2,7 @@ import { initFirestore, statFirestore } from "./firebase";
 import { Toast } from "bootstrap";
 import { addMyUserInfo, deactivateMe, listenUserInfo } from "./user-info";
 import { listenAgenda, sendAgenda } from "./agenda";
-import { listenBgm } from "./bgm";
+import { initBgm, listenBgm } from "./bgm";
 import { getEndTime, listenTimer, sendTimer, initTimer, timerSlider, setCurrentValue } from "./timer";
 import { initTalkVisualizer } from "./voice-visualizer";
 import { initReactionDetector } from "./reaction";
