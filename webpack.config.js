@@ -4,6 +4,10 @@ const srcPath = './src/';
 
 module.exports = {
 	mode: 'development',
+	devServer: {
+		static: 'dist',
+		open: true
+	},
 	devtool: 'eval-source-map',
 	entry: [
 		`${srcPath}agenda.js`,
