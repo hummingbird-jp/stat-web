@@ -1,4 +1,4 @@
-import { initFirestore } from "./firebase";
+import { initFirestore, statFirestore } from "./firebase";
 import { Toast } from "bootstrap";
 import { addMyUserInfo, listenUserInfo } from "./user-info";
 import { listenAgenda, sendAgenda } from "./agenda";
@@ -9,26 +9,15 @@ import { initReactionDetector } from "./reaction";
 
 const appUrl = 'https://stat-web-6372a.web.app/';
 
-const statFirestore = {
-	db: null,
-	dbRootRef: null,
-	usersCollection: 'users',
-	timerCollection: 'timer',
-	agendasCollection: 'agenda',
-	bmgCollection: 'bgm',
-	// TODO: add more collections
-};
-
 let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 let published = false;
 let localTracks;
 let remoteUsers;
-let options;
+export let options;
 let meetingId;
 
 initScreen();
 initAgora();
-
 
 $(() => {
 	var urlParams = new URL(location.href).searchParams;
@@ -66,10 +55,10 @@ $("#join-form").on('submit', async function (e) {
 
 		addMyUserInfo(statFirestore, options.uid, options.userName);
 
-		listenAgenda(statFirestore);
-		//listenBgm(statFirestore.dbRootRef);
-		//listenTimer(statFirestore.dbRootRef);
-		listenUserInfo(statFirestore);
+		listenAgenda();
+		listenBgm(statFirestore.dbRootRef);
+		listenTimer(statFirestore.dbRootRef);
+		listenUserInfo();
 
 		//initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
 		//initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
@@ -123,7 +112,7 @@ $(setAgendaButton).on('click', function (e) {
 	const agenda = $("#agenda-in").val();
 
 	$("#agenda-out").text(agenda);
-	sendAgenda(statFirestore.dbRootRef, agenda, options.userName);
+	sendAgenda(agenda);
 });
 
 // Timer
