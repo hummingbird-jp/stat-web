@@ -1,6 +1,6 @@
 import { initFirestore, statFirestore } from "./firebase";
 import { Toast } from "bootstrap";
-import { addMyUserInfo, listenUserInfo } from "./user-info";
+import { addMyUserInfo, deactivateMe, listenUserInfo } from "./user-info";
 import { listenAgenda, sendAgenda } from "./agenda";
 import { listenBgm } from "./bgm";
 import { getEndTime, listenTimer, sendTimer, initTimer, timerSlider, setCurrentValue } from "./timer";
@@ -48,21 +48,6 @@ $("#join-form").on('submit', async function (e) {
 		options.userName = $("#userNameJoin").val();
 
 		await joinOrCreate(options.token);
-
-		const { db, dbRootRef } = await initFirestore(meetingId);
-		statFirestore.db = db;
-		statFirestore.dbRootRef = dbRootRef;
-
-		addMyUserInfo(statFirestore, options.uid, options.userName);
-
-		listenAgenda();
-		//listenBgm(statFirestore.dbRootRef);
-		initTimer();
-		listenTimer();
-		listenUserInfo();
-
-		//initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
-		//initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
@@ -84,21 +69,6 @@ $("#create-form").on('submit', async function (e) {
 		options.token = await fetchNewTokenWithChannelName(channelName);
 
 		await joinOrCreate(options.token);
-
-		const { db, dbRootRef, rootDocId } = await initFirestore(meetingId);
-		statFirestore.db = db;
-		statFirestore.dbRootRef = dbRootRef;
-
-		addMyUserInfo(statFirestore, options.uid, options.userName);
-
-		listenAgenda(statFirestore);
-		//listenBgm(statFirestore.dbRootRef);
-		initTimer();
-		listenTimer();
-		listenUserInfo();
-
-		//initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
-		//initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
@@ -298,6 +268,19 @@ async function joinOrCreate(token) {
 	$("#join").text("Join");
 	$("#create").text("Create");
 	$("#create").attr("disabled", false);
+
+	await initFirestore(meetingId);
+	await initBgm();
+	initTimer();
+	initTalkVisualizer();
+	initReactionDetector();
+
+	addMyUserInfo();
+
+	listenUserInfo();
+	listenAgenda();
+	listenBgm();
+	listenTimer();
 }
 
 function truncate(str, n) {
@@ -308,12 +291,12 @@ function truncate(str, n) {
  * Stop all local and remote tracks then leave the channel.
  */
 async function leave() {
-	for (const trackName in localTracks) {
-		var track = localTracks[trackName];
+	for (const localTrack in localTracks) {
+		var track = localTracks[localTrack];
 		if (track) {
 			track.stop();
 			track.close();
-			localTracks[trackName] = undefined;
+			localTracks[localTrack] = undefined;
 		}
 	}
 
@@ -340,7 +323,7 @@ async function leave() {
 	}, 1000);
 
 	// Firestore
-	deactivateUser(options.uid);
+	deactivateMe();
 }
 
 /*
