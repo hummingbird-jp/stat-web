@@ -1,11 +1,13 @@
-import { doc, collection, setDoc, onSnapshot } from "@firebase/firestore";
+import { getFirestore, doc, collection, setDoc, onSnapshot, Timestamp } from "@firebase/firestore";
 
 export async function addMyUserInfo(statFirestore, uid, userName) {
 
-	await setDoc(doc(statFirestore.dbRootRef, "users", uid), {
+	const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, uid.toString());
+
+	await setDoc(docRef, {
 		uid: uid,
 		userName: userName,
-		timeJoined: firebase.firestore.Timestamp.now(),
+		timeJoined: Timestamp.now(),
 		isActive: true,
 		reaction: "😀"
 	}).then((result) => {
@@ -16,7 +18,7 @@ export async function addMyUserInfo(statFirestore, uid, userName) {
 }
 
 export function listenUserInfo(statFirestore) {
-	const unsub = onSnapshot(doc(statFirestore.db, statFirestore.usersCollection, uid), (snapshot) => {
+	const unsub = onSnapshot(collection(statFirestore.dbRootRef, statFirestore.usersCollection), (snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			const uid = change.doc.data().uid;
 			const userName = change.doc.data().userName;

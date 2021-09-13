@@ -12,9 +12,10 @@ const appUrl = 'https://stat-web-6372a.web.app/';
 const statFirestore = {
 	db: null,
 	dbRootRef: null,
-	usersCollectionRef: null,
 	usersCollection: 'users',
 	timerCollection: 'timer',
+	agendasCollection: 'agenda',
+	bmgCollection: 'bgm',
 	// TODO: add more collections
 };
 
@@ -59,8 +60,9 @@ $("#join-form").on('submit', async function (e) {
 
 		await joinOrCreate(options.token);
 
-		[statFirestore.db, statFirestore.dbRootRef] = initFirestore(meetingId);
-		//console.log("debug: ", initFirestore(meetingId));
+		const { db, dbRootRef } = await initFirestore(meetingId);
+		statFirestore.db = db;
+		statFirestore.dbRootRef = dbRootRef;
 
 		addMyUserInfo(statFirestore, options.uid, options.userName);
 
@@ -93,8 +95,9 @@ $("#create-form").on('submit', async function (e) {
 
 		await joinOrCreate(options.token);
 
-		//[statFirestore.db, statFirestore.dbRootRef] = initFirestore(meetingId);
-		initFirestore(statFirestore, meetingId);
+		const { db, dbRootRef, rootDocId } = await initFirestore(meetingId);
+		statFirestore.db = db;
+		statFirestore.dbRootRef = dbRootRef;
 
 		addMyUserInfo(statFirestore, options.uid, options.userName);
 
