@@ -1,7 +1,9 @@
+import { doc, collection, query, addDoc, getDoc, getDocs, orderBy, limit, Timestamp } from "@firebase/firestore";
+import { statFirestore } from "./firebase";
+import { options } from "./index";
 const colorPalette = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
-const talkDataCollection = "talkData";
 
-export function initTalkVisualizer(dbRootRef, uid, userName) {
+export function initTalkVisualizer() {
 
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {
@@ -143,9 +145,9 @@ export function initTalkVisualizer(dbRootRef, uid, userName) {
 				talkDataSendTrigger.push(1);
 
 				const talkDataAvg = talkDataArray.reduce((a, b) => a + b) / talkDataArray.length;
-				sendTalkDataToFirebase(dbRootRef, talkDataAvg, uid, userName);
+				sendTalkDataToFirebase(talkDataAvg);
 
-				updateTalkBar(dbRootRef);
+				updateTalkBar();
 
 			} else {
 				talkDataSendTrigger.push(0);
@@ -181,25 +183,21 @@ export function initTalkVisualizer(dbRootRef, uid, userName) {
 
 }
 
-function sendTalkDataToFirebase(dbRootRef, value, uid, userName) {
+async function sendTalkDataToFirebase(value) {
 
-	dbRootRef.collection(talkDataCollection).add({
-		userName: userName,
-		uid: uid,
-		timestamp: firebase.firestore.Timestamp.now(),
+	const collectionRef = collection(statFirestore.dbRootRef, statFirestore.talkDataCollection);
+	await addDoc(collectionRef, {
+		userName: options.userName,
+		uid: options.uid,
+		timestamp: Timestamp.now(),
 		talkValue: value
 	})
-		.then(function () {
-			console.log("log: talkdata sent", Math.round(value), userName);
-		})
-		.catch((err) => {
-			console.error("Error adding document: ", err);
-		});
 }
 
-async function getTalkDataFromFirebase(dbRootRef) {
+async function getTalkDataFromFirebase() {
 	let users = [];
-	const querySnapshotUser = await dbRootRef.collection(usersCollection).get()
+	const collectionRef = collection(statFirestore.dbRootRef, statFirestore.usersCollection);
+	const querySnapshotUser = await getDocs(collectionRef);
 	querySnapshotUser.forEach((doc) => {
 		if (doc.data().isActive) {
 			users.push({
@@ -210,7 +208,9 @@ async function getTalkDataFromFirebase(dbRootRef) {
 		}
 	});
 
-	const querySnapshotTalkData = await dbRootRef.collection(talkDataCollection).orderBy("timestamp", "desc").limit(10).get()
+	const talkDataRef = collection(statFirestore.dbRootRef, statFirestore.talkDataCollection)
+	const q = query(talkDataRef, orderBy("timestamp", "desc"), limit(10));
+	const querySnapshotTalkData = await getDocs(q);
 
 	querySnapshotTalkData.forEach((doc) => {
 		for (let i = 0; i < users.length; i++) {
@@ -231,7 +231,7 @@ async function getTalkDataFromFirebase(dbRootRef) {
 function updateTalkBar() {
 	const canvas = document.getElementById("talk-amount-visualizer");
 	const canvasCtx = canvas.getContext("2d");
-	getTalkDataFromFirebase(dbRootRef).then(result => {
+	getTalkDataFromFirebase().then(result => {
 		let sum = 0;
 		for (let i = 0; i < result.length; i++) {
 			sum += result[i].talkSum;

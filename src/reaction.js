@@ -1,7 +1,11 @@
+import { doc, updateDoc } from "@firebase/firestore";
+import { statFirestore } from "./firebase";
+import { options } from "./index";
+
 const videoElm = document.createElement("video");
 let blazeFaceModel;
 
-const reactionModule = (function (dbRootRef, usersCollection, uid) {
+const reactionModule = (function () {
 	let reactionMethods = {};
 	let renderFrame;
 	let shouldContinue = true;
@@ -92,7 +96,7 @@ const reactionModule = (function (dbRootRef, usersCollection, uid) {
 				const currentReaction = $("#local-player-reaction").text();
 				if (currentReaction != '😀') {
 					$("#local-player-reaction").text("😀");
-					sendMyReaction(dbRootRef, usersCollection, uid, $("#local-player-reaction").text());
+					sendMyReaction($("#local-player-reaction").text());
 				}
 			}
 
@@ -129,8 +133,8 @@ const reactionModule = (function (dbRootRef, usersCollection, uid) {
 })();
 
 // TODO: use buttons or other controller to init and begin.
-export function initReactionDetector(dbRootRef, usersCollection, uid) {
-	reactionModule.init(dbRootRef, usersCollection, uid);
+export function initReactionDetector() {
+	reactionModule.init();
 }
 
 /*
@@ -175,13 +179,9 @@ function fft0(freal) {
 	return fftrec(f, T, N);
 }
 
-function ifft0(F) {
-	const N = F.length, T = 2 * Math.PI / N;
-	return fftrec(F, T, N).map(([r, i]) => [r / N, i / N]);
-}
-
-function sendMyReaction(dbRootRef, usersCollection, uid, text) {
-	dbRootRef.collection(usersCollection).doc(uid.toString()).update({
+function sendMyReaction(text) {
+	const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid.toString());
+	updateDoc(docRef, {
 		reaction: text
 	})
 }
