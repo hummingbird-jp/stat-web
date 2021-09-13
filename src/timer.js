@@ -12,8 +12,10 @@ export function initTimer() {
 
 // Firestore
 export async function sendTimer(isRunning, endTime) {
+	const docRef = doc(statFirestore.dbRootRef, statFirestore.timerCollection, 'temp');
+
 	// Specify doc ID ('temp') to override each time, because no one wants timer log!
-	await setDoc(doc(statFirestore.dbRootRef, statFirestore.timerCollection, 'temp'), {
+	await setDoc(docRef, {
 		isRunning: isRunning,
 		endTime: Timestamp.fromDate(endTime),
 	}).then((result) => {
@@ -24,7 +26,9 @@ export async function sendTimer(isRunning, endTime) {
 }
 
 export function listenTimer() {
-	const unsub = onSnapshot(doc(statFirestore.dbRootRef, statFirestore.timerCollection, 'temp'), (doc) => {
+	const docRef = doc(statFirestore.dbRootRef, statFirestore.timerCollection, 'temp');
+
+	const unsub = onSnapshot(docRef, (doc) => {
 		const isTimerRunningOnOthers = doc.data() !== undefined ? doc.data().isRunning : false;
 		const endTime = doc.data() !== undefined ? doc.data().endTime.toDate() : undefined;
 
