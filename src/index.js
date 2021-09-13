@@ -1,4 +1,5 @@
 import { initFirestore, statFirestore } from "./firebase";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Toast } from "bootstrap";
 import { addMyUserInfo, deactivateMe, listenUserInfo } from "./user-info";
 import { listenAgenda, sendAgenda } from "./agenda";
@@ -6,6 +7,7 @@ import { initBgm, listenBgm } from "./bgm";
 import { getEndTime, listenTimer, sendTimer, initTimer, timerSlider, setCurrentValue } from "./timer";
 import { initTalkVisualizer } from "./voice-visualizer";
 import { initReactionDetector } from "./reaction";
+import './stylesheets/styles.css';
 
 const appUrl = 'https://stat-web-6372a.web.app/';
 
