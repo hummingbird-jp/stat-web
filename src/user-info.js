@@ -1,12 +1,14 @@
-import { getFirestore, doc, collection, setDoc, onSnapshot, Timestamp } from "@firebase/firestore";
+import { doc, collection, setDoc, getDoc, updateDoc, onSnapshot, Timestamp } from "@firebase/firestore";
+import { statFirestore } from "./firebase";
+import { options } from "./index";
 
-export async function addMyUserInfo(statFirestore, uid, userName) {
+export async function addMyUserInfo() {
 
-	const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, uid.toString());
+	const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid.toString());
 
 	await setDoc(docRef, {
-		uid: uid,
-		userName: userName,
+		uid: options.uid,
+		userName: options.userName,
 		timeJoined: Timestamp.now(),
 		isActive: true,
 		reaction: "😀"
@@ -17,7 +19,7 @@ export async function addMyUserInfo(statFirestore, uid, userName) {
 	});
 }
 
-export function listenUserInfo(statFirestore) {
+export async function listenUserInfo() {
 	const unsub = onSnapshot(collection(statFirestore.dbRootRef, statFirestore.usersCollection), (snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			const uid = change.doc.data().uid;
@@ -52,48 +54,14 @@ export function listenUserInfo(statFirestore) {
 		});
 	});
 
-	//dbRootRef.collection(usersCollection).onSnapshot((snapshot) => {
-	//	snapshot.docChanges().forEach((change) => {
-	//const uid = change.doc.data().uid;
-	//const userName = change.doc.data().userName;
-	//const reaction = change.doc.data().reaction;
-
-	//if (change.type === "added") {
-	//	$(`#player-wrapper-${uid}`).children('.player-name').text(userName);
-	//}
-
-	//if (change.type === "modified") {
-
-	//	// Listen to reaction change
-	//	const currentUserReaction = $(`#player-reaction-${uid}`).text();
-	//	if (reaction != currentUserReaction) {
-
-	//		$(`#player-reaction-${uid}`).text(reaction);
-
-	//	} else {
-
-	//		const isActive = change.doc.data().isActive;
-	//		if (isActive) {
-	//			// userName changed
-	//			const uid = change.doc.data().uid;
-	//			const userName = change.doc.data().userName;
-	//			$(`#player-wrapper-${uid}`).children('.player-name').text(userName);
-	//		}
-	//		// If user deactivated, it will be automatically updated.
-	//		updateTalkBar();
-
-	//	}
-	//}
-	//	});
-	//});
-
-	$("#local-player-name").on('click', function () {
+	$("#local-player-name").on('click', async function () {
 		const oldUserName = options.userName;
 		let newUserName = prompt("Please enter your name:", oldUserName);
 		if (newUserName == null || newUserName == "") {
 			newUserName = oldUserName;
 		} else {
-			dbRootRef.collection(usersCollection).doc(options.uid.toString()).update({
+			const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid.toString());
+			const updateUserName = await updateDoc(docRef, {
 				userName: newUserName
 			});
 		}
@@ -102,15 +70,14 @@ export function listenUserInfo(statFirestore) {
 	});
 }
 
-export function deactivateUser(dbRootRef, uid) {
-	const docRef = dbRootRef.collection(usersCollection).doc(uid.toString());
-	docRef.get().then((doc) => {
-		if (doc.exists) {
-			docRef.update({
-				isActive: false
-			})
-		} else {
-			console.error(`Error: user ${uid} does not exists!`)
-		}
-	});
+export async function deactivateMe() {
+	const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid.toString());
+	const docSnap = await getDoc(docRef);
+	if (docSnap.exists()) {
+		updateDoc(docRef, {
+			isActive: false
+		})
+	} else {
+		console.error(`Error: user ${uid} does not exists!`)
+	};
 }
