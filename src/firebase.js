@@ -19,5 +19,5 @@ export function initFirestore(meetingId) {
 		lastTimeActive: firebase.firestore.Timestamp.now()
 	})
 
-	return dbRootRef;
+	return { db: db, dbRootRef: dbRootRef };
 }

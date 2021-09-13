@@ -1,27 +1,21 @@
-const usersCollection = "users";
+import { doc, setDoc, onSnapshot } from "@firebase/firestore";
 
-export function addMyUserInfo(dbRootRef, uid, userName) {
-	dbRootRef.collection(usersCollection).doc(uid.toString()).set({
+export async function addMyUserInfo(statFirestore, uid, userName) {
+	await setDoc(doc(statFirestore.db, statFirestore.usersCollection, uid), {
 		uid: uid,
 		userName: userName,
 		timeJoined: firebase.firestore.Timestamp.now(),
 		isActive: true,
 		reaction: "😀"
-	}).then(() => {
-		console.log(`User data sent.`);
+	}).then((result) => {
+		console.log(`Successfully sent user data. ${result}`);
 	}).catch((err) => {
-		console.error(`Error: ${err}`);
+		console.error(`Error sending user data: ${err}`);
 	});
 }
 
-export function sendMyReaction(dbRootRef, uid, text) {
-	dbRootRef.collection(usersCollection).doc(uid.toString()).update({
-		reaction: text
-	})
-}
-
-export function listenUserInfo(dbRootRef) {
-	dbRootRef.collection(usersCollection).onSnapshot((snapshot) => {
+export function listenUserInfo(statFirestore) {
+	const unsub = onSnapshot(doc(statFirestore.db, statFirestore.usersCollection, uid), (snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			const uid = change.doc.data().uid;
 			const userName = change.doc.data().userName;
@@ -50,20 +44,47 @@ export function listenUserInfo(dbRootRef) {
 					}
 					// If user deactivated, it will be automatically updated.
 					updateTalkBar();
-
 				}
 			}
+		});
+	});
 
-			//if (change.type === "modified") {
-			//	console.log("User modified! ", change.doc.data());
-			//}
-			//if (change.type === "removed") {
-			//	console.log("User removed! ", change.doc.data());
-			//}
-		})
-	})
+	//dbRootRef.collection(usersCollection).onSnapshot((snapshot) => {
+	//	snapshot.docChanges().forEach((change) => {
+	//const uid = change.doc.data().uid;
+	//const userName = change.doc.data().userName;
+	//const reaction = change.doc.data().reaction;
 
-	$("#local-player-name").click(function () {
+	//if (change.type === "added") {
+	//	$(`#player-wrapper-${uid}`).children('.player-name').text(userName);
+	//}
+
+	//if (change.type === "modified") {
+
+	//	// Listen to reaction change
+	//	const currentUserReaction = $(`#player-reaction-${uid}`).text();
+	//	if (reaction != currentUserReaction) {
+
+	//		$(`#player-reaction-${uid}`).text(reaction);
+
+	//	} else {
+
+	//		const isActive = change.doc.data().isActive;
+	//		if (isActive) {
+	//			// userName changed
+	//			const uid = change.doc.data().uid;
+	//			const userName = change.doc.data().userName;
+	//			$(`#player-wrapper-${uid}`).children('.player-name').text(userName);
+	//		}
+	//		// If user deactivated, it will be automatically updated.
+	//		updateTalkBar();
+
+	//	}
+	//}
+	//	});
+	//});
+
+	$("#local-player-name").on('click', function () {
 		const oldUserName = options.userName;
 		let newUserName = prompt("Please enter your name:", oldUserName);
 		if (newUserName == null || newUserName == "") {
@@ -75,7 +96,7 @@ export function listenUserInfo(dbRootRef) {
 		}
 		options.userName = newUserName;
 		$("#local-player-name").text(`${newUserName} (You)`);
-	})
+	});
 }
 
 export function deactivateUser(dbRootRef, uid) {

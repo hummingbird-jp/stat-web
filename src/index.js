@@ -3,13 +3,19 @@ import { Toast } from "bootstrap";
 import { addMyUserInfo, listenUserInfo } from "./user-info";
 import { listenAgenda, sendAgenda } from "./agenda";
 import { listenBgm } from "./bgm";
-import { listenTimer } from "./timer";
+import { getEndTime, listenTimer, sendTimer, timerSlider } from "./timer";
 import { initTalkVisualizer } from "./voice-visualizer";
 import { initReactionDetector } from "./reaction";
 
 const appUrl = 'https://stat-web-6372a.web.app/';
 
-let dbRootRef;
+const statFirestore = {
+	db: null,
+	dbRootRef: null,
+	usersCollection: 'users',
+	timerCollection: 'timer',
+	// TODO: add more collections
+};
 
 let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 let published = false;
@@ -52,17 +58,17 @@ $("#join-form").on('submit', async function (e) {
 
 		await joinOrCreate(options.token);
 
-		dbRootRef = initFirestore(meetingId);
+		statFirestore = initFirestore(meetingId);
 
-		addMyUserInfo(dbRootRef, usersCollection, options.uid, options.userName);
+		addMyUserInfo(statFirestore, options.uid, options.userName);
 
-		listenAgenda(dbRootRef);
-		listenBgm(dbRootRef);
-		listenTimer(dbRootRef);
-		listenUserInfo(dbRootRef);
+		listenAgenda(statFirestore.dbRootRef);
+		listenBgm(statFirestore.dbRootRef);
+		listenTimer(statFirestore.dbRootRef);
+		listenUserInfo(statFirestore.dbRootRef);
 
-		initTalkVisualizer(dbRootRef, options.uid, options.userName);
-		initReactionDetector();
+		initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
+		initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
@@ -85,17 +91,17 @@ $("#create-form").on('submit', async function (e) {
 
 		await joinOrCreate(options.token);
 
-		dbRootRef = initFirestore(meetingId);
+		statFirestore.dbRootRef = initFirestore(meetingId);
 
-		addMyUserInfo(dbRootRef, options.uid, options.userName);
+		addMyUserInfo(statFirestore, options.uid, options.userName);
 
-		listenAgenda(dbRootRef);
-		listenBgm(dbRootRef);
-		listenTimer(dbRootRef);
-		listenUserInfo(dbRootRef);
+		listenAgenda(statFirestore.dbRootRef);
+		listenBgm(statFirestore.dbRootRef);
+		listenTimer(statFirestore.dbRootRef);
+		listenUserInfo(statFirestore.dbRootRef);
 
-		initTalkVisualizer(dbRootRef, options.uid, options.userName);
-		initReactionDetector();
+		initTalkVisualizer(statFirestore.dbRootRef, options.uid, options.userName);
+		initReactionDetector(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid);
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
@@ -111,7 +117,46 @@ $(setAgendaButton).on('click', function (e) {
 	const agenda = $("#agenda-in").val();
 
 	$("#agenda-out").text(agenda);
-	sendAgenda(dbRootRef, agenda, options.userName);
+	sendAgenda(statFirestore.dbRootRef, agenda, options.userName);
+});
+
+// Timer
+$(timerSlider).on("input", (e) => {
+	setCurrentValue(e.target.value)
+});
+
+$('#start-timer').on('click', function () {
+	$('#start-timer').attr('disabled', true);
+	$("#start-timer").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
+
+	setTimeout(() => {
+		$("#timer-slider").css("visibility", "hidden");
+		$("#start-timer").css("display", "none");
+		$("#stop-timer").css("display", "inline");
+		$('#start-timer').html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
+		$('#start-timer').attr('disabled', false);
+	}, 1000);
+
+	const duration = $("#timer-duration").val();
+	const endTime = getEndTime(duration);
+	sendTimer(statFirestore, true, endTime);
+});
+
+$('#stop-timer').on('click', function () {
+	$('#stop-timer').attr('disabled', true);
+	$("#stop-timer").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`)
+
+	setTimeout(() => {
+		$('#stop-timer').html(`<img src="icons/stop_black_24dp.svg" alt="" class="material-icons">`);
+		$("#timer-slider").css("visibility", "visible");
+		$("#stop-timer").css("display", "none");
+		$("#start-timer").css("display", "inline");
+		$('#stop-timer').attr('disabled', false);
+	}, 1000);
+
+	const duration = $("#timer-duration").val();
+	const endTime = getEndTime(duration);
+	sendTimer(statFirestore, false, endTime);
 });
 
 // Share to Others

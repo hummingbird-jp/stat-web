@@ -1,69 +1,28 @@
-const timerSlider = $("#timer-duration")[0];
-const timerCollection = "timer";
+import { doc, setDoc, onSnapshot, Timestamp } from "@firebase/firestore";
+
+export const timerSlider = $("#timer-duration")[0];
 let isTimerRunningLocally = false;
 let lockObj = false;
 
-$(timerSlider).on("input", (e) => {
-	setCurrentValue(e.target.value)
-});
-
-$('#start-timer').click(function (e) {
-	e.preventDefault();
-
-	$('#start-timer').attr('disabled', true);
-	$("#start-timer").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
-
-	setTimeout(() => {
-		$("#timer-slider").css("visibility", "hidden");
-		$("#start-timer").css("display", "none");
-		$("#stop-timer").css("display", "inline");
-		$('#start-timer').html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
-		$('#start-timer').attr('disabled', false);
-	}, 1000);
-
-	const duration = $("#timer-duration").val();
-	const endTime = getEndTime(duration);
-	sendTimer(true, endTime);
-});
-
-$('#stop-timer').click(function (e) {
-	e.preventDefault();
-
-	$('#stop-timer').attr('disabled', true);
-	$("#stop-timer").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`)
-
-	setTimeout(() => {
-		$('#stop-timer').html(`<img src="icons/stop_black_24dp.svg" alt="" class="material-icons">`);
-		$("#timer-slider").css("visibility", "visible");
-		$("#stop-timer").css("display", "none");
-		$("#start-timer").css("display", "inline");
-		$('#stop-timer').attr('disabled', false);
-	}, 1000);
-
-	const duration = $("#timer-duration").val();
-	const endTime = getEndTime(duration);
-	sendTimer(false, endTime)
-});
-
-setCurrentValue($("#timer-duration").val());
+export function initTimer() {
+	setCurrentValue($("#timer-duration").val());
+}
 
 // Firestore
-export function sendTimer(dbRootRef, isRunning, endTime) {
-
-	dbRootRef.collection(timerCollection).doc("temp").set({
+export async function sendTimer(statFirestore, isRunning, endTime) {
+	await setDoc(doc(statFirestore.db, statFirestore.timerCollection, 'temp'), {
 		isRunning: isRunning,
 		// Timestamp data type for Firestore
-		endTime: firebase.firestore.Timestamp.fromDate(endTime),
-	}).then(() => {
-		console.log(`Timer successfully sent!`);
+		endTime: Timestamp.fromDate(endTime),
+	}).then((result) => {
+		console.log(`Timer successfully sent! ${result}`);
 	}).catch((err) => {
-		console.log(`Error sending timer: ${err}`);
+		console.error(`Error sending timer: ${err}`);
 	});
 }
 
-export function listenTimer(dbRootRef) {
-
-	dbRootRef.collection(timerCollection).doc("temp").onSnapshot((doc) => {
+export function listenTimer(statFirestore) {
+	const unsub = onSnapshot(doc(statFirestore.db, statFirestore.timerCollection, 'temp'), (doc) => {
 		const isTimerRunningOnOthers = doc.data().isRunning;
 		const endTime = doc.data().endTime.toDate();
 
@@ -71,23 +30,46 @@ export function listenTimer(dbRootRef) {
 		if (isTimerRunningLocally !== isTimerRunningOnOthers) {
 			console.log(`Change detected on Firestore; fetching...`);
 
-			if (isTimerRunningOnOthers === true) {
-				console.log(`Timer on others has started.`);
-				startTimer(endTime);
-			} else {
-				console.log(`Timer on others has stopped.`);
-				stopTimer();
+			try {
+				if (isTimerRunningOnOthers === true) {
+					console.log(`Timer on others has started.`);
+					startTimer(endTime);
+				} else {
+					console.log(`Timer on others has stopped.`);
+					stopTimer();
+				}
+				console.log(`Successfully changed my timer status!`);
+			} catch (error) {
+				console.error(`Error fetching timer: ${error}`);
 			}
-
-			console.log(`Successfully changed my timer status!`);
 		}
 	});
+
+	//dbRootRef.collection(timerCollection).doc("temp").onSnapshot((doc) => {
+	//	const isTimerRunningOnOthers = doc.data().isRunning;
+	//	const endTime = doc.data().endTime.toDate();
+
+	//	// 自分の状態と他クライアントの状態が異なる場合、他クライアントに合わせる
+	//	if (isTimerRunningLocally !== isTimerRunningOnOthers) {
+	//		console.log(`Change detected on Firestore; fetching...`);
+
+	//		if (isTimerRunningOnOthers === true) {
+	//			console.log(`Timer on others has started.`);
+	//			startTimer(endTime);
+	//		} else {
+	//			console.log(`Timer on others has stopped.`);
+	//			stopTimer();
+	//		}
+
+	//		console.log(`Successfully changed my timer status!`);
+	//	}
+	//});
 }
 
 // Start Timer
 function startTimer(endTime) {
 	lockObj = false;
-	initTimer('clockdiv', endTime);
+	execTimer('clockdiv', endTime);
 	isTimerRunningLocally = true;
 }
 
@@ -99,7 +81,7 @@ function stopTimer() {
 }
 
 // Timer Utils
-function initTimer(id, endTime) {
+function execTimer(id, endTime) {
 	const timer = document.getElementById(id);
 
 	const minutesSpan = timer.querySelector('.minutes');
@@ -125,7 +107,7 @@ function initTimer(id, endTime) {
 			const timerSound = new Audio("sounds/alarm.wav");
 			timerSound.play();
 
-			initTimer(id, endTime);
+			execTimer(id, endTime);
 		}
 	}
 
@@ -133,7 +115,7 @@ function initTimer(id, endTime) {
 	const timeinterval = setInterval(updateTimer, 1000);
 }
 
-function setCurrentValue(val) {
+export function setCurrentValue(val) {
 	const timer = $("#clockdiv")[0];
 
 	const minutesSpan = timer.querySelector('.minutes');
@@ -163,6 +145,6 @@ function getTimeRemaining(endTime) {
 	};
 }
 
-function getEndTime(val) {
+export function getEndTime(val) {
 	return new Date(Date.parse(new Date()) + val * 60 * 1000);
 }

@@ -1,7 +1,7 @@
 const videoElm = document.createElement("video");
 let blazeFaceModel;
 
-var reactionModule = (function () {
+const reactionModule = (function (dbRootRef, usersCollection, uid) {
 	let reactionMethods = {};
 	let renderFrame;
 	let shouldContinue = true;
@@ -20,19 +20,13 @@ var reactionModule = (function () {
 		});
 
 		blazeFaceModel = await blazeface.load();
-	}
 
-	reactionMethods.begin = function () {
 		shouldContinue = true;
 
-		// For test visualizer
-		//const canvas = document.querySelector('.visualizer');
-		//const canvasCtx = canvas.getContext("2d");
-		//const WIDTH = canvas.width;
-		//const HEIGHT = canvas.height;
 		const bufferLength = 32;
 		const dataArrayX = new Array(bufferLength).fill(0); // 左右 = "No"
 		const dataArrayY = new Array(bufferLength).fill(0); // 上下 = "Yes" Nodding
+
 		// For the detector
 		let eyeMovedLog = [];
 		let detector = 0;
@@ -69,41 +63,10 @@ var reactionModule = (function () {
 			}
 
 			// Normalize data (each_data - average)
-			//const arrayX = normalize(dataArrayX);
 			const arrayY = normalize(dataArrayY);
 
-			//canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-			//canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-			//const drawTimeSeries = function (array) {
-			//	canvasCtx.lineWidth = 2;
-			//	canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
-
-			//	canvasCtx.beginPath();
-
-			//	const sliceWidth = WIDTH * 1.0 / array.length;
-			//	const center = HEIGHT / 2;
-			//	let x = 0;
-
-			//	for (var i = 0; i < array.length; i++) {
-			//		const y = center + array[i] / 2;
-			//		if (i === 0) {
-			//			canvasCtx.moveTo(x, y);
-			//		} else {
-			//			canvasCtx.lineTo(x, y);
-			//		}
-			//		x += sliceWidth;
-			//	}
-
-			//	canvasCtx.lineTo(canvas.width, canvas.height / 2);
-			//	canvasCtx.stroke();
-			//};
-
-			//drawTimeSeries(arrayX);
-			//drawTimeSeries(arrayY);
-
 			// Judge nodding
-			Fx = fft0(arrayY);
+			const Fx = fft0(arrayY);
 			const watchingIdx = 1; // Pay attention to index = 1
 			const amplitude = Math.sqrt(Fx[watchingIdx][0] ^ 2 + Fx[watchingIdx][1] ^ 2);
 
@@ -129,7 +92,7 @@ var reactionModule = (function () {
 				const currentReaction = $("#local-player-reaction").text();
 				if (currentReaction != '😀') {
 					$("#local-player-reaction").text("😀");
-					sendMyReaction($("#local-player-reaction").text())
+					sendMyReaction(dbRootRef, usersCollection, uid, $("#local-player-reaction").text());
 				}
 			}
 
@@ -166,10 +129,8 @@ var reactionModule = (function () {
 })();
 
 // TODO: use buttons or other controller to init and begin.
-reactionModule.init();
-
-export function initReactionDetector() {
-	reactionModule.begin();
+export function initReactionDetector(dbRootRef, usersCollection, uid) {
+	reactionModule.init(dbRootRef, usersCollection, uid);
 }
 
 /*
@@ -177,13 +138,9 @@ export function initReactionDetector() {
  */
 function normalize(array) {
 	let result = new Array(array.length);
-	const max = Math.max(...array);
-	const min = Math.min(...array);
 	const avg = array.reduce((a, b) => a + b) / array.length;
 
 	for (let i = 0; i < array.length; i++) {
-		//result[i] = (array[i] - min) / (max - min);
-		// Note: Above is the true normalization, but dont use.
 		result[i] = array[i] - avg;
 	}
 
@@ -217,7 +174,14 @@ function fft0(freal) {
 	const N = f.length, T = -2 * Math.PI / N;
 	return fftrec(f, T, N);
 }
+
 function ifft0(F) {
 	const N = F.length, T = 2 * Math.PI / N;
 	return fftrec(F, T, N).map(([r, i]) => [r / N, i / N]);
+}
+
+function sendMyReaction(dbRootRef, usersCollection, uid, text) {
+	dbRootRef.collection(usersCollection).doc(uid.toString()).update({
+		reaction: text
+	})
 }
