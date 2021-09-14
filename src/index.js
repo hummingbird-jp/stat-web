@@ -201,11 +201,6 @@ function initScreen() {
 
 	$(".meeting-area").hide();
 	$(".control-button-group").hide();
-
-	if (typeof audioElm != "undefined") {
-		audioElm.pause();
-		configureDefaultControlPanel(); // bgm buttons default setting
-	}
 }
 
 function initAgora() {
@@ -275,7 +270,7 @@ async function joinOrCreate(token) {
 	$("#create").attr("disabled", false);
 
 	await firebase.initFirestore(meetingId);
-	await bgm.initBgm();
+	bgm.init();
 	timer.initTimer();
 	voiceVisualizer.initTalkVisualizer();
 	reaction.initReactionDetector();
@@ -284,7 +279,6 @@ async function joinOrCreate(token) {
 
 	userInfo.listenUserInfo();
 	agenda.listenAgenda();
-	bgm.listenBgm();
 	timer.listenTimer();
 }
 
