@@ -2,7 +2,6 @@
 	"name": "stat-web",
 	"version": "1.0.0",
 	"description": "This is a web-rtc project made by hummingbird.",
-	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "webpack-dev-server --inline --hot --config webpack.config.js",
