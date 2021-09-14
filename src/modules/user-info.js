@@ -1,11 +1,11 @@
 import * as firestore from "@firebase/firestore";
 
 import * as _ from "..";
-import * as firebase from "./firebase";
+import * as statFirebase from "./stat_firebase";
 
 export async function addMyUserInfo() {
 
-	const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection, _.options.uid.toString());
+	const docRef = firestore.doc(statFirebase.statFirestore.dbRootRef, statFirebase.statFirestore.usersCollection, _.options.uid.toString());
 
 	await firestore.setDoc(docRef, {
 		uid: _.options.uid,
@@ -21,7 +21,7 @@ export async function addMyUserInfo() {
 }
 
 export async function listenUserInfo() {
-	const unsub = firestore.onSnapshot(firestore.collection(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection), (snapshot) => {
+	const unsub = firestore.onSnapshot(firestore.collection(statFirebase.statFirestore.dbRootRef, statFirebase.statFirestore.usersCollection), (snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			const uid = change.doc.data().uid;
 			const userName = change.doc.data().userName;
@@ -61,7 +61,7 @@ export async function listenUserInfo() {
 		if (newUserName == null || newUserName == "") {
 			newUserName = oldUserName;
 		} else {
-			const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection, _.options.uid.toString());
+			const docRef = firestore.doc(statFirebase.statFirestore.dbRootRef, statFirebase.statFirestore.usersCollection, _.options.uid.toString());
 			const updateUserName = await firestore.updateDoc(docRef, {
 				userName: newUserName
 			});
@@ -72,7 +72,7 @@ export async function listenUserInfo() {
 }
 
 export async function deactivateMe() {
-	const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection, _.options.uid.toString());
+	const docRef = firestore.doc(statFirebase.statFirestore.dbRootRef, statFirebase.statFirestore.usersCollection, _.options.uid.toString());
 	const docSnap = await firestore.getDoc(docRef);
 	if (docSnap.exists()) {
 		firestore.updateDoc(docRef, {

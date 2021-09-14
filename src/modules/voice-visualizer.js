@@ -1,7 +1,7 @@
 import * as firestore from "@firebase/firestore";
 
 import * as _ from "..";
-import * as firebase from "./firebase";
+import * as statFirebase from "./stat_firebase";
 
 const colorPalette = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
 
@@ -187,7 +187,7 @@ export function initTalkVisualizer() {
 
 async function sendTalkDataToFirebase(value) {
 
-	const collectionRef = firestore.collection(firebase.statFirestore.dbRootRef, firebase.statFirestore.talkDataCollection);
+	const collectionRef = firestore.collection(statFirebase.statFirestore.dbRootRef, statFirebase.statFirestore.talkDataCollection);
 	await firestore.addDoc(collectionRef, {
 		userName: _.options.userName,
 		uid: _.options.uid,
@@ -198,7 +198,7 @@ async function sendTalkDataToFirebase(value) {
 
 async function getTalkDataFromFirebase() {
 	let users = [];
-	const collectionRef = firestore.collection(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection);
+	const collectionRef = firestore.collection(statFirebase.statFirestore.dbRootRef, statFirebase.statFirestore.usersCollection);
 	const querySnapshotUser = await firestore.getDocs(collectionRef);
 	querySnapshotUser.forEach((doc) => {
 		if (doc.data().isActive) {
@@ -210,7 +210,7 @@ async function getTalkDataFromFirebase() {
 		}
 	});
 
-	const talkDataRef = firestore.collection(firebase.statFirestore.dbRootRef, firebase.statFirestore.talkDataCollection)
+	const talkDataRef = firestore.collection(statFirebase.statFirestore.dbRootRef, statFirebase.statFirestore.talkDataCollection)
 	const q = firestore.query(talkDataRef, firestore.orderBy("timestamp", "desc"), firestore.limit(10));
 	const querySnapshotTalkData = await firestore.getDocs(q);
 

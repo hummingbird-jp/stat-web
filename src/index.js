@@ -2,7 +2,7 @@ import * as bootstrap from "bootstrap";
 
 import * as agenda from "./modules/agenda";
 import * as bgm from "./modules/bgm";
-import * as firebase from "./modules/firebase";
+import * as firebase from "./modules/stat_firebase";
 import * as reaction from "./modules/reaction";
 import * as timer from "./modules/timer";
 import * as userInfo from "./modules/user-info";
