@@ -39,6 +39,7 @@
 	"dependencies": {
 		"@popperjs/core": "^2.10.1",
 		"@tensorflow-models/blazeface": "^0.0.7",
+		"@tensorflow/tfjs": "^3.9.0",
 		"bootstrap": "^5.1.1",
 		"firebase": "^9.0.2",
 		"jquery": "^3.6.0",

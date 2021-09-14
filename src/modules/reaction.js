@@ -2,6 +2,8 @@ import * as firestore from "@firebase/firestore";
 
 import * as _ from "..";
 import * as firebase from "./firebase";
+import * as tf from '@tensorflow/tfjs';
+import * as blazeface from '@tensorflow-models/blazeface';
 
 const videoElm = document.createElement("video");
 let blazeFaceModel;
