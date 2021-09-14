@@ -181,8 +181,8 @@ function fft0(freal) {
 }
 
 function sendMyReaction(text) {
-	const docRef = firestore.doc(statFirebase.statFirestore.dbRootRef, statFirebase.statFirestore.usersCollection, _.options.uid.toString());
+	const docRef = firestore.doc(statFirebase.dbRootRef, statFirebase.usersCollection, _.options.uid.toString());
 	firestore.updateDoc(docRef, {
 		reaction: text
-	})
+	});
 }
