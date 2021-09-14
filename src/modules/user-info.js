@@ -1,15 +1,16 @@
-import { doc, collection, setDoc, getDoc, updateDoc, onSnapshot, Timestamp } from "@firebase/firestore";
-import { statFirestore } from "./firebase";
-import { options } from "..";
+import * as firestore from "@firebase/firestore";
+
+import * as _ from "..";
+import * as firebase from "./firebase";
 
 export async function addMyUserInfo() {
 
-	const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid.toString());
+	const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection, _.options.uid.toString());
 
-	await setDoc(docRef, {
-		uid: options.uid,
-		userName: options.userName,
-		timeJoined: Timestamp.now(),
+	await firestore.setDoc(docRef, {
+		uid: _.options.uid,
+		userName: _.options.userName,
+		timeJoined: firestore.Timestamp.now(),
 		isActive: true,
 		reaction: "😀"
 	}).then((result) => {
@@ -20,7 +21,7 @@ export async function addMyUserInfo() {
 }
 
 export async function listenUserInfo() {
-	const unsub = onSnapshot(collection(statFirestore.dbRootRef, statFirestore.usersCollection), (snapshot) => {
+	const unsub = firestore.onSnapshot(firestore.collection(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection), (snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			const uid = change.doc.data().uid;
 			const userName = change.doc.data().userName;
@@ -55,26 +56,26 @@ export async function listenUserInfo() {
 	});
 
 	$("#local-player-name").on('click', async function () {
-		const oldUserName = options.userName;
+		const oldUserName = _.options.userName;
 		let newUserName = prompt("Please enter your name:", oldUserName);
 		if (newUserName == null || newUserName == "") {
 			newUserName = oldUserName;
 		} else {
-			const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid.toString());
-			const updateUserName = await updateDoc(docRef, {
+			const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection, _.options.uid.toString());
+			const updateUserName = await firestore.updateDoc(docRef, {
 				userName: newUserName
 			});
 		}
-		options.userName = newUserName;
+		_.options.userName = newUserName;
 		$("#local-player-name").text(`${newUserName} (You)`);
 	});
 }
 
 export async function deactivateMe() {
-	const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid.toString());
-	const docSnap = await getDoc(docRef);
+	const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection, _.options.uid.toString());
+	const docSnap = await firestore.getDoc(docRef);
 	if (docSnap.exists()) {
-		updateDoc(docRef, {
+		firestore.updateDoc(docRef, {
 			isActive: false
 		})
 	} else {

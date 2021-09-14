@@ -1,6 +1,6 @@
-import { doc, setDoc, onSnapshot, Timestamp } from "@firebase/firestore";
-import { statFirestore } from "./firebase";
-import { options } from "../index";
+import * as firestore from "@firebase/firestore";
+
+import * as firebase from "./firebase";
 
 let isTimerRunningLocally = false;
 let lockObj = false;
@@ -11,12 +11,12 @@ export function initTimer() {
 
 // Firestore
 export async function sendTimer(isRunning, endTime) {
-	const docRef = doc(statFirestore.dbRootRef, statFirestore.timerCollection, 'temp');
+	const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.timerCollection, 'temp');
 
 	// Specify doc ID ('temp') to override each time, because no one wants timer log!
-	await setDoc(docRef, {
+	await firestore.setDoc(docRef, {
 		isRunning: isRunning,
-		endTime: Timestamp.fromDate(endTime),
+		endTime: firestore.Timestamp.fromDate(endTime),
 	}).then((result) => {
 		console.log(`Timer successfully sent! ${result}`);
 	}).catch((err) => {
@@ -25,9 +25,9 @@ export async function sendTimer(isRunning, endTime) {
 }
 
 export function listenTimer() {
-	const docRef = doc(statFirestore.dbRootRef, statFirestore.timerCollection, 'temp');
+	const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.timerCollection, 'temp');
 
-	const unsub = onSnapshot(docRef, (doc) => {
+	const unsub = firestore.onSnapshot(docRef, (doc) => {
 		const isTimerRunningOnOthers = doc.data() !== undefined ? doc.data().isRunning : false;
 		const endTime = doc.data() !== undefined ? doc.data().endTime.toDate() : undefined;
 

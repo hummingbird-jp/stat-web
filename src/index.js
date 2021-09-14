@@ -1,14 +1,14 @@
+import * as bootstrap from "bootstrap";
+
+import * as agenda from "./modules/agenda";
+import * as bgm from "./modules/bgm";
+import * as firebase from "./modules/firebase";
+import * as reaction from "./modules/reaction";
+import * as timer from "./modules/timer";
+import * as userInfo from "./modules/user-info";
+import * as voiceVisualizer from "./modules/voice-visualizer";
+
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Toast } from "bootstrap";
-
-import { initFirestore, statFirestore } from "./modules/firebase";
-import { addMyUserInfo, deactivateMe, listenUserInfo } from "./modules/user-info";
-import { listenAgenda, sendAgenda } from "./modules/agenda";
-import { initBgm, listenBgm } from "./modules/bgm";
-import { getEndTime, listenTimer, sendTimer, initTimer, setCurrentValue } from "./modules/timer";
-import { initTalkVisualizer } from "./modules/voice-visualizer";
-import { initReactionDetector } from "./modules/reaction";
-
 import './styles.css';
 
 const appUrl = 'https://stat-web-6372a.web.app/';
@@ -88,14 +88,14 @@ $(setAgendaButton).on('click', function (e) {
 	const agenda = $("#agenda-in").val();
 
 	$("#agenda-out").text(agenda);
-	sendAgenda(agenda);
+	agenda.sendAgenda(agenda);
 });
 
 // Timer
 const timerSlider = $("#timer-duration")[0];
 
 $(timerSlider).on("input", (e) => {
-	setCurrentValue(e.target.value)
+	timer.setCurrentValue(e.target.value)
 });
 
 $('#start-timer').on('click', function () {
@@ -111,8 +111,8 @@ $('#start-timer').on('click', function () {
 	}, 1000);
 
 	const duration = $("#timer-duration").val();
-	const endTime = getEndTime(duration);
-	sendTimer(true, endTime);
+	const endTime = timer.getEndTime(duration);
+	timer.sendTimer(true, endTime);
 });
 
 $('#stop-timer').on('click', function () {
@@ -128,8 +128,8 @@ $('#stop-timer').on('click', function () {
 	}, 1000);
 
 	const duration = $("#timer-duration").val();
-	const endTime = getEndTime(duration);
-	sendTimer(false, endTime);
+	const endTime = timer.getEndTime(duration);
+	timer.sendTimer(false, endTime);
 });
 
 // Share to Others
@@ -167,8 +167,8 @@ function generateRandomChannelName(length) {
 // Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
 $("#unpublish").on("click", async function () {
 	const toastOptions = { animation: true, autohide: true, delay: 3000 };
-	const unpublishedMessageElement = new Toast($('#unpublished-message'), toastOptions);
-	const publishedMessageElement = new Toast($('#published-message'), toastOptions);
+	const unpublishedMessageElement = new bootstrap.Toast($('#unpublished-message'), toastOptions);
+	const publishedMessageElement = new bootstrap.Toast($('#published-message'), toastOptions);
 
 	if (published === true) {
 		// Unpublish the user
@@ -274,18 +274,18 @@ async function joinOrCreate(token) {
 	$("#create").text("Create");
 	$("#create").attr("disabled", false);
 
-	await initFirestore(meetingId);
-	await initBgm();
-	initTimer();
-	initTalkVisualizer();
-	initReactionDetector();
+	await firebase.initFirestore(meetingId);
+	await bgm.initBgm();
+	timer.initTimer();
+	voiceVisualizer.initTalkVisualizer();
+	reaction.initReactionDetector();
 
-	addMyUserInfo();
+	userInfo.addMyUserInfo();
 
-	listenUserInfo();
-	listenAgenda();
-	listenBgm();
-	listenTimer();
+	userInfo.listenUserInfo();
+	agenda.listenAgenda();
+	bgm.listenBgm();
+	timer.listenTimer();
 }
 
 function truncate(str, n) {
@@ -328,7 +328,7 @@ async function leave() {
 	}, 1000);
 
 	// Firestore
-	deactivateMe();
+	userInfo.deactivateMe();
 }
 
 /*

@@ -1,6 +1,7 @@
-import { doc, updateDoc } from "@firebase/firestore";
-import { statFirestore } from "./firebase";
-import { options } from "..";
+import * as firestore from "@firebase/firestore";
+
+import * as _ from "..";
+import * as firebase from "./firebase";
 
 const videoElm = document.createElement("video");
 let blazeFaceModel;
@@ -180,8 +181,8 @@ function fft0(freal) {
 }
 
 function sendMyReaction(text) {
-	const docRef = doc(statFirestore.dbRootRef, statFirestore.usersCollection, options.uid.toString());
-	updateDoc(docRef, {
+	const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection, _.options.uid.toString());
+	firestore.updateDoc(docRef, {
 		reaction: text
 	})
 }

@@ -1,6 +1,7 @@
-import { doc, collection, query, addDoc, getDoc, getDocs, orderBy, limit, Timestamp } from "@firebase/firestore";
-import { statFirestore } from "./firebase";
-import { options } from "..";
+import * as firestore from "@firebase/firestore";
+
+import * as _ from "..";
+import * as firebase from "./firebase";
 
 const colorPalette = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
 
@@ -186,19 +187,19 @@ export function initTalkVisualizer() {
 
 async function sendTalkDataToFirebase(value) {
 
-	const collectionRef = collection(statFirestore.dbRootRef, statFirestore.talkDataCollection);
-	await addDoc(collectionRef, {
-		userName: options.userName,
-		uid: options.uid,
-		timestamp: Timestamp.now(),
+	const collectionRef = firestore.collection(firebase.statFirestore.dbRootRef, firebase.statFirestore.talkDataCollection);
+	await firestore.addDoc(collectionRef, {
+		userName: _.options.userName,
+		uid: _.options.uid,
+		timestamp: firestore.Timestamp.now(),
 		talkValue: value
 	})
 }
 
 async function getTalkDataFromFirebase() {
 	let users = [];
-	const collectionRef = collection(statFirestore.dbRootRef, statFirestore.usersCollection);
-	const querySnapshotUser = await getDocs(collectionRef);
+	const collectionRef = firestore.collection(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection);
+	const querySnapshotUser = await firestore.getDocs(collectionRef);
 	querySnapshotUser.forEach((doc) => {
 		if (doc.data().isActive) {
 			users.push({
@@ -209,9 +210,9 @@ async function getTalkDataFromFirebase() {
 		}
 	});
 
-	const talkDataRef = collection(statFirestore.dbRootRef, statFirestore.talkDataCollection)
-	const q = query(talkDataRef, orderBy("timestamp", "desc"), limit(10));
-	const querySnapshotTalkData = await getDocs(q);
+	const talkDataRef = firestore.collection(firebase.statFirestore.dbRootRef, firebase.statFirestore.talkDataCollection)
+	const q = firestore.query(talkDataRef, firestore.orderBy("timestamp", "desc"), firestore.limit(10));
+	const querySnapshotTalkData = await firestore.getDocs(q);
 
 	querySnapshotTalkData.forEach((doc) => {
 		for (let i = 0; i < users.length; i++) {

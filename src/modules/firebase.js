@@ -1,6 +1,5 @@
-import { initializeApp } from "@firebase/app";
-import { getFirestore } from "@firebase/firestore";
-import { doc, setDoc, collection, Timestamp } from "@firebase/firestore";
+import * as app from "@firebase/app";
+import * as firestore from "@firebase/firestore";
 
 export const statFirestore = {
 	db: null,
@@ -15,7 +14,7 @@ export const statFirestore = {
 };
 
 export async function initFirestore(meetingId) {
-	const firebaseApp = initializeApp({
+	const firebaseApp = app.initializeApp({
 		apiKey: "AIzaSyBq1wb-WlCSMH8cYeKvSWQlssMIk6z7b7Y",
 		authDomain: "stat-web-6372a.firebaseapp.com",
 		projectId: "stat-web-6372a",
@@ -25,12 +24,12 @@ export async function initFirestore(meetingId) {
 		measurementId: "G-ZWTBZRCXXE"
 	});
 
-	statFirestore.db = getFirestore();
-	statFirestore.dbRootRef = doc(statFirestore.db, 'meetings', meetingId);
+	statFirestore.db = firestore.getFirestore();
+	statFirestore.dbRootRef = firestore.doc(statFirestore.db, 'meetings', meetingId);
 
 	try {
-		const docRef = await setDoc(statFirestore.dbRootRef, {
-			lastTimeActive: Timestamp.now()
+		const docRef = await firestore.setDoc(statFirestore.dbRootRef, {
+			lastTimeActive: firestore.Timestamp.now()
 		});
 		console.log("Firestore document for meetingId is set.");
 	} catch (e) {
