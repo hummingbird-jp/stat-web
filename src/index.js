@@ -1,13 +1,15 @@
-import { initFirestore, statFirestore } from "./firebase";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Toast } from "bootstrap";
-import { addMyUserInfo, deactivateMe, listenUserInfo } from "./user-info";
-import { listenAgenda, sendAgenda } from "./agenda";
-import { initBgm, listenBgm } from "./bgm";
-import { getEndTime, listenTimer, sendTimer, initTimer, timerSlider, setCurrentValue } from "./timer";
-import { initTalkVisualizer } from "./voice-visualizer";
-import { initReactionDetector } from "./reaction";
-import './stylesheets/styles.css';
+
+import { initFirestore, statFirestore } from "./modules/firebase";
+import { addMyUserInfo, deactivateMe, listenUserInfo } from "./modules/user-info";
+import { listenAgenda, sendAgenda } from "./modules/agenda";
+import { initBgm, listenBgm } from "./modules/bgm";
+import { getEndTime, listenTimer, sendTimer, initTimer, setCurrentValue } from "./modules/timer";
+import { initTalkVisualizer } from "./modules/voice-visualizer";
+import { initReactionDetector } from "./modules/reaction";
+
+import './styles.css';
 
 const appUrl = 'https://stat-web-6372a.web.app/';
 
@@ -90,6 +92,8 @@ $(setAgendaButton).on('click', function (e) {
 });
 
 // Timer
+const timerSlider = $("#timer-duration")[0];
+
 $(timerSlider).on("input", (e) => {
 	setCurrentValue(e.target.value)
 });

@@ -1,6 +1,6 @@
 import { doc, getDoc, getDocs, setDoc, collection, onSnapshot, query, where, limit, Timestamp } from "@firebase/firestore";
 import { statFirestore } from "./firebase";
-import { options } from "./index";
+import { options } from "../index";
 
 const audioElm = new Audio(statFirestore.uriAudioDefault);
 

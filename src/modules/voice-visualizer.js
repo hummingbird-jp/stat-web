@@ -1,6 +1,7 @@
 import { doc, collection, query, addDoc, getDoc, getDocs, orderBy, limit, Timestamp } from "@firebase/firestore";
 import { statFirestore } from "./firebase";
-import { options } from "./index";
+import { options } from "..";
+
 const colorPalette = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
 
 export function initTalkVisualizer() {

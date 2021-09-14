@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const srcPath = './src/';
 
 module.exports = {
 	mode: 'development',
@@ -10,15 +9,7 @@ module.exports = {
 	},
 	devtool: 'eval-source-map',
 	entry: [
-		`${srcPath}agenda.js`,
-		`${srcPath}agora.js`,
-		`${srcPath}bgm.js`,
-		`${srcPath}firebase.js`,
-		`${srcPath}index.js`,
-		`${srcPath}reaction.js`,
-		`${srcPath}timer.js`,
-		`${srcPath}user-info.js`,
-		`${srcPath}voice-visualizer.js`,
+		'./src/index.js',
 	],
 	output: {
 		path: path.resolve(__dirname, 'dist'),

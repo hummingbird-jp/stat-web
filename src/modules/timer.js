@@ -1,8 +1,7 @@
 import { doc, setDoc, onSnapshot, Timestamp } from "@firebase/firestore";
 import { statFirestore } from "./firebase";
-import { options } from "./index";
+import { options } from "../index";
 
-export const timerSlider = $("#timer-duration")[0];
 let isTimerRunningLocally = false;
 let lockObj = false;
 

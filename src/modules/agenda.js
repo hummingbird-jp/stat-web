@@ -1,6 +1,6 @@
 import { statFirestore } from "./firebase";
 import { doc, collection, addDoc, onSnapshot, Timestamp } from "@firebase/firestore";
-import { options } from "./index";
+import { options } from "../index";
 
 // Send agenda to Firestore
 export async function sendAgenda(agenda) {

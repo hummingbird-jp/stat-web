@@ -1,6 +1,6 @@
 import { doc, collection, setDoc, getDoc, updateDoc, onSnapshot, Timestamp } from "@firebase/firestore";
 import { statFirestore } from "./firebase";
-import { options } from "./index";
+import { options } from "..";
 
 export async function addMyUserInfo() {
 

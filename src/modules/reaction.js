@@ -1,6 +1,6 @@
 import { doc, updateDoc } from "@firebase/firestore";
 import { statFirestore } from "./firebase";
-import { options } from "./index";
+import { options } from "..";
 
 const videoElm = document.createElement("video");
 let blazeFaceModel;
