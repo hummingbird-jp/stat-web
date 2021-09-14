@@ -2,7 +2,7 @@ import * as bootstrap from "bootstrap";
 
 import * as agenda from "./modules/agenda";
 import * as bgm from "./modules/bgm";
-import * as firebase from "./modules/firebase";
+import * as firebase from "./modules/stat_firebase";
 import * as reaction from "./modules/reaction";
 import * as timer from "./modules/timer";
 import * as userInfo from "./modules/user-info";
@@ -85,10 +85,10 @@ $("#create-form").on('submit', async function (e) {
 const setAgendaButton = $('#set-agenda')[0];
 
 $(setAgendaButton).on('click', function (e) {
-	const agenda = $("#agenda-in").val();
+	const newAgenda = $("#agenda-in").val();
 
-	$("#agenda-out").text(agenda);
-	agenda.sendAgenda(agenda);
+	$("#agenda-out").text(newAgenda);
+	agenda.sendAgenda(newAgenda);
 });
 
 // Timer

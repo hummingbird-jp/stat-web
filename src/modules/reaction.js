@@ -1,7 +1,7 @@
 import * as firestore from "@firebase/firestore";
-
+import * as statFirebase from "./stat_firebase";
 import * as _ from "..";
-import * as firebase from "./firebase";
+
 import * as tf from '@tensorflow/tfjs';
 import * as blazeface from '@tensorflow-models/blazeface';
 
@@ -183,8 +183,8 @@ function fft0(freal) {
 }
 
 function sendMyReaction(text) {
-	const docRef = firestore.doc(firebase.statFirestore.dbRootRef, firebase.statFirestore.usersCollection, _.options.uid.toString());
+	const docRef = firestore.doc(statFirebase.dbRootRef, statFirebase.usersCollection, _.options.uid.toString());
 	firestore.updateDoc(docRef, {
 		reaction: text
-	})
+	});
 }

@@ -1,17 +1,15 @@
 import * as app from "@firebase/app";
 import * as firestore from "@firebase/firestore";
 
-export const statFirestore = {
-	db: null,
-	dbRootRef: null,
-	usersCollection: 'users',
-	timerCollection: 'timer',
-	agendasCollection: 'agenda',
-	bmgCollection: 'bgm',
-	audioSetCollection: 'audioSet',
-	talkDataCollection: 'talkData',
-	uriAudioDefault: 'https://firebasestorage.googleapis.com/v0/b/stat-web-6372a.appspot.com/o/bgm%2Fnature_sound.mp3?alt=media&token=aff3df2f-787d-43e6-be5f-2a51cae2abef',
-};
+export let db;
+export let dbRootRef;
+export const usersCollection = 'users';
+export const timerCollection = 'timer';
+export const agendasCollection = 'agenda';
+export const bgmCollection = 'bgm';
+export const audioSetCollection = 'audioSet';
+export const talkDataCollection = 'talkData';
+export const uriAudioDefault = 'https://firebasestorage.googleapis.com/v0/b/stat-web-6372a.appspot.com/o/bgm%2Fnature_sound.mp3?alt=media&token=aff3df2f-787d-43e6-be5f-2a51cae2abef';
 
 export async function initFirestore(meetingId) {
 	const firebaseApp = app.initializeApp({
@@ -24,11 +22,11 @@ export async function initFirestore(meetingId) {
 		measurementId: "G-ZWTBZRCXXE"
 	});
 
-	statFirestore.db = firestore.getFirestore();
-	statFirestore.dbRootRef = firestore.doc(statFirestore.db, 'meetings', meetingId);
+	db = firestore.getFirestore();
+	dbRootRef = firestore.doc(db, 'meetings', meetingId);
 
 	try {
-		const docRef = await firestore.setDoc(statFirestore.dbRootRef, {
+		const docRef = await firestore.setDoc(dbRootRef, {
 			lastTimeActive: firestore.Timestamp.now()
 		});
 		console.log("Firestore document for meetingId is set.");
