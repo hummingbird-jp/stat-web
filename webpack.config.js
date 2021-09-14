@@ -19,6 +19,7 @@ module.exports = {
 		`${srcPath}timer.js`,
 		`${srcPath}user-info.js`,
 		`${srcPath}voice-visualizer.js`,
+		//`${srcPath}stylesheets/styles.css`,
 	],
 	output: {
 		path: path.resolve(__dirname, 'dist'),
