@@ -25,15 +25,16 @@ let meetingId;
 initScreen();
 initAgora();
 
-$(() => {
+$("#sign-in-with-google").on("click", function () {
+	stat_auth.signin();
+	// TODO: show error screen if log in failed
+	$("#sign-in-with-google").hide();
+
 	var urlParams = new URL(location.href).searchParams;
 
 	options.token = urlParams.get("token");
 	options.channel = urlParams.get("channel");
 
-	stat_auth.signin();
-
-	// TODO: show error screen if log in failed
 
 	if (options.token && options.channel) {
 		options.token = options.token.replaceAll(' ', '+');

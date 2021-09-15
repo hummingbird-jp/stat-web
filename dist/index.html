@@ -60,6 +60,7 @@
 
 		setTimeout(() => {
 			document.getElementById('splash').style.display = 'none';
+			document.getElementById('limit').style.display = 'block';
 		}, 4000);
 	</script>
 
@@ -76,6 +77,13 @@
 			</div>
 			<div class="toast-body">
 				We're so happy that you're back! Enjoy your time 🙃
+			</div>
+		</div>
+
+		<!-- Time Limit -->
+		<div id="limit" style="display: none;">
+			<div id="limit-all">
+				<div id="limit-progress"></div>
 			</div>
 		</div>
 
@@ -115,6 +123,10 @@
 				</div>
 			</form>
 		</div>
+
+		<button id="sign-in-with-google" style="padding: 0; border: 0; background-color: #0D0D0D;">
+			<img src="icons/btn_google_signin_light_normal_web@2x.png" alt="sign-in-with-google" style="height: 60px;">
+		</button>
 
 		<!-- Meeting Area shows up after user joined meeting -->
 		<div class="meeting-area">
