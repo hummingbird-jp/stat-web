@@ -153,34 +153,10 @@ async function sendBgmStatus(currentTime, isChanged, isPlaying) {
 
 function setLocalPlay() {
 	audioElm.play();
-	configureControlPanelPlaying();
-}
 
-function setLocalPause() {
-	audioElm.pause();
-	configureControlPanelPaused();
-};
-
-function setLocalStop() {
-	audioElm.pause();
-	configureControlPanelDefault();
-}
-
-function configureAudioDefault(audioElm) {
-	audioElm.preload = 'none';
-	audioElm.loop = true;
-	audioElm.autoplay = false;
-	audioElm.volume = 0.05;
-}
-
-function configureControlPanelDefault() {
-	stopButton.disabled = true;
-	selectorObj.disabled = false;
-	selectorObj.value = "default";
-	$(playbackIcon).attr("src", "icons/play_arrow_black_24dp.svg");
-}
-
-function configureControlPanelPlaying() {
+	// Configure control panel as 'Playing'
+	$(playButton).attr('disabled', true);
+	$(playButton).html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 	setTimeout(() => {
 		$(playButton).html(`<img src="icons/pause_black_24dp.svg" alt="" class="material-icons">`);
 		$(playButton).attr('disabled', false);
@@ -190,7 +166,12 @@ function configureControlPanelPlaying() {
 	selectorObj.disabled = true;
 }
 
-function configureControlPanelPaused() {
+function setLocalPause() {
+	audioElm.pause();
+
+	// Configure control panel as 'Paused'
+	$(playButton).attr('disabled', true);
+	$(playButton).html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 	setTimeout(() => {
 		$(playButton).html(`<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">`);
 		$(playButton).attr('disabled', false);
@@ -198,6 +179,25 @@ function configureControlPanelPaused() {
 
 	stopButton.disabled = false;
 	selectorObj.disabled = true;
+};
+
+function setLocalStop() {
+	audioElm.pause();
+
+	// Configure control panel as 'Stopped'
+	$(playbackIcon).attr("src", "icons/play_arrow_black_24dp.svg");
+	selectorObj.value = "natural";
+
+	stopButton.disabled = true;
+	selectorObj.disabled = false;
+
+}
+
+function configureAudioDefault(audioElm) {
+	audioElm.preload = 'none';
+	audioElm.loop = true;
+	audioElm.autoplay = false;
+	audioElm.volume = 0.05;
 }
 
 function changeTrackTo(uri, currentTime) {
