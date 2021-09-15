@@ -1,8 +1,9 @@
 import * as bootstrap from "bootstrap";
 
+import * as stat_firebase from "./modules/stat_firebase";
+import * as stat_auth from "./modules/stat_auth";
 import * as agenda from "./modules/agenda";
 import * as bgm from "./modules/bgm";
-import * as firebase from "./modules/stat_firebase";
 import * as reaction from "./modules/reaction";
 import * as timer from "./modules/timer";
 import * as userInfo from "./modules/user-info";
@@ -12,6 +13,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
 const appUrl = 'https://stat-web-6372a.web.app/';
+const toastOptions = { animation: true, autohide: true, delay: 3000 };
 
 let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 let published = false;
@@ -28,6 +30,10 @@ $(() => {
 
 	options.token = urlParams.get("token");
 	options.channel = urlParams.get("channel");
+
+	stat_auth.signin();
+
+	// TODO: show error screen if log in failed
 
 	if (options.token && options.channel) {
 		options.token = options.token.replaceAll(' ', '+');
@@ -166,7 +172,6 @@ function generateRandomChannelName(length) {
 
 // Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
 $("#unpublish").on("click", async function () {
-	const toastOptions = { animation: true, autohide: true, delay: 3000 };
 	const unpublishedMessageElement = new bootstrap.Toast($('#unpublished-message'), toastOptions);
 	const publishedMessageElement = new bootstrap.Toast($('#published-message'), toastOptions);
 
@@ -269,7 +274,7 @@ async function joinOrCreate(token) {
 	$("#create").text("Create");
 	$("#create").attr("disabled", false);
 
-	await firebase.initFirestore(meetingId);
+	await stat_firebase.initFirestore(meetingId);
 	bgm.init();
 	timer.initTimer();
 	voiceVisualizer.initTalkVisualizer();
