@@ -25,9 +25,22 @@ export async function initFirestore(meetingId) {
 	dbRootRef = firestore.doc(db, 'meetings', meetingId);
 
 	try {
-		const docRef = await firestore.setDoc(dbRootRef, {
-			lastTimeActive: firestore.Timestamp.now()
-		});
+		const docRef = await firestore.getDoc(dbRootRef);
+		if (!docRef.exists()) {
+			// If it is the first time to initialize this document
+			const nowMillis = firestore.Timestamp.now().toMillis();
+			const endMillis = nowMillis + 40 * 60 * 1000; // 40 minutes from now
+			firestore.setDoc(dbRootRef, {
+				lastTimeActive: firestore.Timestamp.now(),
+				meetingStartedAt: firestore.Timestamp.now(),
+				meetingLimitUntil: firestore.Timestamp.fromMillis(endMillis)
+			});
+
+		} else {
+			firestore.updateDoc(dbRootRef, {
+				lastTimeActive: firestore.Timestamp.now()
+			});
+		}
 		console.log("Firestore document for meetingId is set.");
 	} catch (e) {
 		console.error("Error adding document: ", e);
