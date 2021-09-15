@@ -11,18 +11,29 @@ const volumeSlider = $("#bgm-volume")[0];
 
 let audioElm;
 const audioTrackData = {
-	categoryLocal: '',
 	categoryFirestore: ''
 };
 
 export async function init() {
 	audioElm = new Audio(statFirebase.uriAudioDefault);
 
-	// If you are the first person in the meeting, initialize Firestore document.
 	const docRef = firestore.doc(statFirebase.dbRootRef, statFirebase.bgmCollection, 'temp');
 	const docSnap = await firestore.getDoc(docRef);
 	if (!docSnap.exists()) {
+		// If you are the first person in the meeting, initialize Firestore document.
 		initBgmFirestoreDoc();
+
+	} else {
+		// If someone already started playing BGM, your local player follows.
+		if (docSnap.data().isPlaying) {
+			const currentTrackId = doc.data().currentTrackId;
+			const currentTime = doc.data().currentTime;
+			const docRef = firestore.doc(statFirebase.db, statFirebase.audioSetCollection, currentTrackId);
+			const snapshot = await firestore.getDoc(docRef);
+			changeSelectorTo(snapshot.data().category);
+			changeTrackTo(snapshot.data().uri, currentTime);
+			setLocalPlay();
+		}
 	}
 
 	//Create event listener to change local bgm volume
@@ -34,6 +45,7 @@ export async function init() {
 	$(playButton).on('click', function (e) {
 		e.preventDefault();
 
+		// Disable button for a while to prevent from collision
 		$(playButton).attr('disabled', true);
 		$(playButton).html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 
@@ -99,13 +111,10 @@ function listenBgm() {
 				const isChanged = change.doc.data().isChanged;
 				const category = change.doc.data().category;
 
-				console.log("debug: ", category, isPlaying, isChanged);
-
 				audioTrackData.categoryFirestore = category;
 
 				if (isChanged && isPlaying) {
 					// When someone has changed the bgm track and played
-					console.log("debug are you here? 1")
 					const docRef = firestore.doc(statFirebase.db, statFirebase.audioSetCollection, currentTrackId);
 					const snapshot = await firestore.getDoc(docRef);
 					changeSelectorTo(snapshot.data().category);

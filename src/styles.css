@@ -184,6 +184,14 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 	margin-top: 2rem;
 }
 
+/* BGM */
+#bgm-selector {
+	background-color: aliceblue;
+}
+#bgm-selector:disabled {
+	background-color: #6d6d6d;
+}
+
 /* Video Group */
 .video-wrapper {
 	width: 168px;
