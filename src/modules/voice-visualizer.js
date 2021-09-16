@@ -203,7 +203,7 @@ async function getTalkDataFromFirebase() {
 	querySnapshotUser.forEach((doc) => {
 		if (doc.data().isActive) {
 			users.push({
-				"userName": doc.data().displayNameStat,
+				"displayNameStat": doc.data().displayNameStat,
 				"uid": doc.data().uid,
 				"talkSum": 0
 			});
