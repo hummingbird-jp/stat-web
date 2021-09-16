@@ -1,5 +1,6 @@
 import * as firestore from "@firebase/firestore";
-import * as firebase from "./stat_firebase";
+import * as stat_firebase from "./stat_firebase";
+import * as _ from "..";
 
 export async function initMeetingTimeLimit() {
 
@@ -7,7 +8,7 @@ export async function initMeetingTimeLimit() {
 	const caption = $(`
 			<p class="limit-text">
 				<span id="limit-span">00h40m</span> remains.
-				<a href="">Need more time?</a>
+				<a href="https://forms.gle/5prf8vyS73KygvdL9" target="_blank" style="cursor: pointer;">Extend limit</a>
 			</p>
 		`);
 	$("#limit-all").append(caption);
@@ -15,7 +16,7 @@ export async function initMeetingTimeLimit() {
 	const id = setInterval(update, 60000);
 
 	async function update() {
-		const snapshot = await firestore.getDoc(firebase.dbRootRef);
+		const snapshot = await firestore.getDoc(stat_firebase.dbRootRef);
 
 		// Firestore Timestamp to numeric timestamp
 		const startTime = snapshot.data().meetingStartedAt.toMillis();
@@ -32,6 +33,9 @@ export async function initMeetingTimeLimit() {
 			const timerSound = new Audio("sounds/alarm.wav");
 			timerSound.play();
 
+			// Force leave meeting
+			_.leave();
+
 		} else {
 			const remainMillis = endTime - currentTime;
 			const minutes = Math.floor((remainMillis / 1000 / 60) % 60);
@@ -41,4 +45,22 @@ export async function initMeetingTimeLimit() {
 			$("#limit-span").text(remains);
 		}
 	}
+
+	// Create event listener for update limit
+	// TODO: Currently anyone can extend meeting limit by clicking the link
+	// TODO: So, lets make this for premium account!
+	$(".limit-text a").on('click', async function () {
+		const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.extendLimitCollection);
+		firestore.addDoc(collectionRef, {
+			timestanp: firestore.Timestamp.now(),
+			userName: _.options.userName,
+			uid: _.options.uid
+		})
+	});
+
+	// Create event listner for show extended result instantly
+	const unsub = firestore.onSnapshot(stat_firebase.dbRootRef, (doc) => {
+		console.log("updated");
+		update();
+	})
 }

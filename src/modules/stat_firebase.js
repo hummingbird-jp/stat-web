@@ -20,6 +20,9 @@ export const firebaseApp = app.initializeApp({
 	measurementId: "G-ZWTBZRCXXE"
 });
 
+// TODO: this should be distinguished between free account and pro.
+export const extendLimitCollection = 'extendLimit';
+
 export async function initFirestore(meetingId) {
 	db = firestore.getFirestore();
 	dbRootRef = firestore.doc(db, 'meetings', meetingId);
@@ -32,8 +35,8 @@ export async function initFirestore(meetingId) {
 			const endMillis = nowMillis + 40 * 60 * 1000; // 40 minutes from now
 			firestore.setDoc(dbRootRef, {
 				lastTimeActive: firestore.Timestamp.now(),
-				meetingStartedAt: firestore.Timestamp.now(),
-				meetingLimitUntil: firestore.Timestamp.fromMillis(endMillis)
+				//meetingStartedAt: firestore.Timestamp.now(),
+				//meetingLimitUntil: firestore.Timestamp.fromMillis(endMillis)
 			});
 
 		} else {
