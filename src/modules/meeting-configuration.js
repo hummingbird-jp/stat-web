@@ -52,11 +52,11 @@ export async function initMeetingTimeLimit() {
 	// TODO: So, lets make this for premium account!
 	$(".limit-text a").on('click', async function () {
 		const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.extendLimitCollection);
-		firestore.addDoc(collectionRef, {
-			timestanp: firestore.Timestamp.now(),
+		await firestore.addDoc(collectionRef, {
+			timestamp: firestore.Timestamp.now(),
 			userName: _.options.userName,
 			uid: _.options.uid
-		})
+		});
 	});
 
 	// Create event listner for show extended result instantly
