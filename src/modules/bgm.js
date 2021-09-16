@@ -1,7 +1,7 @@
 import * as firestore from "@firebase/firestore";
 
 import * as _ from "../index";
-import * as statFirebase from "./stat_firebase";
+import * as stat_firebase from "./stat_firebase";
 
 const selectorObj = $("#bgm-selector")[0];
 const playButton = $("#play-button")[0];
@@ -15,9 +15,9 @@ const audioTrackData = {
 };
 
 export async function init() {
-	audioElm = new Audio(statFirebase.uriAudioDefault);
+	audioElm = new Audio(stat_firebase.uriAudioDefault);
 
-	const docRef = firestore.doc(statFirebase.dbRootRef, statFirebase.bgmCollection, 'temp');
+	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.bgmCollection, 'temp');
 	const docSnap = await firestore.getDoc(docRef);
 	if (!docSnap.exists()) {
 		// If you are the first person in the meeting, initialize Firestore document.
@@ -28,7 +28,7 @@ export async function init() {
 		if (docSnap.data().isPlaying) {
 			const currentTrackId = doc.data().currentTrackId;
 			const currentTime = doc.data().currentTime;
-			const docRef = firestore.doc(statFirebase.db, statFirebase.audioSetCollection, currentTrackId);
+			const docRef = firestore.doc(stat_firebase.db, stat_firebase.audioSetCollection, currentTrackId);
 			const snapshot = await firestore.getDoc(docRef);
 			changeSelectorTo(snapshot.data().category);
 			changeTrackTo(snapshot.data().uri, currentTime);
@@ -77,8 +77,8 @@ export async function init() {
 
 async function initBgmFirestoreDoc() {
 
-	const collectionRef = firestore.collection(statFirebase.db, statFirebase.audioSetCollection);
-	const q = firestore.query(collectionRef, firestore.where('uri', '==', statFirebase.uriAudioDefault), firestore.limit(1));
+	const collectionRef = firestore.collection(stat_firebase.db, stat_firebase.audioSetCollection);
+	const q = firestore.query(collectionRef, firestore.where('uri', '==', stat_firebase.uriAudioDefault), firestore.limit(1));
 
 	const querySnapshot = await firestore.getDocs(q);
 
@@ -89,7 +89,7 @@ async function initBgmFirestoreDoc() {
 		category = doc.data().category;
 	});
 
-	const docRef = firestore.doc(statFirebase.dbRootRef, statFirebase.bgmCollection, 'temp');
+	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.bgmCollection, 'temp');
 	await firestore.setDoc(docRef, {
 		currentTime: 0,
 		currentTrackId: defaultTrackId,
@@ -100,7 +100,7 @@ async function initBgmFirestoreDoc() {
 }
 
 function listenBgm() {
-	const collectionRef = firestore.collection(statFirebase.dbRootRef, statFirebase.bgmCollection);
+	const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.bgmCollection);
 	const unsub = firestore.onSnapshot(collectionRef, (docSnapshot) => {
 		docSnapshot.docChanges().forEach(async (change) => {
 			if (change.type === "modified") {
@@ -115,7 +115,7 @@ function listenBgm() {
 
 				if (isChanged && isPlaying) {
 					// When someone has changed the bgm track and played
-					const docRef = firestore.doc(statFirebase.db, statFirebase.audioSetCollection, currentTrackId);
+					const docRef = firestore.doc(stat_firebase.db, stat_firebase.audioSetCollection, currentTrackId);
 					const snapshot = await firestore.getDoc(docRef);
 					changeSelectorTo(snapshot.data().category);
 					changeTrackTo(snapshot.data().uri, currentTime);
@@ -141,8 +141,8 @@ function listenBgm() {
 
 async function sendBgmStatus(currentTime, isChanged, isPlaying) {
 	const category = selectorObj.value;
-	const q = firestore.query(firestore.collection(statFirebase.db, statFirebase.audioSetCollection), firestore.where('category', '==', category), firestore.limit(1));
-	const docRef = firestore.doc(statFirebase.dbRootRef, statFirebase.bgmCollection, 'temp');
+	const q = firestore.query(firestore.collection(stat_firebase.db, stat_firebase.audioSetCollection), firestore.where('category', '==', category), firestore.limit(1));
+	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.bgmCollection, 'temp');
 	const querySnapshot = await firestore.getDocs(q);
 
 	querySnapshot.forEach((doc) => {

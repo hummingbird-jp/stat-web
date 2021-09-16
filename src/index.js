@@ -6,7 +6,6 @@ import * as agenda from "./modules/agenda";
 import * as bgm from "./modules/bgm";
 import * as reaction from "./modules/reaction";
 import * as timer from "./modules/timer";
-import * as userInfo from "./modules/user-info";
 import * as voiceVisualizer from "./modules/voice-visualizer";
 import * as meetingConfiguration from "./modules/meeting-configuration";
 
@@ -14,13 +13,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
 const appUrl = 'https://stat-web-6372a.web.app/';
+const appid = "adaa9fb7675e4ca19ca80a6762e44dd2";
 const toastOptions = { animation: true, autohide: true, delay: 3000 };
 
 let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 let published = false;
 let localTracks;
 let remoteUsers;
-export let options;
 let meetingId;
 
 initScreen();
@@ -31,15 +30,17 @@ $("#sign-in-with-google").on("click", function () {
 	// TODO: show error screen if log in failed
 	$("#sign-in-with-google").hide();
 
+
+	// Judge if user already has meeting token as URL parameters
 	var urlParams = new URL(location.href).searchParams;
 
-	options.token = urlParams.get("token");
-	options.channel = urlParams.get("channel");
+	stat_auth.user.token = urlParams.get("token");
+	stat_auth.user.channel = urlParams.get("channel");
 
 
-	if (options.token && options.channel) {
-		options.token = options.token.replaceAll(' ', '+');
-		options.uid = generateUid();
+	if (stat_auth.user.token && stat_auth.user.channel) {
+		stat_auth.user.token = stat_auth.user.token.replaceAll(' ', '+');
+		stat_auth.user.uid = generateUid();
 
 		// Show #userNameJoin
 		setTimeout(() => {
@@ -61,9 +62,9 @@ $("#join-form").on('submit', async function (e) {
 	$("#join").attr("disabled", true);
 
 	try {
-		options.userName = $("#userNameJoin").val();
+		stat_auth.user.displayNameStat = $("#userNameJoin").val();
 
-		await joinOrCreate(options.token);
+		await joinOrCreate(stat_auth.user.token);
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
@@ -80,11 +81,11 @@ $("#create-form").on('submit', async function (e) {
 	try {
 		const channelName = generateRandomChannelName(20);
 
-		options.channel = channelName;
-		options.userName = $("#userNameCreate").val();
-		options.token = await fetchNewTokenWithChannelName(channelName);
+		stat_auth.user.channel = channelName;
+		stat_auth.user.displayNameStat = $("#userNameCreate").val();
+		stat_auth.user.token = await fetchNewTokenWithChannelName(channelName);
 
-		await joinOrCreate(options.token);
+		await joinOrCreate(stat_auth.user.token);
 	} catch (error) {
 		console.error(error);
 		// TODO: show error and clear form
@@ -225,14 +226,6 @@ function initAgora() {
 	};
 
 	remoteUsers = {};
-
-	options = {
-		appid: "adaa9fb7675e4ca19ca80a6762e44dd2",
-		channel: null,
-		uid: null,
-		token: null,
-		userName: null,
-	};
 }
 
 /*
@@ -250,9 +243,9 @@ async function joinOrCreate(token) {
 	$("#create").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 
 	// Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
-	[options.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
+	[stat_auth.user.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
 		// Join the channel.
-		client.join(options.appid, options.channel, options.token || null, options.uid || null),
+		client.join(appid, stat_auth.user.channel, stat_auth.user.token || null, stat_auth.user.uid || null),
 		// Create tracks to the local microphone and camera.
 		AgoraRTC.createMicrophoneAudioTrack(),
 		AgoraRTC.createCameraVideoTrack()
@@ -260,11 +253,11 @@ async function joinOrCreate(token) {
 
 	// Play the local video track to the local browser and update the UI with the user ID.
 	localTracks.videoTrack.play("local-player");
-	$("#local-player-name").text(`${options.userName} (You)`);
+	$("#local-player-name").text(`${stat_auth.user.displayNameStat} (You)`);
 
 	// Show token and password
-	const shortenedToken = truncate(options.token, 10);
-	const shortenedChannelName = truncate(options.channel, 10);
+	const shortenedToken = truncate(stat_auth.user.token, 10);
+	const shortenedChannelName = truncate(stat_auth.user.channel, 10);
 
 	$("#token-and-password").html(`Token: ${shortenedToken}<br>Password: ${shortenedChannelName}`);
 
@@ -286,9 +279,9 @@ async function joinOrCreate(token) {
 	voiceVisualizer.initTalkVisualizer();
 	reaction.initReactionDetector();
 
-	userInfo.addMyUserInfo();
+	stat_auth.addMyUserInfo();
 
-	userInfo.listenUserInfo();
+	stat_auth.listenUserInfo();
 	agenda.listenAgenda();
 	timer.listenTimer();
 
@@ -335,7 +328,7 @@ export async function leave() {
 	}, 1000);
 
 	// Firestore
-	userInfo.deactivateMe();
+	stat_auth.deactivateMe();
 }
 
 /*
@@ -416,7 +409,7 @@ function copyTextToClipboard() {
 }
 
 function generateShareUrl() {
-	return `${appUrl}?token=${options.token}&channel=${options.channel}`;
+	return `${appUrl}?token=${stat_auth.user.token}&channel=${stat_auth.user.channel}`;
 }
 
 function generateUid() {

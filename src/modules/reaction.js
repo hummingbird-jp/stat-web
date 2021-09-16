@@ -1,5 +1,6 @@
 import * as firestore from "@firebase/firestore";
-import * as statFirebase from "./stat_firebase";
+import * as stat_firebase from "./stat_firebase";
+import * as stat_auth from "./stat_auth";
 import * as _ from "..";
 
 import * as tf from '@tensorflow/tfjs';
@@ -183,7 +184,7 @@ function fft0(freal) {
 }
 
 function sendMyReaction(text) {
-	const docRef = firestore.doc(statFirebase.dbRootRef, statFirebase.usersCollection, _.options.uid.toString());
+	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.usersCollection, stat_auth.user.uid);
 	firestore.updateDoc(docRef, {
 		reaction: text
 	});
