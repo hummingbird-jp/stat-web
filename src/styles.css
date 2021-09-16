@@ -142,6 +142,51 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
   right: 4rem;
 }
 
+/* Meeting Limit Progress Bar */
+#limit {
+  width: 100vw;
+  height: 15px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0;
+  z-index: 100;
+}
+
+.limit-text {
+  right: 4rem;
+}
+
+#limit-all {
+  position: fixed;
+  width: 100vw;
+  height: 5px;
+  background-image: linear-gradient(
+    to right,
+    #bf1f5a,
+    #f2780c,
+    #43bf30,
+    #0476d9
+  );
+}
+
+#limit-progress {
+  width: 0%;
+  height: 5px;
+  margin-left: auto;
+  margin-right: 0;
+  background-color: #0d0d0d;
+}
+
+.limit-text {
+  position: fixed;
+  width: 100%;
+  text-align: right;
+  padding-top: 5px;
+  font-size: 12px;
+  color: #a1a1a1;
+}
+
 /* Meeting Area */
 
 .main-view {

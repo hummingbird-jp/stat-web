@@ -8,6 +8,7 @@ import * as reaction from "./modules/reaction";
 import * as timer from "./modules/timer";
 import * as userInfo from "./modules/user-info";
 import * as voiceVisualizer from "./modules/voice-visualizer";
+import * as meetingConfiguration from "./modules/meeting-configuration";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
@@ -286,6 +287,8 @@ async function joinOrCreate(token) {
 	userInfo.listenUserInfo();
 	agenda.listenAgenda();
 	timer.listenTimer();
+
+	meetingConfiguration.initMeetingTimeLimit();
 }
 
 function truncate(str, n) {
@@ -295,7 +298,7 @@ function truncate(str, n) {
 /*
  * Stop all local and remote tracks then leave the channel.
  */
-async function leave() {
+export async function leave() {
 	for (const localTrack in localTracks) {
 		var track = localTracks[localTrack];
 		if (track) {
