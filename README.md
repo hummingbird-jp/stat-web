@@ -1,6 +1,6 @@
 # TL;DR
 - Stat! is a powerful tool that makes your discussion experience **productive and creative** 🪄
-- Open Stat! [here](https://stat-web-6372a.web.app) 🔗 .
+- Open Stat! <a href="https://stat-web-6372a.web.app" target="_blank">here</a> 🔗 .
 - Let us hear your comments and suggestions [here](https://forms.gle/5prf8vyS73KygvdL9) 🔗 .
 
 # Constraints
