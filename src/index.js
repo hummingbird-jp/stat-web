@@ -42,12 +42,16 @@ $("#sign-in-with-google").on("click", function () {
 		options.uid = generateUid();
 
 		// Show #userNameJoin
-		$("#join-form").css("display", "unset");
-		$('#userNameJoin').focus();
+		setTimeout(() => {
+			$("#join-form").css("display", "unset");
+			$('#userNameJoin').focus();
+		}, 1000);
 	} else {
 		// Show #userNameCreate
-		$("#create-form").css("display", "unset");
-		$('#userNameCreate').focus();
+		setTimeout(() => {
+			$("#create-form").css("display", "unset");
+			$('#userNameCreate').focus();
+		}, 1000);
 	}
 });
 

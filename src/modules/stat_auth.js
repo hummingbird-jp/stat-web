@@ -23,7 +23,7 @@ export async function signin() {
 			user.email = result.user.email;
 			user.uid = result.user.uid;
 			user.photoURL = result.user.photoURL;
-			console.log(`Logged in: ${user.displayName}`);
+			console.log(`Signed in: ${user.displayName}`);
 
 			$("#display-name").text(`Welcome back, ${user.displayName} 👋`);
 
