@@ -2,7 +2,7 @@ import * as firestore from "@firebase/firestore";
 
 import * as _ from "../index";
 import * as stat_auth from "./stat_auth";
-import * as  stat_firebase from "./stat_firebase";
+import * as stat_firebase from "./stat_firebase";
 
 // Send agenda to Firestore
 export async function sendAgenda(agenda) {

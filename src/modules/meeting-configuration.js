@@ -29,13 +29,14 @@ export async function initMeetingTimeLimit() {
 		if (percentage >= 100) {
 			clearInterval(id);
 
-			$(".limit-text").fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
 			const timerSound = new Audio("sounds/alarm.wav");
 			timerSound.play();
 
 			// Force leave meeting
 			_.leave();
-
+			// TODO: show toast message says "Go Premium or send us feedback!"
+		} else if (percentage > 80) {
+			$(".limit-text").fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
 		} else {
 			const remainMillis = endTime - currentTime;
 			const minutes = Math.floor((remainMillis / 1000 / 60) % 60);
@@ -57,11 +58,11 @@ export async function initMeetingTimeLimit() {
 			'text-decoration': 'none'
 		});
 		const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.extendLimitCollection);
-		firestore.addDoc(collectionRef, {
-			timestanp: firestore.Timestamp.now(),
-			userName: stat_auth.user.displayNameStat,
+		await firestore.addDoc(collectionRef, {
+			timestamp: firestore.Timestamp.now(),
+			userName: stat_auth.user.userName,
 			uid: stat_auth.user.uid
-		})
+		});
 	});
 
 	// Create event listner for show extended result instantly
