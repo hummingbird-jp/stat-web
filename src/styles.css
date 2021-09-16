@@ -100,6 +100,11 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
   border: none;
 }
 
+.btn-transparent {
+  background-color: transparent;
+  border: none;
+}
+
 .btn:hover,
 .btn:focus,
 .btn:disabled {
@@ -134,7 +139,7 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
   right: 8rem;
 }
 
-#github-icon {
+#usage-icon {
   height: 30px;
   width: 30px;
   position: fixed;
