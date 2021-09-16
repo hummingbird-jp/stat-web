@@ -25,8 +25,8 @@ let meetingId;
 initScreen();
 initAgora();
 
-$("#sign-in-with-google").on("click", function () {
-	stat_auth.signin();
+$("#sign-in-with-google").on("click", async function () {
+	await stat_auth.signin();
 	// TODO: show error screen if log in failed
 	$("#sign-in-with-google").hide();
 
