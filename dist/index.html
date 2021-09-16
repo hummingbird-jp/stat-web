@@ -65,9 +65,17 @@
 	</script>
 
 	<div class="container">
-		<div id="limit" style="display: none;">
-			<div id="limit-all">
-				<div id="limit-progress"></div>
+		<!-- Welcome Message -->
+		<div id="welcome-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+			style="z-index: 10000;">
+			<div class="toast-header">
+				<!--<img src="..." class="rounded me-2" alt="...">-->
+				<strong id="display-name" class="me-auto">Welcome back 👋</strong>
+				<!--<small>11 mins ago</small>-->
+				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+			<div class="toast-body">
+				We're so happy that you're back! Enjoy your time 🙃
 			</div>
 		</div>
 
@@ -90,7 +98,7 @@
 					<div class="col-lg-4 col-md-6 mx-auto">
 						<input class="form form-control" id="userNameJoin" type="text" placeholder="User Name" required
 							autocomplete="off">
-						<p class="tips">User Name is temporary.</p>
+						<p class="tips">User Name is temporary. You can edit now or change it later.</p>
 						<div class="button-group d-grid gap-2">
 							<button id="join" type="submit" class="btn btn-primary">Join</button>
 						</div>
@@ -104,7 +112,7 @@
 					<div class="col-lg-4 col-md-6 mx-auto">
 						<input class="form form-control" id="userNameCreate" type="text" placeholder="User Name"
 							required autocomplete="off">
-						<p class="tips">User Name is temporary.</p>
+						<p class="tips">User Name is temporary. You can edit now or change it later.</p>
 						<div class="button-group d-grid gap-2">
 							<button id="create" type="submit" class="btn btn-primary">
 								Create

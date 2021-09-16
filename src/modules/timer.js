@@ -1,6 +1,6 @@
 import * as firestore from "@firebase/firestore";
 
-import * as statFirebase from "./stat_firebase";
+import * as stat_firebase from "./stat_firebase";
 
 let isTimerRunningLocally = false;
 let lockObj = false;
@@ -11,7 +11,7 @@ export function initTimer() {
 
 // Firestore
 export async function sendTimer(isRunning, endTime) {
-	const docRef = firestore.doc(statFirebase.dbRootRef, statFirebase.timerCollection, 'temp');
+	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.timerCollection, 'temp');
 
 	// Specify doc ID ('temp') to override each time, because no one wants timer log!
 	await firestore.setDoc(docRef, {
@@ -25,7 +25,7 @@ export async function sendTimer(isRunning, endTime) {
 }
 
 export function listenTimer() {
-	const docRef = firestore.doc(statFirebase.dbRootRef, statFirebase.timerCollection, 'temp');
+	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.timerCollection, 'temp');
 
 	const unsub = firestore.onSnapshot(docRef, (doc) => {
 		const isTimerRunningOnOthers = doc.data() !== undefined ? doc.data().isRunning : false;

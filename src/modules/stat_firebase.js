@@ -31,12 +31,8 @@ export async function initFirestore(meetingId) {
 		const docRef = await firestore.getDoc(dbRootRef);
 		if (!docRef.exists()) {
 			// If it is the first time to initialize this document
-			const nowMillis = firestore.Timestamp.now().toMillis();
-			const endMillis = nowMillis + 40 * 60 * 1000; // 40 minutes from now
 			firestore.setDoc(dbRootRef, {
 				lastTimeActive: firestore.Timestamp.now(),
-				//meetingStartedAt: firestore.Timestamp.now(),
-				//meetingLimitUntil: firestore.Timestamp.fromMillis(endMillis)
 			});
 
 		} else {

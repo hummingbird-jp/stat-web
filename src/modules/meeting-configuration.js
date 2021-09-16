@@ -50,17 +50,22 @@ export async function initMeetingTimeLimit() {
 	// TODO: Currently anyone can extend meeting limit by clicking the link
 	// TODO: So, lets make this for premium account!
 	$(".limit-text a").on('click', async function () {
+		$(".limit-text a").css({
+			'color': 'aliceblue',
+			'cursor': 'not-allowed',
+			'opacity': '0.5',
+			'text-decoration': 'none'
+		});
 		const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.extendLimitCollection);
 		firestore.addDoc(collectionRef, {
 			timestanp: firestore.Timestamp.now(),
-			userName: _.options.userName,
-			uid: _.options.uid
+			userName: stat_auth.user.displayNameStat,
+			uid: stat_auth.user.uid
 		})
 	});
 
 	// Create event listner for show extended result instantly
 	const unsub = firestore.onSnapshot(stat_firebase.dbRootRef, (doc) => {
-		console.log("updated");
 		update();
 	})
 }
