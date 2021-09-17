@@ -80,21 +80,6 @@
 			</div>
 		</div>
 
-		<!-- Welcome Message -->
-		<div id="welcome-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
-			style="z-index: 10000;">
-			<div class="toast-header">
-				<img src="images/square.jpg" class="rounded me-2" alt="hummingbird-logo hummingbird logo"
-					style="width: 12px; height: 12px;">
-				<strong id="display-name" class="me-auto">Welcome back 👋</strong>
-				<!--<small>11 mins ago</small>-->
-				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-			</div>
-			<div class="toast-body">
-				We're so happy that you're back! Enjoy your time 🙃
-			</div>
-		</div>
-
 		<!-- Time Limit -->
 		<div id="limit" style="display: none;">
 			<div id="limit-all">
@@ -167,22 +152,16 @@
 				<!-- Timer -->
 				<div class="col-md-4 mx-auto main-view" id="timer-group">
 					<h1>Timer</h1>
-					<div id="clockdiv" class="">
-						<div>
-							<span class="minutes"></span>
-							<div class="smalltext">Min</div>
+					<div id="timer-body" class="mx-auto">
+						<div id="timer-static">
+							<p>05:00</p>
 						</div>
-						<div>
-							<span class="seconds"></span>
-							<div class="smalltext">Sec</div>
-						</div>
+						<canvas id="timer-dynamic"></canvas>
 					</div>
 
 					<div class="col-md-8 mx-auto main-controller">
-						<div id="timer-slider">
-							<input type="range" class="form-range available-only-published" min="1" max="30" value="5"
-								step="1" id="timer-duration">
-						</div>
+						<input type="range" class="form-range available-only-published" min="1" max="30" value="5"
+							step="1" id="timer-slider">
 						<div class="button-group d-grid gap-2">
 							<button id="start-timer" class="btn btn-primary available-only-published">
 								<img src="icons/play_arrow_black_24dp.svg" alt="" class="material-icons">

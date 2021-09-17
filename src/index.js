@@ -105,10 +105,9 @@ $(setAgendaButton).on('click', function (e) {
 });
 
 // Timer
-const timerSlider = $("#timer-duration")[0];
-
-$(timerSlider).on("input", (e) => {
-	timer.setCurrentValue(e.target.value)
+$("#timer-slider").on("input", (e) => {
+	const text = ('0' + e.target.value).slice(-2) + ':00';
+	$("#timer-static p").text(text);
 });
 
 $('#start-timer').on('click', function () {
@@ -123,9 +122,8 @@ $('#start-timer').on('click', function () {
 		$('#start-timer').attr('disabled', false);
 	}, 1000);
 
-	const duration = $("#timer-duration").val();
-	const endTime = timer.getEndTime(duration);
-	timer.sendTimer(true, endTime);
+	const durationMin = $("#timer-slider").val();
+	timer.sendTimer(true, durationMin);
 });
 
 $('#stop-timer').on('click', function () {
@@ -140,9 +138,7 @@ $('#stop-timer').on('click', function () {
 		$('#stop-timer').attr('disabled', false);
 	}, 1000);
 
-	const duration = $("#timer-duration").val();
-	const endTime = timer.getEndTime(duration);
-	timer.sendTimer(false, endTime);
+	timer.sendTimer(false, 0);
 });
 
 // Share to Others
@@ -275,7 +271,6 @@ async function joinOrCreate(token) {
 
 	await stat_firebase.initFirestore(meetingId);
 	bgm.init();
-	timer.initTimer();
 	voiceVisualizer.initTalkVisualizer();
 	reaction.initReactionDetector();
 
