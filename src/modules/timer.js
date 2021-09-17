@@ -1,22 +1,107 @@
 import * as firestore from "@firebase/firestore";
-
 import * as stat_firebase from "./stat_firebase";
 
-let isTimerRunningLocally = false;
-let lockObj = false;
+let isTimerRunningLocally;
+let shouldStop;
 
-export function initTimer() {
-	setCurrentValue($("#timer-duration").val());
+function startTimer(startedAt, endAt) {
+	isTimerRunningLocally = true;
+	shouldStop = false;
+
+	const canvas = $("#timer-dynamic")[0];
+	const ctx = canvas.getContext("2d");
+	const SIZE = 128;
+	const ARCWIDTH = 4;
+	canvas.width = SIZE;
+	canvas.height = SIZE;
+
+	const x = SIZE / 2;
+	const y = SIZE / 2;
+	const radius = SIZE / 2 - ARCWIDTH;
+	const angleEnd = 1.5 * Math.PI;
+
+	//Create gradient
+	const corner = radius * Math.sqrt(2) / 2;
+	const gradient = ctx.createLinearGradient(SIZE / 2 - corner, SIZE / 2 - corner, SIZE / 2 + corner, SIZE / 2 + corner);
+	gradient.addColorStop(0.00, '#bf1f5a');
+	gradient.addColorStop(0.25, '#f2780c');
+	gradient.addColorStop(0.50, '#43bf30');
+	gradient.addColorStop(1.00, '#0476d9');
+
+	// Hide static timer and show dynamic timer
+	$("#timer-static").css("display", "none");
+	$("#timer-dynamic").css("display", "block");
+
+	draw();
+	const timeinterval = setInterval(draw, 1000);
+
+	function draw() {
+		const t = getRemainTime(startedAt, endAt);
+		const angleStart = (2.0 * t.ratio - 0.5) * Math.PI;
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		// Draw arc
+		ctx.beginPath();
+		ctx.arc(x, y, radius, angleStart, angleEnd);
+		ctx.strokeStyle = gradient;
+		ctx.lineWidth = ARCWIDTH;
+		ctx.lineCap = 'round';
+		ctx.stroke();
+
+		// Draw Timer Text
+		ctx.font = '24px sans-serif';
+		ctx.fillStyle = "#FFFFFF";
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		ctx.fillText(t.remain_text, x, y);
+
+		if (shouldStop) {
+			clearInterval(timeinterval);
+			$("#timer-dynamic").css("display", "none");
+			$("#timer-static").css("display", "block");
+		}
+
+		if (t.remain <= 0) {
+			clearInterval(timeinterval);
+			$("#timer-dynamic").css("display", "none");
+			$("#timer-static").css("display", "block");
+			$("#timer-static p").text('00:00');
+			$("#timer-static").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500);
+		}
+	}
+}
+
+function stopTimer() {
+	shouldStop = true;
+	isTimerRunningLocally = false;
+}
+
+function getRemainTime(startedAt, endAt) {
+	const nowAt = firestore.Timestamp.now();
+	const total = endAt.seconds - startedAt.seconds;
+	const remain = endAt.seconds - nowAt.seconds;
+	const ratio = 1.0 - remain / total;
+
+	const remain_sec = Math.floor(remain % 60);
+	const remain_min = Math.floor((remain / 60) % 60);
+	const remain_text = ('0' + remain_min).slice(-2) + ':' + ('0' + remain_sec).slice(-2);
+
+	return { remain: remain, ratio: ratio, remain_text: remain_text };
 }
 
 // Firestore
-export async function sendTimer(isRunning, endTime) {
+export async function sendTimer(isRunning, durationMin) {
+	const nowMillis = firestore.Timestamp.now().toMillis();
+	const durationMillis = durationMin * 60 * 1000;
+	const endAt = firestore.Timestamp.fromMillis(nowMillis + durationMillis);
+
 	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.timerCollection, 'temp');
 
 	// Specify doc ID ('temp') to override each time, because no one wants timer log!
 	await firestore.setDoc(docRef, {
 		isRunning: isRunning,
-		endTime: firestore.Timestamp.fromDate(endTime),
+		endAt: endAt,
+		startedAt: firestore.Timestamp.now()
 	}).then((result) => {
 		console.log(`Timer successfully sent! ${result}`);
 	}).catch((err) => {
@@ -29,100 +114,17 @@ export function listenTimer() {
 
 	const unsub = firestore.onSnapshot(docRef, (doc) => {
 		const isTimerRunningOnOthers = doc.data() !== undefined ? doc.data().isRunning : false;
-		const endTime = doc.data() !== undefined ? doc.data().endTime.toDate() : undefined;
+		const endAt = doc.data() !== undefined ? doc.data().endAt : undefined;
+		const startedAt = doc.data() !== undefined ? doc.data().startedAt : undefined;
 
 		if (isTimerRunningLocally !== isTimerRunningOnOthers) {
-			console.log(`Change detected on Firestore; fetching...`);
-
-			try {
-				if (isTimerRunningOnOthers === true) {
-					console.log(`Timer on others has started.`);
-					startTimer(endTime);
-				} else {
-					console.log(`Timer on others has stopped.`);
-					stopTimer();
-				}
-				console.log(`Successfully changed my timer status!`);
-			} catch (error) {
-				console.error(`Error fetching timer: ${error}`);
+			if (isTimerRunningOnOthers === true) {
+				console.log(`Timer on others has started.`);
+				startTimer(startedAt, endAt);
+			} else {
+				console.log(`Timer on others has stopped.`);
+				stopTimer();
 			}
 		}
 	});
-}
-
-// Start Timer
-function startTimer(endTime) {
-	lockObj = false;
-	execTimer('clockdiv', endTime);
-	isTimerRunningLocally = true;
-}
-
-// Stop Timer
-function stopTimer() {
-	lockObj = true;
-
-	isTimerRunningLocally = false;
-}
-
-// Timer Utils
-function execTimer(id, endTime) {
-	const timer = document.getElementById(id);
-
-	const minutesSpan = timer.querySelector('.minutes');
-	const secondsSpan = timer.querySelector('.seconds');
-
-	function updateTimer() {
-
-		const t = getTimeRemaining(endTime);
-
-		$(minutesSpan).text(('0' + t.minutes).slice(-2));
-		$(secondsSpan).text(('0' + t.seconds).slice(-2));
-
-		if (lockObj === true) {
-			clearInterval(timeinterval);
-			lockObj = false;
-			return 0;
-		}
-
-		if (t.total <= 0) {
-			$(timer).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-			clearInterval(timeinterval);
-
-			const timerSound = new Audio("sounds/alarm.wav");
-			timerSound.play();
-
-			execTimer(id, endTime);
-		}
-	}
-
-	updateTimer();
-	const timeinterval = setInterval(updateTimer, 1000);
-}
-
-export function setCurrentValue(val) {
-	const timer = $("#clockdiv")[0];
-
-	const minutesSpan = timer.querySelector('.minutes');
-	const secondsSpan = timer.querySelector('.seconds');
-
-	const endTime = getEndTime(val);
-	const t = getTimeRemaining(endTime);
-
-	$(minutesSpan).text(('0' + t.minutes).slice(-2));
-	$(secondsSpan).text(('0' + t.seconds).slice(-2));
-}
-
-function getTimeRemaining(endTime) {
-	const total = Date.parse(endTime) - Date.parse(new Date());
-
-	const seconds = Math.floor((total / 1000) % 60);
-	const minutes = Math.floor((total / 1000 / 60) % 60);
-	const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
-	const days = Math.floor(total / (1000 * 60 * 60 * 24));
-
-	return { total, days, hours, minutes, seconds };
-}
-
-export function getEndTime(val) {
-	return new Date(Date.parse(new Date()) + val * 60 * 1000);
 }
