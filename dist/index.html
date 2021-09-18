@@ -221,9 +221,17 @@
 		<!-- Control Button Group -->
 		<div class="row control-button-group">
 			<div class="col-sm">
+				<button id="clap" class="btn btn-with-tooltip">
+					<span class="tooltiptext">
+						Clap! (C)
+					</span>
+					👏
+				</button>
+			</div>
+			<div class="col-sm">
 				<button class="btn btn-with-tooltip" id="copy-infos-to-clipboard">
-					<span class="tooltiptext meeting-infos-tooltip">
-						Copy
+					<span id="meeting-infos-tooltip" class="tooltiptext">
+						Share (S)
 					</span>
 					<img src="icons/share_black_24dp.svg" alt="" class="material-icons">
 				</button>
@@ -281,7 +289,7 @@
 
 		<!-- Feedback -->
 		<button class="btn-transparent btn-with-tooltip" id="feedback-icon">
-			<span class="tooltiptext meeting-infos-tooltip">
+			<span class="tooltiptext">
 				Give us feedback!
 			</span>
 			<a href="https://forms.gle/5prf8vyS73KygvdL9" target="_blank" rel="noopener noreferrer">
@@ -292,7 +300,7 @@
 
 		<!-- See Usage -->
 		<button class="btn-transparent btn-with-tooltip" id="usage-icon">
-			<span class="tooltiptext meeting-infos-tooltip">
+			<span class="tooltiptext">
 				See usage
 			</span>
 			<a href="https://github.com/hummingbird-jp/stat-web#readme" target="_blank" rel="noopener noreferrer">

@@ -383,12 +383,11 @@ function handleUserUnpublished(user) {
 	$(`#player-wrapper-${id}`).remove();
 }
 
+// Control Button Group
 // Handle keypress events
 $(window).on("keypress", function (e) {
 	switch (e.key) {
 		case "c":
-			console.log(`c pressed.`);
-			// TODO: show clap icon
 			reaction.clap();
 			break;
 		default:
@@ -396,9 +395,10 @@ $(window).on("keypress", function (e) {
 	}
 });
 
-// Meeting Info card
-$("#copy-infos-to-clipboard").click(function (e) {
-	e.preventDefault();
+// Click "Clap!" to clap
+$("#clap").on("click", function () {
+	reaction.clap();
+});
 
 	copyTextToClipboard();
 });
