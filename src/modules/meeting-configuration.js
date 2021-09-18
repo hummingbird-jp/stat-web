@@ -1,4 +1,5 @@
 import * as firestore from "@firebase/firestore";
+import * as stat_auth from "./stat_auth";
 import * as stat_firebase from "./stat_firebase";
 import * as _ from "..";
 
@@ -51,22 +52,21 @@ export async function initMeetingTimeLimit() {
 	// TODO: Currently anyone can extend meeting limit by clicking the link
 	// TODO: So, lets make this for premium account!
 	$(".limit-text a").on('click', async function () {
-		$(".limit-text a").css({
-			'color': 'aliceblue',
-			'cursor': 'not-allowed',
-			'opacity': '0.5',
-			'text-decoration': 'none'
-		});
+		$(".limit-text a").remove();
+
 		const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.extendLimitCollection);
 		await firestore.addDoc(collectionRef, {
 			timestamp: firestore.Timestamp.now(),
-			userName: stat_auth.user.userName,
+			displayNameStat: stat_auth.user.displayNameStat,
 			uid: stat_auth.user.uid
 		});
+
+		// Create event listner for show extended result instantly
+		const collectionRefExtend = firestore.collection(stat_firebase.dbRootRef, stat_firebase.extendLimitCollection);
+		const unsub = firestore.onSnapshot(collectionRefExtend, (doc) => {
+			update();
+		});
+
 	});
 
-	// Create event listner for show extended result instantly
-	const unsub = firestore.onSnapshot(stat_firebase.dbRootRef, (doc) => {
-		update();
-	})
 }
