@@ -1,26 +1,117 @@
 body {
-  background-color: #0d0d0d;
-  width: 100vw;
-  height: 100%;
-  color: aliceblue;
-  font-family: "Montserrat", sans-serif;
-  font-size: 1rem;
+	background-color: #0d0d0d;
+	width: 100vw;
+	height: 100%;
+	margin: 0px;
+	color: #0d0d0d;
+	font-family: "Montserrat", sans-serif;
+	font-size: 1rem;
 }
 
 h1 {
-  font-weight: bold;
-  font-size: 1.8rem;
-  letter-spacing: 0.1rem;
-  margin: 1rem;
+	font-weight: bold;
+	font-size: 1.8rem;
+	letter-spacing: 0.1rem;
+	margin: 1rem;
 }
 
 h2 {
-  font-weight: 500;
-  font-size: 1.5rem;
-  letter-spacing: 0.1rem;
-  margin: 40px 0px 20px;
+	font-weight: 500;
+	font-size: 1.5rem;
+	letter-spacing: 0.1rem;
+	margin: 40px 0px 20px;
 }
 
 a {
-  color: #8f35ff;
+	color: #8f35ff;
+}
+
+.gradient-bar {
+	width: 100vw;
+	height: 5px;
+	background-image: linear-gradient(
+	to right,
+	#bf1f5a,
+	#f2780c,
+	#43bf30,
+	#0476d9
+	);
+}
+.logo-center {
+	width: 8%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5rem;
+	margin-bottom: 1rem;
+	align-items: center;
+}
+
+.island {
+	background-color: #FFFFFF;
+	width: 60vw;
+	height: 50vh;
+	margin: auto;
+	padding: 40px;
+	border-radius: 5px;
+}
+
+.text-overflow {
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	overflow: hidden scroll;
+}
+
+/* Scroll Bar */
+/* width */
+.island ::-webkit-scrollbar {
+	width: 5px;
+}
+
+/* Track */
+.island ::-webkit-scrollbar-track {
+	background-image: linear-gradient(
+	to bottom,
+	#bf1f5a,
+	#f2780c,
+	#43bf30,
+	#0476d9
+	);
+	border-radius: 4px;
+}
+
+/* Handle */
+.island ::-webkit-scrollbar-thumb {
+	background: #FFFFFF;
+	border-radius: 4px;
+}
+
+.noselect {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	 -moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently
+	supported by Chrome, Edge, Opera and Firefox */
+}
+
+.back-to-top {
+	height: 40px;
+	width: 64px;
+	border-radius: 10%;
+	background-color: #8f35ff;
+	margin-top: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+
+}
+.back-to-top:hover {
+	background-color: #572099;
+}
+.back-to-top img{
+	margin-top: 8px;
+	top: 50%;
 }

@@ -27,11 +27,16 @@ a {
 }
 
 .footer {
-  position: absolute;
-  background-color: #333333;
-  height: 100px;
-  width: 100%;
-  bottom: 0;
+	position: absolute;
+	background-color: #0D0D0D;
+	height: 80px;
+	width: 100%;
+	bottom: 0;
+}
+
+.copyright {
+	font-size: 12px;
+	margin-top: 1.3rem;
 }
 
 /* Slider */
