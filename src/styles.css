@@ -1,373 +1,373 @@
 body {
-	background-color: #0d0d0d;
-	width: 100vw;
-	height: 100%;
-	text-align: center;
-	color: aliceblue;
-	font-family: "Montserrat", sans-serif;
-	font-size: 1rem;
+  background-color: #0d0d0d;
+  width: 100vw;
+  height: 100%;
+  text-align: center;
+  color: aliceblue;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
 }
 
 h1 {
-	font-weight: bold;
-	font-size: 1.8rem;
-	letter-spacing: 0.1rem;
-	margin: 1rem;
+  font-weight: bold;
+  font-size: 1.8rem;
+  letter-spacing: 0.1rem;
+  margin: 1rem;
 }
 
 h2 {
-	font-weight: 500;
-	font-size: 1.5rem;
-	letter-spacing: 0.1rem;
-	margin: 40px 0px 20px;
+  font-weight: 500;
+  font-size: 1.5rem;
+  letter-spacing: 0.1rem;
+  margin: 40px 0px 20px;
 }
 
 a {
-	color: #8f35ff;
+  color: #8f35ff;
 }
 
 .footer {
-	position: absolute;
-	background-color: #0D0D0D;
-	height: 80px;
-	width: 100%;
-	bottom: 0;
+  position: absolute;
+  background-color: #0d0d0d;
+  height: 80px;
+  width: 100%;
+  bottom: 0;
 }
 
-.copyright {
-	font-size: 12px;
-	margin-top: 1.3rem;
+#copyright {
+  font-size: 12px;
+  margin-top: 1.3rem;
 }
 
 /* Slider */
 
 input {
-	width: 100%;
-	margin-bottom: 2px;
+  width: 100%;
+  margin-bottom: 2px;
 }
 
 input[type="range"] {
-	height: 22px;
-	-webkit-appearance: none;
-	margin: 10px 0;
-	width: 100%;
+  height: 22px;
+  -webkit-appearance: none;
+  margin: 10px 0;
+  width: 100%;
 }
 
 input[type="range"]:focus {
-	outline: none;
+  outline: none;
 }
 
 input[type="range"]::-webkit-slider-runnable-track {
-	width: 100%;
-	height: 3px;
-	cursor: pointer;
-	box-shadow: 0px 0px 0px #000000;
-	background: #f0f8ff;
-	border-radius: 5px;
-	border: 0px solid #000000;
+  width: 100%;
+  height: 3px;
+  cursor: pointer;
+  box-shadow: 0px 0px 0px #000000;
+  background: #f0f8ff;
+  border-radius: 5px;
+  border: 0px solid #000000;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-	box-shadow: 0px 0px 0px #000000;
-	border: 1px solid #f0f8ff;
-	height: 15px;
-	width: 15px;
-	border-radius: 50px;
-	background: #ffffff;
-	cursor: pointer;
-	-webkit-appearance: none;
-	margin-top: -6.5px;
+  box-shadow: 0px 0px 0px #000000;
+  border: 1px solid #f0f8ff;
+  height: 15px;
+  width: 15px;
+  border-radius: 50px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -6.5px;
 }
 
 input[type="range"]:focus::-webkit-slider-runnable-track {
-	background: #f0f8ff;
+  background: #f0f8ff;
 }
 
 /* Join Area */
 .join-area {
-	margin-top: 20vh;
+  margin-top: 20vh;
 }
 
 .logo {
-	height: 15vh;
-	margin-top: 5rem;
+  height: 15vh;
+  margin-top: 5rem;
 }
 
 .form {
-	margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 /* Buttons */
 
 .control-button-group {
-	position: fixed;
-	z-index: 1;
-	left: 50%;
-	bottom: 2rem;
-	transform: translate(-50%);
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 2rem;
+  transform: translate(-50%);
 }
 
 .btn {
-	margin-top: 1rem;
-	background-color: #8f35ff;
-	border: none;
+  margin-top: 1rem;
+  background-color: #8f35ff;
+  border: none;
 }
 
 .btn-transparent {
-	background-color: transparent;
-	border: none;
+  background-color: transparent;
+  border: none;
 }
 
 .btn:hover,
 .btn:focus,
 .btn:disabled {
-	background-color: #572099;
-	color: lightgrey;
+  background-color: #572099;
+  color: lightgrey;
 }
 
 #leave {
-	background-color: #bf1f5a;
+  background-color: #bf1f5a;
 }
 
 /* Icons */
 
 .material-icons,
 .icons {
-	fill: aliceblue;
+  fill: aliceblue;
 }
 
 #buy-me-a-coffee {
-	height: 30px;
-	width: 109px;
-	position: fixed;
-	bottom: 2rem;
-	right: 12rem;
+  height: 30px;
+  width: 109px;
+  position: fixed;
+  bottom: 2rem;
+  right: 12rem;
 }
 
 #feedback-icon {
-	height: 30px;
-	width: 30px;
-	position: fixed;
-	bottom: 2rem;
-	right: 8rem;
+  height: 30px;
+  width: 30px;
+  position: fixed;
+  bottom: 2rem;
+  right: 8rem;
 }
 
 #usage-icon {
-	height: 30px;
-	width: 30px;
-	position: fixed;
-	bottom: 2rem;
-	right: 4rem;
+  height: 30px;
+  width: 30px;
+  position: fixed;
+  bottom: 2rem;
+  right: 4rem;
 }
 
 /* Meeting Limit Progress Bar */
 #limit {
-	width: 100vw;
-	height: 15px;
-	position: fixed;
-	top: 0;
-	left: 0;
-	padding: 0;
-	z-index: 100;
+  width: 100vw;
+  height: 15px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0;
+  z-index: 100;
 }
 
 .limit-text {
-	right: 4rem;
+  right: 4rem;
 }
 
 #limit-all {
-	position: fixed;
-	width: 100vw;
-	height: 5px;
-	background-image: linear-gradient(
-	to right,
-	#bf1f5a,
-	#f2780c,
-	#43bf30,
-	#0476d9
-	);
+  position: fixed;
+  width: 100vw;
+  height: 5px;
+  background-image: linear-gradient(
+    to right,
+    #bf1f5a,
+    #f2780c,
+    #43bf30,
+    #0476d9
+  );
 }
 
 #limit-progress {
-	width: 0%;
-	height: 5px;
-	margin-left: auto;
-	margin-right: 0;
-	background-color: #0d0d0d;
+  width: 0%;
+  height: 5px;
+  margin-left: auto;
+  margin-right: 0;
+  background-color: #0d0d0d;
 }
 
 .limit-text {
-	position: fixed;
-	width: 100%;
-	text-align: right;
-	padding-top: 5px;
-	font-size: 12px;
-	color: #a1a1a1;
+  position: fixed;
+  width: 100%;
+  text-align: right;
+  padding-top: 5px;
+  font-size: 12px;
+  color: #a1a1a1;
 }
 
 /* Meeting Area */
 
 .main-view {
-	min-height: 20rem;
+  min-height: 20rem;
 }
 
 .main-controller {
-	position: absolute;
-	bottom: 0;
-	left: 50%;
-	transform: translate(-50%);
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 .meeting-area {
-	width: 80vw;
-	height: 80vh;
-	max-width: 1200px;
-	max-height: 1000px;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translateY(-50%) translateX(-50%);
-	-webkit-transform: translateY(-50%) translateX(-50%);
+  width: 80vw;
+  height: 80vh;
+  max-width: 1200px;
+  max-height: 1000px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  -webkit-transform: translateY(-50%) translateX(-50%);
 }
 
 #timer-group,
 #bgm-group,
 #agenda-group {
-	position: relative;
+  position: relative;
 }
 
 /* Timer */
 #timer-body {
-	width:128px;
-	height: 128px;
+  width: 128px;
+  height: 128px;
 }
 
 #timer-static {
-	width: 100%;
-	height: 100%;
-	border-radius: 50%;
-	background-color: #0D0D0D;
-	border-style: solid;
-	border-color: aliceblue;
-	border-width: 3px;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #0d0d0d;
+  border-style: solid;
+  border-color: aliceblue;
+  border-width: 3px;
 }
 
-#timer-static p{
-	text-align: center;
-	line-height: 128px;
-	font-size: 24px;
-	font-family: Arial, Helvetica, sans-serif;
+#timer-static p {
+  text-align: center;
+  line-height: 128px;
+  font-size: 24px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #stop-timer {
-	background-color: #bf1f5a;
+  background-color: #bf1f5a;
 }
 
 /* BGM */
 
 #bgm-selector {
-	background-color: aliceblue;
+  background-color: aliceblue;
 }
 
 #bgm-selector:disabled {
-	background-color: #6d6d6d;
+  background-color: #6d6d6d;
 }
 
 /* Video Group */
 
 .video-wrapper {
-	width: 168px;
-	height: 160px;
-	background-color: #0d0d0d;
-	clip-path: circle(50%);
+  width: 168px;
+  height: 160px;
+  background-color: #0d0d0d;
+  clip-path: circle(50%);
 }
 
 .player {
-	width: 160px;
-	height: 160px;
-	clip-path: circle(50%);
+  width: 160px;
+  height: 160px;
+  clip-path: circle(50%);
 }
 
 .player-name {
-	text-align: center;
-	margin: 8px 0;
+  text-align: center;
+  margin: 8px 0;
 }
 
 #local-player-name {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .reaction-text {
-	margin: 0px;
-	font-size: 1.5rem;
+  margin: 0px;
+  font-size: 1.5rem;
 }
 
 /* Tooltip */
 
 .btn-with-tooltip {
-	position: relative;
-	display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .btn-with-tooltip .tooltiptext {
-	visibility: hidden;
-	width: 140px;
-	background-color: #555;
-	color: #fff;
-	text-align: center;
-	border-radius: 6px;
-	padding: 5px;
-	position: absolute;
-	z-index: 1;
-	bottom: 150%;
-	left: 50%;
-	margin-left: -75px;
-	opacity: 0;
-	transition: opacity 0.3s;
+  visibility: hidden;
+  width: 140px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -75px;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .btn-with-tooltip .tooltiptext::after {
-	content: "";
-	position: absolute;
-	top: 100%;
-	left: 50%;
-	margin-left: -5px;
-	border-width: 5px;
-	border-style: solid;
-	border-color: #555 transparent transparent transparent;
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
 }
 
 .btn-with-tooltip:hover .tooltiptext {
-	visibility: visible;
-	opacity: 1;
+  visibility: visible;
+  opacity: 1;
 }
 
 /* Toast Message */
 
 .toast {
-	position: absolute;
-	top: 2rem;
-	right: 2rem;
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
 }
 
 .toast-body {
-	text-align: left;
-	color: #0d0d0d;
+  text-align: left;
+  color: #0d0d0d;
 }
 
 /* Spacers */
 
 .vertical-spacer-3rem {
-	width: 100%;
-	height: 3rem;
+  width: 100%;
+  height: 3rem;
 }
 
 /* Other */
 
 .tips {
-	font-size: 0.8rem;
-	margin-top: 0.5rem;
-	margin-bottom: 1rem;
-	color: darkgray;
-	text-align: start;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  color: darkgray;
+  text-align: start;
 }

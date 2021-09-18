@@ -5,7 +5,7 @@ import * as stat_firebase from "./stat_firebase";
 
 const colorPalette = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
 
-export function initTalkVisualizer() {
+export function init() {
 
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {

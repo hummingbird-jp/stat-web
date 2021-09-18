@@ -149,7 +149,7 @@ const reactionModule = (function () {
 })();
 
 // TODO: use buttons or other controller to init and begin.
-export function initReactionDetector() {
+export function init() {
 	reactionModule.init();
 }
 

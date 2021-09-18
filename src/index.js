@@ -267,16 +267,17 @@ async function joinOrCreate(token) {
 	console.log("publish success");
 
 	$(".join-area").hide();
+	$("#copyright").hide();
 	$(".meeting-area").fadeIn();
 	$(".control-button-group").fadeIn();
 	$("#join").text("Join");
 	$("#create").text("Create");
 	$("#create").attr("disabled", false);
 
-	await stat_firebase.initFirestore(meetingId);
+	await stat_firebase.init(meetingId);
 	bgm.init();
-	voiceVisualizer.initTalkVisualizer();
-	reaction.initReactionDetector();
+	voiceVisualizer.init();
+	reaction.init();
 
 	stat_auth.addMyUserInfo();
 
@@ -321,6 +322,7 @@ export async function leave() {
 	// timeout is unnecessary of course, but for better UX
 	setTimeout(() => {
 		$(".join-area").fadeIn();
+		$("#copyright").fadeIn();
 		$(".meeting-area").hide();
 		$(".control-button-group").hide();
 		$("#leave").html(`<img src="icons/call_end_black_24dp.svg" alt="" class="material-icons">`)
