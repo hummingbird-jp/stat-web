@@ -9,7 +9,7 @@ export const agendasCollection = 'agenda';
 export const bgmCollection = 'bgm';
 export const audioSetCollection = 'audioSet';
 export const talkDataCollection = 'talkData';
-export const uriAudioDefault = 'https://firebasestorage.googleapis.com/v0/b/stat-web-6372a.appspot.com/o/bgm%2Fnature_sound.mp3?alt=media&token=aff3df2f-787d-43e6-be5f-2a51cae2abef';
+export const uriAudioDefault = 'https://firebasestorage.googleapis.com/v0/b/stat-web-6372a.appspot.com/o/bgm%2Fambient-1-dova-sjp-Everywhere_you_know.mp3?alt=media&token=fae5b477-8bc1-4884-bc06-41b79d49c96f';
 export const firebaseApp = app.initializeApp({
 	apiKey: "AIzaSyBq1wb-WlCSMH8cYeKvSWQlssMIk6z7b7Y",
 	authDomain: "stat-web-6372a.firebaseapp.com",
