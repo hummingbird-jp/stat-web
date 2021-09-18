@@ -383,6 +383,19 @@ function handleUserUnpublished(user) {
 	$(`#player-wrapper-${id}`).remove();
 }
 
+// Handle keypress events
+$(window).on("keypress", function (e) {
+	switch (e.key) {
+		case "c":
+			console.log(`c pressed.`);
+			// TODO: show clap icon
+			reaction.clap();
+			break;
+		default:
+			break;
+	}
+});
+
 // Meeting Info card
 $("#copy-infos-to-clipboard").click(function (e) {
 	e.preventDefault();
