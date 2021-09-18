@@ -2,6 +2,7 @@ import * as firestore from "@firebase/firestore";
 import * as stat_auth from "./stat_auth";
 import * as stat_firebase from "./stat_firebase";
 import * as _ from "..";
+import * as agora from "./agora"
 
 export async function initMeetingTimeLimit() {
 
@@ -34,7 +35,7 @@ export async function initMeetingTimeLimit() {
 			timerSound.play();
 
 			// Force leave meeting
-			_.leave();
+			agora.leave();
 			// TODO: show toast message says "Go Premium or send us feedback!"
 		} else if (percentage > 80) {
 			$(".limit-text").fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
