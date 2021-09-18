@@ -23,7 +23,7 @@ export const firebaseApp = app.initializeApp({
 // TODO: this should be distinguished between free account and pro.
 export const extendLimitCollection = 'extendLimit';
 
-export async function initFirestore(meetingId) {
+export async function init(meetingId) {
 	db = firestore.getFirestore();
 	dbRootRef = firestore.doc(db, 'meetings', meetingId);
 
