@@ -26,6 +26,19 @@ a {
 	color: #8f35ff;
 }
 
+.footer {
+	position: absolute;
+	background-color: #0D0D0D;
+	height: 80px;
+	width: 100%;
+	bottom: 0;
+}
+
+.copyright {
+	font-size: 12px;
+	margin-top: 1.3rem;
+}
+
 /* Slider */
 
 input {
