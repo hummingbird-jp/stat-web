@@ -390,6 +390,16 @@ function handleUserUnpublished(user) {
 // Control Button Group
 // Handle keypress events
 $(window).on("keypress", async function (e) {
+	// ignore if "#agenda-in" is focused
+	const isTyping = $("#agenda-in").is(":focus");
+
+	if (isTyping === true) {
+		console.log(`Keypress ignored because typing.`);
+		return;
+	}
+
+	console.log(`isTyping: ${isTyping}`);
+
 	switch (e.key) {
 		case "c":
 			reaction.clap();
