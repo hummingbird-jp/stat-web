@@ -12,7 +12,7 @@ import * as meetingConfiguration from "./modules/meeting-configuration";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
-const appUrl = 'https://stat-web-6372a.web.app/';
+const appUrl = $(location).attr('href');
 const appid = "adaa9fb7675e4ca19ca80a6762e44dd2";
 const toastOptions = { animation: true, autohide: true, delay: 3000 };
 
@@ -28,11 +28,9 @@ initAgora();
 $("#sign-in-with-google").on("click", async function () {
 	await stat_auth.signin();
 	// TODO: show error screen if log in failed
-	$("#sign-in-with-google").hide();
-
 
 	// Judge if user already has meeting token as URL parameters
-	var urlParams = new URL(location.href).searchParams;
+	const urlParams = new URL(appUrl).searchParams;
 
 	stat_auth.user.token = urlParams.get("token");
 	stat_auth.user.channel = urlParams.get("channel");
@@ -44,15 +42,17 @@ $("#sign-in-with-google").on("click", async function () {
 
 		// Show #userNameJoin
 		setTimeout(() => {
+			$("#sign-in-with-google").hide();
 			$("#join-form").css("display", "unset");
-			$('#userNameJoin').focus();
-		}, 1000);
+			$('#userNameJoin').trigger("focus");
+		}, 2000);
 	} else {
 		// Show #userNameCreate
 		setTimeout(() => {
+			$("#sign-in-with-google").hide();
 			$("#create-form").css("display", "unset");
-			$('#userNameCreate').focus();
-		}, 1000);
+			$('#userNameCreate').trigger("focus");
+		}, 2000);
 	}
 });
 
@@ -398,14 +398,15 @@ $(window).on("keypress", async function (e) {
 		return;
 	}
 
-	console.log(`isTyping: ${isTyping}`);
-
 	switch (e.key) {
 		case "c":
 			reaction.clap();
 			break;
 		case "s":
-			copyTextToClipboard();
+			const text = generateShareUrl();
+			const tooltip = $("#meeting-infos-tooltip");
+
+			copyTextToClipboard(text, tooltip);
 			break;
 		case "m":
 			await unpublish();
@@ -436,13 +437,10 @@ $("#copy-infos-to-clipboard").on("mouseout", function () {
 });
 
 // Copy share url to clipboard
-function copyTextToClipboard() {
-	const text = generateShareUrl();
-	const tooltip = $("#meeting-infos-tooltip");
-
+function copyTextToClipboard(text, tooltip) {
 	navigator.clipboard.writeText(text);
 
-	$(tooltip).html(`Share it to others!`);
+	$(tooltip).html(`Copied!`);
 }
 
 function generateShareUrl() {
