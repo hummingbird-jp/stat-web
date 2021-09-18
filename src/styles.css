@@ -26,6 +26,14 @@ a {
   color: #8f35ff;
 }
 
+.footer {
+  position: absolute;
+  background-color: #333333;
+  height: 100px;
+  width: 100%;
+  bottom: 0;
+}
+
 /* Slider */
 
 input {
