@@ -175,6 +175,10 @@ function generateRandomChannelName(length) {
 
 // Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
 $("#unpublish").on("click", async function () {
+	await unpublish();
+});
+
+async function unpublish() {
 	const unpublishedMessageElement = new bootstrap.Toast($('#unpublished-message'), toastOptions);
 	const publishedMessageElement = new bootstrap.Toast($('#published-message'), toastOptions);
 
@@ -201,7 +205,7 @@ $("#unpublish").on("click", async function () {
 		unpublishedMessageElement.hide();
 		publishedMessageElement.show();
 	}
-});
+}
 
 function initScreen() {
 	$('#join-form').css('display', 'none');
@@ -383,20 +387,48 @@ function handleUserUnpublished(user) {
 	$(`#player-wrapper-${id}`).remove();
 }
 
-// Meeting Info card
-$("#copy-infos-to-clipboard").click(function (e) {
-	e.preventDefault();
+// Control Button Group
+// Handle keypress events
+$(window).on("keypress", async function (e) {
+	switch (e.key) {
+		case "c":
+			reaction.clap();
+			break;
+		case "s":
+			copyTextToClipboard();
+			break;
+		case "m":
+			await unpublish();
+			break;
+		case "l":
+			leave();
+			break;
+		default:
+			break;
+	}
+});
 
+// Click "Clap!" to clap
+$("#clap").on("click", function () {
+	reaction.clap();
+});
+
+// Click "Share" to copy
+$("#copy-infos-to-clipboard").on("click", function () {
 	copyTextToClipboard();
 });
 
-$("#copy-infos-to-clipboard").mouseout(function () {
-	mouseOut();
+// Revert tooltip text to "Share (S)"
+$("#copy-infos-to-clipboard").on("mouseout", function () {
+	const tooltip = $("#meeting-infos-tooltip");
+
+	$(tooltip).html("Share (S)");
 });
 
+// Copy share url to clipboard
 function copyTextToClipboard() {
 	const text = generateShareUrl();
-	const tooltip = $(".meeting-infos-tooltip")[0];
+	const tooltip = $("#meeting-infos-tooltip");
 
 	navigator.clipboard.writeText(text);
 
@@ -411,12 +443,6 @@ function generateUid() {
 	let uid = '0000000000';
 
 	return parseInt((uid + Math.floor(Math.random() * 1000000000)).slice(-10));
-}
-
-function mouseOut() {
-	const tooltip = $(".meeting-infos-tooltip")[0];
-
-	$(tooltip).html("Copy");
 }
 
 // Leave

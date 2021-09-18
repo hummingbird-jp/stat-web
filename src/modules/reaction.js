@@ -9,6 +9,18 @@ import * as blazeface from '@tensorflow-models/blazeface';
 const videoElm = document.createElement("video");
 let blazeFaceModel;
 
+export function clap() {
+	const haystack = $("#local-player-reaction").text();
+	const needle = "👏";
+	const myClapCount = (haystack.match(new RegExp(needle, "g")) || []).length;
+
+	// Ignore if clap count is higher than five
+	if (myClapCount > 5) return;
+
+	$("#local-player-reaction").append("👏");
+	sendMyReaction($("#local-player-reaction").text());
+}
+
 const reactionModule = (function () {
 	let reactionMethods = {};
 	let renderFrame;
@@ -108,8 +120,8 @@ const reactionModule = (function () {
 				eyeMovedLog = [];
 				detector = 0;
 				console.log('%c You are nodding! ', 'background: #222; color: #bada55');
-				$("#local-player-reaction").append("👍🏻");
-				sendMyReaction($("#local-player-reaction").text())
+				$("#local-player-reaction").append("👍");
+				sendMyReaction($("#local-player-reaction").text());
 			}
 		};
 
