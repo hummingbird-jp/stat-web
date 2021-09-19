@@ -1,3 +1,5 @@
+import * as auth from "firebase/auth";
+
 import * as stat_auth from "./modules/stat_auth";
 import * as agenda from "./modules/agenda";
 import * as agora from "./modules/agora"
@@ -9,40 +11,88 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
 export const appUrl = $(location).attr('href');
+const urlStr = window.location.toString();
 const setAgendaButton = $('#set-agenda')[0];
 
 utils.initScreen();
 agora.initAgora();
 
+if (!urlStr.includes("signin")) {
+	auth.onAuthStateChanged(stat_auth.authInstance, (user) => {
+		if (user) {
+			// User is signed in.
+			// show the form
+			console.log(`User already signed in. Showing the form.`);
+
+			if (window.location === "./signin") {
+				window.location = "./";
+			}
+
+			stat_auth.user.displayNameAuth = user.displayName;
+			stat_auth.user.email = user.email;
+			stat_auth.user.uid = user.uid;
+			stat_auth.user.photoURL = user.photoURL;
+
+			console.log(`Signed in: ${stat_auth.user.displayNameAuth}`);
+
+			$("#display-name").text(`Welcome back, ${stat_auth.user.displayNameAuth} 👋`);
+
+			const toastOptions = { animation: true, autohide: true, delay: 3000 };
+			const welcomeMessageElement = new bootstrap.Toast($('#welcome-message'), toastOptions);
+
+			welcomeMessageElement.show();
+
+			// Change placeholder of join/create form
+			$("#userNameJoin").val(stat_auth.user.displayNameAuth);
+			$("#userNameCreate").val(stat_auth.user.displayNameAuth);
+
+			const urlParams = new URL(appUrl).searchParams;
+
+			stat_auth.user.token = urlParams.get("token");
+			stat_auth.user.channel = urlParams.get("channel");
+
+			if (stat_auth.user.token && stat_auth.user.channel) {
+				stat_auth.user.token = stat_auth.user.token.replaceAll(' ', '+');
+				stat_auth.user.uid = utils.generateUid();
+
+				// Show #userNameJoin
+				setTimeout(() => {
+					$("#sign-in-with-google").hide();
+					$("#join-form").css("display", "unset");
+					$('#userNameJoin').trigger("focus");
+				}, 2000);
+			} else {
+				// Show #userNameCreate
+				setTimeout(() => {
+					$("#sign-in-with-google").hide();
+					$("#create-form").css("display", "unset");
+					$('#userNameCreate').trigger("focus");
+				}, 2000);
+			}
+		} else {
+			// No user is signed in.
+			// redirect to ./singnin
+			console.log(`User doesn't exists. Redirecting to ./signin/...`);
+			window.location = "./signin/";
+		}
+	});
+} else {
+	// Is in ./signin
+	console.log(`URL includes "signin". Checking user...`);
+}
+
+// dist/signin/index.html
 $("#sign-in-with-google").on("click", async function () {
+	console.log(`User signed in. Redirecting to home page...`);
+
 	await stat_auth.signin();
-	// TODO: show error screen if log in failed
-
-	// Judge if user already has meeting token as URL parameters
-	const urlParams = new URL(appUrl).searchParams;
-
-	stat_auth.user.token = urlParams.get("token");
-	stat_auth.user.channel = urlParams.get("channel");
-
-
-	if (stat_auth.user.token && stat_auth.user.channel) {
-		stat_auth.user.token = stat_auth.user.token.replaceAll(' ', '+');
-		stat_auth.user.uid = utils.generateUid();
-
-		// Show #userNameJoin
-		setTimeout(() => {
-			$("#sign-in-with-google").hide();
-			$("#join-form").css("display", "unset");
-			$('#userNameJoin').trigger("focus");
-		}, 2000);
-	} else {
-		// Show #userNameCreate
-		setTimeout(() => {
-			$("#sign-in-with-google").hide();
-			$("#create-form").css("display", "unset");
-			$('#userNameCreate').trigger("focus");
-		}, 2000);
-	}
+	auth.onAuthStateChanged(stat_auth.authInstance, async (user) => {
+		if (user) {
+			window.location.href = "../";
+		} else {
+			console.error(`User doesn't exsits.`);
+		}
+	});
 });
 
 // Join existing meeting
