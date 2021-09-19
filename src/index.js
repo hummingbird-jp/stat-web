@@ -171,7 +171,9 @@ $("#clap").on("click", function () {
 
 // Click "Share" to copy
 $("#copy-infos-to-clipboard").on("click", function () {
-	utils.copyTextToClipboard();
+	const text = utils.generateShareUrl();
+	const tooltip = $("#meeting-infos-tooltip");
+	utils.copyTextToClipboard(text, tooltip);
 });
 
 // Revert tooltip text to "Share (S)"
