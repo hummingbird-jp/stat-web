@@ -230,7 +230,7 @@ async function getTalkDataFromFirebase() {
 	return users;
 }
 
-function updateTalkBar() {
+export function updateTalkBar() {
 	const canvas = document.getElementById("talk-amount-visualizer");
 	const canvasCtx = canvas.getContext("2d");
 	getTalkDataFromFirebase().then(result => {
