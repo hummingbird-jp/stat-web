@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<!-- OGP -->
+	<meta property="og:title" content="Stat! Web" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://stat-web-6372a.web.app" />
+	<meta property="og:image" content="https://stat-web-6372a.web.app/images/favicon.png" />
+	<meta property="og:site_name" content="Stat! Web" />
+	<meta property="og:description" content="Stat! Web is a Web RTC project made with ❤️ by hummingbird." />
+
+	<!-- OGP/Twitter -->
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@yhakamay" />
+
+	<!-- Site Verification -->
+	<meta name="google-site-verification" content="6oME1ha5CTZlLv7unyWMXNuBen9wNF5WJxf-o4liJTc" />
+	<meta name="google-site-verification" content="UWmefE2I2l68WfIfIx2gpVac8uBnEE8RLbQmXM8HLUU" />
+
+	<title>Stat!</title>
+
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="../images/favicon.png" type="image/x-icon">
+
+	<!-- Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+
+<body style="background-color: #0D0D0D;">
+	<!-- Splash Screen -->
+	<div id="splash" style="width: 100vw; height: 100vh; position:
+		absolute; top: 0; left: 0; padding: 50vh 0; background: #0D0D0D; z-index: 100;">
+		<div class="progress"
+			style="width: 30%; margin: auto; justify-content: end; background-image: linear-gradient(to right, #BF1F5A, #F2780C,#43BF30,#0476D9);">
+			<div id="splash-progress" class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0"
+				aria-valuemax="100" style="width: 100%; background-color: #0D0D0D;">
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const elem = document.getElementById("splash-progress");
+		const id = setInterval(frame, 3);
+
+		let width = 100;
+
+		function frame() {
+			if (width <= 0) {
+				clearInterval(id);
+			} else {
+				width--;
+				elem.style.width = width + '%';
+			}
+		}
+
+		setTimeout(() => {
+			document.getElementById('splash').style.display = 'none';
+			document.getElementById('limit').style.display = 'block';
+		}, 4000);
+	</script>
+
+	<div class="container">
+		<img src="../images/favicon.png" alt="" class="mx-auto d-block logo" style="height: 150px;">
+
+		<div class="vertical-spacer-3rem"></div>
+
+		<button id="sign-in-with-google" style="padding: 0; border: 0; background-color: #0D0D0D;">
+			<img src="../icons/btn_google_signin_light_normal_web@2x.png" alt="sign-in-with-google"
+				style="height: 60px;">
+		</button>
+	</div>
+
+	<!-- Footer -->
+	<div class="footer">
+		<!-- Copyright, privacy policy and terms of service -->
+		<div id="copyright">
+			<p>
+				&copy; 2021- hummingbird. All rights reserved. See our
+				<a href="./privacy-policy/">
+					Privacy Policy
+				</a> and
+				<a href="./terms-of-service/">
+					Terms of Service
+				</a>.
+			</p>
+		</div>
+
+		<!-- Buy Me a Coffee -->
+		<a href="https://www.buymeacoffee.com/yhakamay" target="_blank"><img
+				src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee"
+				id="buy-me-a-coffee">
+		</a>
+
+		<!-- Feedback -->
+		<button class="btn-transparent btn-with-tooltip" id="feedback-icon">
+			<span class="tooltiptext">
+				Give us feedback!
+			</span>
+			<a href="https://forms.gle/5prf8vyS73KygvdL9" target="_blank" rel="noopener noreferrer">
+				<img src="../icons/thumb_up_black_24dp.svg" alt="feedback thumb-up" class="material-icons"
+					id="feedback-icon">
+			</a>
+		</button>
+
+		<!-- See Usage -->
+		<button class="btn-transparent btn-with-tooltip" id="usage-icon">
+			<span class="tooltiptext">
+				See usage
+			</span>
+			<a href="https://github.com/hummingbird-jp/stat-web#readme" target="_blank" rel="noopener noreferrer">
+				<img src="../icons/menu_book_black_24dp.svg" alt="document" class="material-icons" id="usage-icon">
+			</a>
+		</button>
+	</div>
+
+	<!-- Scripts -->
+	<script src="https://download.agora.io/sdk/release/AgoraRTC_N.js" defer></script>
+	<script type="module" src="../bundle.js" defer></script>
+</body>
+
+</html>
