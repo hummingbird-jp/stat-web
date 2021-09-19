@@ -127,6 +127,9 @@ export async function unpublish() {
 	const unpublishedMessageElement = new bootstrap.Toast($('#unpublished-message'), toastOptions);
 	const publishedMessageElement = new bootstrap.Toast($('#published-message'), toastOptions);
 
+	// Firestore Update
+	stat_auth.adjustMyActiveStatus(published);
+
 	if (published === true) {
 		// Unpublish the user
 		await client.unpublish(Object.values(localTracks));
@@ -138,6 +141,7 @@ export async function unpublish() {
 		// Show toast message
 		unpublishedMessageElement.show();
 		publishedMessageElement.hide();
+
 	} else {
 		// Publish the user
 		await client.publish(Object.values(localTracks));
@@ -189,7 +193,7 @@ export async function leave() {
 	}, 1000);
 
 	// Firestore
-	stat_auth.deactivateMe();
+	stat_auth.adjustMyActiveStatus(false);
 }
 
 /*

@@ -2,6 +2,7 @@ import * as auth from "firebase/auth";
 import * as bootstrap from "bootstrap";
 import * as firestore from "@firebase/firestore";
 import * as stat_firebase from "./stat_firebase";
+import * as voiceVisualizer from "./voice-visualizer";
 import * as _ from "..";
 
 export const user = {
@@ -120,16 +121,13 @@ export async function listenUserInfo() {
 					$(`#player-reaction-${uid}`).text(reaction);
 
 				} else {
+					// displayNameStat changed
+					const uid = change.doc.data().uid;
+					const displayNameStat = change.doc.data().displayNameStat;
+					$(`#player-wrapper-${uid}`).children('.player-name').text(displayNameStat);
 
-					const isActive = change.doc.data().isActive;
-					if (isActive) {
-						// displayNameStat changed
-						const uid = change.doc.data().uid;
-						const displayNameStat = change.doc.data().displayNameStat;
-						$(`#player-wrapper-${uid}`).children('.player-name').text(displayNameStat);
-					}
 					// If user deactivated, it will be automatically updated.
-					updateTalkBar();
+					voiceVisualizer.updateTalkBar();
 				}
 			}
 		});
@@ -151,12 +149,12 @@ export async function listenUserInfo() {
 	});
 }
 
-export async function deactivateMe() {
+export async function adjustMyActiveStatus(isActive) {
 	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.usersCollection, user.uid);
 	const docSnap = await firestore.getDoc(docRef);
 	if (docSnap.exists()) {
 		firestore.updateDoc(docRef, {
-			isActive: false
+			isActive: isActive
 		})
 	} else {
 		console.error(`Error: user ${uid} does not exists!`)
