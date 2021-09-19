@@ -23,37 +23,63 @@ export const user = {
 
 export async function signin() {
 	const authInstance = auth.getAuth(stat_firebase.firebaseApp);
+
+	await auth.setPersistence(authInstance, auth.browserLocalPersistence);
+
 	const provider = new auth.GoogleAuthProvider();
 
-	auth.signInWithPopup(authInstance, provider)
-		.then((result) => {
-			const credential = auth.GoogleAuthProvider.credentialFromResult(result);
-			const token = credential.accessToken;
+	//auth.signInWithPopup(authInstance, provider)
+	//	.then((result) => {
+	//		const credential = auth.GoogleAuthProvider.credentialFromResult(result);
+	//		const token = credential.accessToken;
 
-			user.displayNameAuth = result.user.displayName;
-			user.email = result.user.email;
-			user.uid = result.user.uid;
-			user.photoURL = result.user.photoURL;
-			console.log(`Signed in: ${user.displayName}`);
+	//		user.displayNameAuth = result.user.displayName;
+	//		user.email = result.user.email;
+	//		user.uid = result.user.uid;
+	//		user.photoURL = result.user.photoURL;
+	//		console.log(`Signed in: ${user.displayName}`);
 
-			$("#display-name").text(`Welcome back, ${user.displayNameAuth} 👋`);
+	//		$("#display-name").text(`Welcome back, ${user.displayNameAuth} 👋`);
 
-			const toastOptions = { animation: true, autohide: true, delay: 3000 };
-			const welcomeMessageElement = new bootstrap.Toast($('#welcome-message'), toastOptions);
+	//		const toastOptions = { animation: true, autohide: true, delay: 3000 };
+	//		const welcomeMessageElement = new bootstrap.Toast($('#welcome-message'), toastOptions);
 
-			welcomeMessageElement.show();
+	//		welcomeMessageElement.show();
 
-			// Change placeholder of join/create form
-			$("#userNameJoin").val(user.displayNameAuth);
-			$("#userNameCreate").val(user.displayNameAuth);
+	//		// Change placeholder of join/create form
+	//		$("#userNameJoin").val(user.displayNameAuth);
+	//		$("#userNameCreate").val(user.displayNameAuth);
 
-			return true;
-		}).catch((error) => {
-			const errorMessage = error.message;
-			console.log(`Log in failed: ${errorMessage}`);
+	//		return true;
+	//	}).catch((error) => {
+	//		const errorMessage = error.message;
+	//		console.log(`Log in failed: ${errorMessage}`);
 
-			return false;
-		});
+	//		return false;
+	//	});
+
+	const result = await auth.signInWithPopup(authInstance, provider);
+	const credential = auth.GoogleAuthProvider.credentialFromResult(result);
+	const token = credential.accessToken;
+
+	user.displayNameAuth = result.user.displayName;
+	user.email = result.user.email;
+	user.uid = result.user.uid;
+	user.photoURL = result.user.photoURL;
+	console.log(`Signed in: ${user.displayNameAuth}`);
+
+	$("#display-name").text(`Welcome back, ${user.displayNameAuth} 👋`);
+
+	const toastOptions = { animation: true, autohide: true, delay: 3000 };
+	const welcomeMessageElement = new bootstrap.Toast($('#welcome-message'), toastOptions);
+
+	welcomeMessageElement.show();
+
+	// Change placeholder of join/create form
+	$("#userNameJoin").val(user.displayNameAuth);
+	$("#userNameCreate").val(user.displayNameAuth);
+
+	return true;
 
 }
 

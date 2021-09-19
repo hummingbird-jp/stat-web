@@ -1,3 +1,7 @@
+import * as bootstrap from "bootstrap";
+
+import * as auth from "firebase/auth";
+import * as stat_firebase from "./modules/stat_firebase";
 import * as stat_auth from "./modules/stat_auth";
 import * as agenda from "./modules/agenda";
 import * as agora from "./modules/agora"
@@ -15,8 +19,35 @@ utils.initScreen();
 agora.initAgora();
 
 $("#sign-in-with-google").on("click", async function () {
-	await stat_auth.signin();
-	// TODO: show error screen if log in failed
+	//await stat_auth.signin();
+
+	function waitForLoading(targetWindow) {
+		return new Promise((resolve, reject) => {
+			targetWindow.addEventListener("load", resolve);
+		});
+	}
+
+	stat_auth.signin().then(async (result) => {
+
+		console.log("debug: ", result);
+
+		const authInstance = auth.getAuth(stat_firebase.firebaseApp);
+		auth.onAuthStateChanged(authInstance, async (userAuth) => {
+			console.log("result ", userAuth);
+			if (userAuth) {
+				window.location.href = './meeting/';
+				await waitForLoading(window);
+			} else {
+				console.log("User doesnt have Auth!");
+			}
+		});
+
+	}).catch((err) => {
+		// TODO: show error screen if log in failed
+		console.error("Error signing in: ", err);
+	})
+	$("#sign-in-with-google").hide();
+
 
 	// Judge if user already has meeting token as URL parameters
 	const urlParams = new URL(appUrl).searchParams;
@@ -67,20 +98,30 @@ $("#create-form").on('submit', async function (e) {
 	e.preventDefault();
 	$("#create").attr("disabled", true);
 
-	try {
-		const channelName = agora.generateRandomChannelName(20);
+	const authInstance = auth.getAuth(stat_firebase.firebaseApp);
+	auth.onAuthStateChanged(authInstance, async (userAuth) => {
+		console.log("result ", userAuth);
+		if (userAuth) {
+			try {
+				const channelName = generateRandomChannelName(20);
 
-		stat_auth.user.channel = channelName;
-		stat_auth.user.displayNameStat = $("#userNameCreate").val();
-		stat_auth.user.token = await agora.fetchNewTokenWithChannelName(channelName);
+				stat_auth.user.channel = channelName;
+				stat_auth.user.displayNameStat = $("#userNameCreate").val();
+				stat_auth.user.token = await fetchNewTokenWithChannelName(channelName);
 
-		await agora.joinOrCreate(stat_auth.user.token);
-	} catch (error) {
-		console.error(error);
-		// TODO: show error and clear form
-	} finally {
-		$("#leave").attr("disabled", false);
-	}
+				await joinOrCreate(stat_auth.user.token);
+			} catch (error) {
+				console.error(error);
+				// TODO: show error and clear form
+			} finally {
+				$("#leave").attr("disabled", false);
+			}
+
+		} else {
+			stat_auth.signin();
+		}
+	});
+
 });
 
 $(setAgendaButton).on('click', function (e) {
