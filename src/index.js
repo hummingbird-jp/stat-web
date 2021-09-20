@@ -198,8 +198,7 @@ $("#unpublish").on("click", async function () {
 	await agora.unpublish();
 });
 
-// Control Button Group
-// Handle keypress events
+// Control with keypress
 $(window).on("keypress", async function (e) {
 	// ignore if "#agenda-in" is focused
 	const isTyping = $("#agenda-in").is(":focus");

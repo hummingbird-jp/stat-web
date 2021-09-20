@@ -31,8 +31,8 @@ export async function initMeetingTimeLimit() {
 		if (percentage >= 100) {
 			clearInterval(id);
 
-			const timerSound = new Audio("sounds/alarm.wav");
-			timerSound.play();
+			const alarm = new Audio("../sounds/alarm.wav");
+			alarm.play();
 
 			// Force leave meeting
 			agora.leave();

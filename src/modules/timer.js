@@ -67,6 +67,8 @@ function startTimer(startedAt, endAt) {
 			$("#timer-static").css("display", "block");
 			$("#timer-static p").text('00:00');
 			$("#timer-static").fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500).fadeOut(500).fadeIn(500);
+			const alarm = new Audio("../sounds/alarm.wav");
+			alarm.play();
 		}
 	}
 }
