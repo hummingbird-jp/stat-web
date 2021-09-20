@@ -1,4 +1,8 @@
+import * as bootstrap from "bootstrap";
+
+import * as auth from "firebase/auth";
 import * as stat_auth from "./modules/stat_auth";
+import * as stat_firebase from "./modules/stat_firebase";
 import * as agenda from "./modules/agenda";
 import * as agora from "./modules/agora"
 import * as reaction from "./modules/reaction";
@@ -9,41 +13,93 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
 export const appUrl = $(location).attr('href');
+const urlStr = window.location.toString();
 const setAgendaButton = $('#set-agenda')[0];
 
 utils.initScreen();
 agora.initAgora();
 
-$("#sign-in-with-google").on("click", async function () {
-	await stat_auth.signin();
-	// TODO: show error screen if log in failed
+if (window.location.pathname === '/signin/') {
+	$("#sign-in-with-google").on("click", async function () {
+		// Get URL parameter and pass it to top page
+		const urlParamStartsAt = window.location.href.indexOf('?');
+		const tempUrlParam = window.location.href.slice(urlParamStartsAt);
 
-	// Judge if user already has meeting token as URL parameters
-	const urlParams = new URL(appUrl).searchParams;
+		await stat_auth.signin();
+		auth.onAuthStateChanged(stat_auth.authInstance, async (user) => {
+			if (user) {
+				// If successfully signed in, redirect to main page
+				console.log(`User signed in. Redirecting to home page...`);
+				window.location.href = '../' + tempUrlParam;
+			} else {
+				console.error(`Error signing in. Try again...`);
+			}
+		});
+	});
+} else if (window.location.pathname === '/') {
 
-	stat_auth.user.token = urlParams.get("token");
-	stat_auth.user.channel = urlParams.get("channel");
+	// If you are at the main page, check auth instance
+	auth.onAuthStateChanged(stat_auth.authInstance, (user) => {
+		if (!user) {
+			// 1. User is not signed in.
+			// 2. Get URL parameter and pass it to sign in page.
+			// 3. Then, Redirect to sign in page.
 
+			console.log(`User not signed in. Redirecting to sign-in page/...`);
+			const urlParamStartsAt = window.location.href.indexOf('?');
+			let tempUrlParam = '';
+			if (urlParamStartsAt > 0) {
+				tempUrlParam = window.location.href.slice(urlParamStartsAt);
+			}
+			window.location.href = 'signin/' + tempUrlParam;
+		} else {
+			// User is signed in.
+			// show the form
+			console.log(`User already signed in. Showing the form.`);
 
-	if (stat_auth.user.token && stat_auth.user.channel) {
-		stat_auth.user.token = stat_auth.user.token.replaceAll(' ', '+');
-		stat_auth.user.uid = utils.generateUid();
+			stat_auth.user.displayNameAuth = user.displayName;
+			stat_auth.user.email = user.email;
+			stat_auth.user.uid = user.uid;
+			stat_auth.user.photoURL = user.photoURL;
 
-		// Show #userNameJoin
-		setTimeout(() => {
-			$("#sign-in-with-google").hide();
-			$("#join-form").css("display", "unset");
-			$('#userNameJoin').trigger("focus");
-		}, 2000);
-	} else {
-		// Show #userNameCreate
-		setTimeout(() => {
-			$("#sign-in-with-google").hide();
-			$("#create-form").css("display", "unset");
-			$('#userNameCreate').trigger("focus");
-		}, 2000);
-	}
-});
+			console.log(`Signed in: ${stat_auth.user.displayNameAuth}`);
+
+			$("#display-name").text(`Welcome back, ${stat_auth.user.displayNameAuth} 👋`);
+
+			const toastOptions = { animation: true, autohide: true, delay: 3000 };
+			const welcomeMessageElement = new bootstrap.Toast($('#welcome-message'), toastOptions);
+
+			welcomeMessageElement.show();
+
+			// Change placeholder of join/create form
+			$("#userNameJoin").val(stat_auth.user.displayNameAuth);
+			$("#userNameCreate").val(stat_auth.user.displayNameAuth);
+
+			const urlParams = new URL(appUrl).searchParams;
+
+			stat_auth.user.token = urlParams.get("token");
+			stat_auth.user.channel = urlParams.get("channel");
+
+			if (stat_auth.user.token && stat_auth.user.channel) {
+				stat_auth.user.token = stat_auth.user.token.replaceAll(' ', '+');
+
+				// Show #userNameJoin
+				setTimeout(() => {
+					$("#sign-in-with-google").hide();
+					$("#join-form").css("display", "unset");
+					$('#userNameJoin').trigger("focus");
+				}, 2000);
+			} else {
+				// Show #userNameCreate
+				setTimeout(() => {
+					$("#sign-in-with-google").hide();
+					$("#create-form").css("display", "unset");
+					$('#userNameCreate').trigger("focus");
+				}, 2000);
+			}
+		}
+	});
+}
 
 // Join existing meeting
 $("#join-form").on('submit', async function (e) {
@@ -67,20 +123,30 @@ $("#create-form").on('submit', async function (e) {
 	e.preventDefault();
 	$("#create").attr("disabled", true);
 
-	try {
-		const channelName = agora.generateRandomChannelName(20);
+	const authInstance = auth.getAuth(stat_firebase.firebaseApp);
+	auth.onAuthStateChanged(authInstance, async (userAuth) => {
 
-		stat_auth.user.channel = channelName;
-		stat_auth.user.displayNameStat = $("#userNameCreate").val();
-		stat_auth.user.token = await agora.fetchNewTokenWithChannelName(channelName);
+		if (userAuth) {
+			try {
+				const channelName = agora.generateRandomChannelName(20);
 
-		await agora.joinOrCreate(stat_auth.user.token);
-	} catch (error) {
-		console.error(error);
-		// TODO: show error and clear form
-	} finally {
-		$("#leave").attr("disabled", false);
-	}
+				stat_auth.user.channel = channelName;
+				stat_auth.user.displayNameStat = $("#userNameCreate").val();
+				stat_auth.user.token = await agora.fetchNewTokenWithChannelName(channelName);
+
+				await agora.joinOrCreate(stat_auth.user.token);
+			} catch (error) {
+				console.error(error);
+				// TODO: show error and clear form
+			} finally {
+				$("#leave").attr("disabled", false);
+			}
+
+		} else {
+			stat_auth.signin();
+		}
+	});
+
 });
 
 $(setAgendaButton).on('click', function (e) {
