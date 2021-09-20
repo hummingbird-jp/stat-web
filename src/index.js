@@ -46,7 +46,10 @@ if (window.location.pathname === '/signin/') {
 
 			console.log(`User not signed in. Redirecting to sign-in page/...`);
 			const urlParamStartsAt = window.location.href.indexOf('?');
-			const tempUrlParam = window.location.href.slice(urlParamStartsAt);
+			let tempUrlParam = '';
+			if (urlParamStartsAt > 0) {
+				tempUrlParam = window.location.href.slice(urlParamStartsAt);
+			}
 			window.location.href = 'signin/' + tempUrlParam;
 		} else {
 			// User is signed in.
