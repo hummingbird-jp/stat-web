@@ -1,5 +1,6 @@
 import * as app from "@firebase/app";
 import * as firestore from "@firebase/firestore";
+import * as functions from "firebase/functions";
 
 export let db;
 export let dbRootRef;
@@ -22,6 +23,8 @@ export const firebaseApp = app.initializeApp({
 
 // TODO: this should be distinguished between free account and pro.
 export const extendLimitCollection = 'extendLimit';
+
+export const functionsInstance = functions.getFunctions(firebaseApp);
 
 export async function init(meetingId) {
 	db = firestore.getFirestore();

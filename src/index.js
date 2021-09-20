@@ -1,6 +1,7 @@
 import * as bootstrap from "bootstrap";
 
 import * as auth from "firebase/auth";
+import * as functions from "firebase/functions";
 import * as stat_auth from "./modules/stat_auth";
 import * as stat_firebase from "./modules/stat_firebase";
 import * as agenda from "./modules/agenda";
@@ -132,7 +133,14 @@ $("#create-form").on('submit', async function (e) {
 
 				stat_auth.user.channel = channelName;
 				stat_auth.user.displayNameStat = $("#userNameCreate").val();
-				stat_auth.user.token = await agora.fetchNewTokenWithChannelName(channelName);
+
+				// Generate a token with channel name via Cloud Functions
+				const generateTokenWithUid = functions.httpsCallable(stat_firebase.functionsInstance, "generateTokenWithUid",);
+				const result = await generateTokenWithUid({ channelName: channelName })
+				const data = result.data;
+
+				// Don't worry, generateTokenWithUid returns token
+				stat_auth.user.token = data.token;
 
 				await agora.joinOrCreate(stat_auth.user.token);
 			} catch (error) {
