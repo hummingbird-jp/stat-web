@@ -2,6 +2,7 @@ import * as bootstrap from "bootstrap";
 
 import * as auth from "firebase/auth";
 import * as stat_auth from "./modules/stat_auth";
+import * as stat_firebase from "./modules/stat_firebase";
 import * as agenda from "./modules/agenda";
 import * as agora from "./modules/agora"
 import * as reaction from "./modules/reaction";
@@ -81,7 +82,6 @@ if (window.location.pathname === '/signin/') {
 
 			if (stat_auth.user.token && stat_auth.user.channel) {
 				stat_auth.user.token = stat_auth.user.token.replaceAll(' ', '+');
-				stat_auth.user.uid = utils.generateUid();
 
 				// Show #userNameJoin
 				setTimeout(() => {
@@ -125,16 +125,16 @@ $("#create-form").on('submit', async function (e) {
 
 	const authInstance = auth.getAuth(stat_firebase.firebaseApp);
 	auth.onAuthStateChanged(authInstance, async (userAuth) => {
-		console.log("result ", userAuth);
+
 		if (userAuth) {
 			try {
-				const channelName = generateRandomChannelName(20);
+				const channelName = agora.generateRandomChannelName(20);
 
 				stat_auth.user.channel = channelName;
 				stat_auth.user.displayNameStat = $("#userNameCreate").val();
-				stat_auth.user.token = await fetchNewTokenWithChannelName(channelName);
+				stat_auth.user.token = await agora.fetchNewTokenWithChannelName(channelName);
 
-				await joinOrCreate(stat_auth.user.token);
+				await agora.joinOrCreate(stat_auth.user.token);
 			} catch (error) {
 				console.error(error);
 				// TODO: show error and clear form
