@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const { RtcRole } = require('agora-access-token');
+const { RtcRole, RtcTokenBuilder } = require('agora-access-token');
 admin.initializeApp();
 
 exports.setTimeLimit = functions.firestore.document("/meetings/{meetingId}")
@@ -40,7 +40,7 @@ exports.extendTimeLimit = functions.firestore
 
 	});
 
-exports.generateTokenWithUid = functions.https.onCall((data, context) => {
+exports.generateTokenWithUid = functions.region("us-central1").https.onCall((data, context) => {
 	// Rtc Examples
 	const appID = 'adaa9fb7675e4ca19ca80a6762e44dd2';
 	const appCertificate = '2fa47b6819414439a09915f8f46fb6bd';
