@@ -1,7 +1,6 @@
 import * as bootstrap from "bootstrap";
 
 import * as auth from "firebase/auth";
-import * as stat_firebase from "./modules/stat_firebase";
 import * as stat_auth from "./modules/stat_auth";
 import * as agenda from "./modules/agenda";
 import * as agora from "./modules/agora"
@@ -13,68 +12,91 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
 export const appUrl = $(location).attr('href');
+const urlStr = window.location.toString();
 const setAgendaButton = $('#set-agenda')[0];
 
 utils.initScreen();
 agora.initAgora();
 
-$("#sign-in-with-google").on("click", async function () {
-	//await stat_auth.signin();
+if (window.location.pathname === '/signin/') {
+	$("#sign-in-with-google").on("click", async function () {
+		// Get URL parameter and pass it to top page
+		const urlParamStartsAt = window.location.href.indexOf('?');
+		const tempUrlParam = window.location.href.slice(urlParamStartsAt);
 
-	function waitForLoading(targetWindow) {
-		return new Promise((resolve, reject) => {
-			targetWindow.addEventListener("load", resolve);
-		});
-	}
-
-	stat_auth.signin().then(async (result) => {
-
-		console.log("debug: ", result);
-
-		const authInstance = auth.getAuth(stat_firebase.firebaseApp);
-		auth.onAuthStateChanged(authInstance, async (userAuth) => {
-			console.log("result ", userAuth);
-			if (userAuth) {
-				window.location.href = './meeting/';
-				await waitForLoading(window);
+		await stat_auth.signin();
+		auth.onAuthStateChanged(stat_auth.authInstance, async (user) => {
+			if (user) {
+				// If successfully signed in, redirect to main page
+				console.log(`User signed in. Redirecting to home page...`);
+				window.location.href = '../' + tempUrlParam;
 			} else {
-				console.log("User doesnt have Auth!");
+				console.error(`Error signing in. Try again...`);
 			}
 		});
+	});
+} else if (window.location.pathname === '/') {
 
-	}).catch((err) => {
-		// TODO: show error screen if log in failed
-		console.error("Error signing in: ", err);
-	})
-	$("#sign-in-with-google").hide();
+	// If you are at the main page, check auth instance
+	auth.onAuthStateChanged(stat_auth.authInstance, (user) => {
+		if (!user) {
+			// 1. User is not signed in.
+			// 2. Get URL parameter and pass it to sign in page.
+			// 3. Then, Redirect to sign in page.
 
+			console.log(`User not signed in. Redirecting to sign-in page/...`);
+			const urlParamStartsAt = window.location.href.indexOf('?');
+			const tempUrlParam = window.location.href.slice(urlParamStartsAt);
+			window.location.href = 'signin/' + tempUrlParam;
+		} else {
+			// User is signed in.
+			// show the form
+			console.log(`User already signed in. Showing the form.`);
 
-	// Judge if user already has meeting token as URL parameters
-	const urlParams = new URL(appUrl).searchParams;
+			stat_auth.user.displayNameAuth = user.displayName;
+			stat_auth.user.email = user.email;
+			stat_auth.user.uid = user.uid;
+			stat_auth.user.photoURL = user.photoURL;
 
-	stat_auth.user.token = urlParams.get("token");
-	stat_auth.user.channel = urlParams.get("channel");
+			console.log(`Signed in: ${stat_auth.user.displayNameAuth}`);
 
+			$("#display-name").text(`Welcome back, ${stat_auth.user.displayNameAuth} 👋`);
 
-	if (stat_auth.user.token && stat_auth.user.channel) {
-		stat_auth.user.token = stat_auth.user.token.replaceAll(' ', '+');
-		stat_auth.user.uid = utils.generateUid();
+			const toastOptions = { animation: true, autohide: true, delay: 3000 };
+			const welcomeMessageElement = new bootstrap.Toast($('#welcome-message'), toastOptions);
 
-		// Show #userNameJoin
-		setTimeout(() => {
-			$("#sign-in-with-google").hide();
-			$("#join-form").css("display", "unset");
-			$('#userNameJoin').trigger("focus");
-		}, 2000);
-	} else {
-		// Show #userNameCreate
-		setTimeout(() => {
-			$("#sign-in-with-google").hide();
-			$("#create-form").css("display", "unset");
-			$('#userNameCreate').trigger("focus");
-		}, 2000);
-	}
-});
+			welcomeMessageElement.show();
+
+			// Change placeholder of join/create form
+			$("#userNameJoin").val(stat_auth.user.displayNameAuth);
+			$("#userNameCreate").val(stat_auth.user.displayNameAuth);
+
+			const urlParams = new URL(appUrl).searchParams;
+
+			stat_auth.user.token = urlParams.get("token");
+			stat_auth.user.channel = urlParams.get("channel");
+
+			if (stat_auth.user.token && stat_auth.user.channel) {
+				stat_auth.user.token = stat_auth.user.token.replaceAll(' ', '+');
+				stat_auth.user.uid = utils.generateUid();
+
+				// Show #userNameJoin
+				setTimeout(() => {
+					$("#sign-in-with-google").hide();
+					$("#join-form").css("display", "unset");
+					$('#userNameJoin').trigger("focus");
+				}, 2000);
+			} else {
+				// Show #userNameCreate
+				setTimeout(() => {
+					$("#sign-in-with-google").hide();
+					$("#create-form").css("display", "unset");
+					$('#userNameCreate').trigger("focus");
+				}, 2000);
+			}
+		}
+	});
+}
 
 // Join existing meeting
 $("#join-form").on('submit', async function (e) {
