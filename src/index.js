@@ -133,11 +133,13 @@ $("#create-form").on('submit', async function (e) {
 
 				stat_auth.user.channel = channelName;
 				stat_auth.user.displayNameStat = $("#userNameCreate").val();
-				//stat_auth.user.token = await agora.fetchNewTokenWithChannelName(channelName);
 
-				const generateTokenWithUid = functions.httpsCallable(stat_firebase.functionsInstance, "generateTokenWithUid");
+				// Generate a token with channel name via Cloud Functions
+				const generateTokenWithUid = functions.httpsCallable(stat_firebase.functionsInstance, "generateTokenWithUid",);
 				const result = await generateTokenWithUid({ channelName: channelName })
 				const data = result.data;
+
+				// Don't worry, generateTokenWithUid returns token
 				stat_auth.user.token = data.token;
 
 				await agora.joinOrCreate(stat_auth.user.token);

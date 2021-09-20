@@ -13,14 +13,11 @@ import * as voiceVisualizer from "./voice-visualizer";
 const appid = "adaa9fb7675e4ca19ca80a6762e44dd2";
 const toastOptions = { animation: true, autohide: true, delay: 3000 };
 
-
 let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 let published = false;
 let localTracks;
 let remoteUsers;
 let meetingId;
-
-
 
 export function initAgora() {
 	published = false;
@@ -33,23 +30,6 @@ export function initAgora() {
 	};
 
 	remoteUsers = {};
-}
-
-export async function fetchNewTokenWithChannelName(channelName) {
-	const uid = 1234;
-	let token;
-
-	await $.getJSON(`https://stat-web.herokuapp.com/access_token?channel=${channelName}`,
-		function (data) {
-			token = data.token;
-		}
-	);
-
-	console.log(`uid: ${uid}`);
-	console.log(`channelName: ${channelName}`);
-	console.log(`token: ${token}`);
-
-	return token;
 }
 
 export function generateRandomChannelName(length) {
