@@ -25,7 +25,7 @@ export const firebaseApp = app.initializeApp({
 export function enableAppCheck() {
 	appCheck.initializeAppCheck(firebaseApp, {
 		// Don't worry, the site key is not a secret one
-		provider: new appCheck.ReCaptchaV3Provider("6LehqH4cAAAAAKY9uptk5gtquoj72UMB0y0Tde_r"),
+		provider: new appCheck.ReCaptchaV3Provider("6Lc7loAcAAAAAJftbQJ7z_8pE5RRPi3KHeyuXCxr"),
 		isTokenAutoRefreshEnabled: true,
 	});
 }
