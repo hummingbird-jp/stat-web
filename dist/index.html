@@ -36,6 +36,13 @@
 </head>
 
 <body style="background-color: #0D0D0D;">
+	<!-- Setting Up for AppCheck Debug Mode -->
+	<!-- https://firebase.google.com/docs/app-check/web/debug-provider?hl=en#ci -->
+	<script>
+		self.FIREBASE_APPCHECK_DEBUG_TOKEN = process.env.APP_CHECK_DEBUG_TOKEN_FROM_CI;
+	</script>
+	<script src="https://www.gstatic.com/firebasejs/9.0.1/firebase-app-check.js"></script>
+
 	<!-- Splash Screen -->
 	<div id="splash" style="width: 100vw; height: 100vh; position:
 		absolute; top: 0; left: 0; padding: 50vh 0; background: #0D0D0D; z-index: 100;">
