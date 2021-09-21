@@ -1,7 +1,11 @@
+// Bootstrap
 import * as bootstrap from "bootstrap";
 
+// Firebase
 import * as auth from "firebase/auth";
 import * as functions from "firebase/functions";
+
+// Internal Modules
 import * as stat_auth from "./modules/stat_auth";
 import * as stat_firebase from "./modules/stat_firebase";
 import * as agenda from "./modules/agenda";
@@ -10,6 +14,7 @@ import * as reaction from "./modules/reaction";
 import * as timer from "./modules/timer";
 import * as utils from "./modules/utils"
 
+// Stylesheets
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
@@ -19,6 +24,12 @@ const setAgendaButton = $('#set-agenda')[0];
 
 utils.initScreen();
 agora.initAgora();
+
+try {
+	stat_firebase.enableAppCheck();
+} catch (error) {
+	console.log(`Error enabling AppCheck: ${error}`);
+}
 
 if (window.location.pathname === '/signin/') {
 	$("#sign-in-with-google").on("click", async function () {

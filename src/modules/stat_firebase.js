@@ -21,6 +21,14 @@ export const firebaseApp = app.initializeApp({
 	measurementId: "G-ZWTBZRCXXE"
 });
 
+export function enableAppCheck() {
+	const stat_appCheck = appCheck.initializeAppCheck(stat_firebase.firebaseApp, {
+		// Don't worry, the site key is not a secret one
+		provider: new appCheck.ReCaptchaV3Provider("6LehqH4cAAAAAKY9uptk5gtquoj72UMB0y0Tde_r"),
+		isTokenAutoRefreshEnabled: true,
+	});
+}
+
 // TODO: this should be distinguished between free account and pro.
 export const extendLimitCollection = 'extendLimit';
 
