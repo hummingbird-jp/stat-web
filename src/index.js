@@ -27,8 +27,9 @@ agora.initAgora();
 
 try {
 	stat_firebase.enableAppCheck();
+	console.log(`AppCheck enabled!`);
 } catch (error) {
-	console.log(`Error enabling AppCheck: ${error}`);
+	console.error(`Error enabling AppCheck: ${error}`);
 }
 
 if (window.location.pathname === '/signin/') {

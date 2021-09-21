@@ -1,6 +1,7 @@
 import * as app from "@firebase/app";
 import * as firestore from "@firebase/firestore";
 import * as functions from "firebase/functions";
+import * as appCheck from "firebase/app-check";
 
 export let db;
 export let dbRootRef;
@@ -22,7 +23,7 @@ export const firebaseApp = app.initializeApp({
 });
 
 export function enableAppCheck() {
-	const stat_appCheck = appCheck.initializeAppCheck(stat_firebase.firebaseApp, {
+	appCheck.initializeAppCheck(firebaseApp, {
 		// Don't worry, the site key is not a secret one
 		provider: new appCheck.ReCaptchaV3Provider("6LehqH4cAAAAAKY9uptk5gtquoj72UMB0y0Tde_r"),
 		isTokenAutoRefreshEnabled: true,
