@@ -37,7 +37,10 @@ if (window.location.pathname === '/signin/') {
 	$("#sign-in-with-google").on("click", async function () {
 		// Get URL parameter and pass it to top page
 		const urlParamStartsAt = window.location.href.indexOf('?');
-		const tempUrlParam = window.location.href.slice(urlParamStartsAt);
+		let tempUrlParam = '';
+		if (urlParamStartsAt > 0) {
+			tempUrlParam = window.location.href.slice(urlParamStartsAt);
+		}
 
 		await stat_auth.signin();
 		auth.onAuthStateChanged(stat_auth.authInstance, async (user) => {
@@ -173,7 +176,8 @@ $("#btn-join-channel").on('click', async function () {
 				$("#btn-join-channel").attr("disabled", true);
 				$(".modal-backdrop").remove();
 
-				await agora.joinWithChannelName(inputValue);
+				const link = window.location.href + '?channel=' + inputValue;
+				window.location.href = link;
 			}
 		}
 
