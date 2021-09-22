@@ -7,7 +7,6 @@ import * as bgm from "./bgm";
 import * as meetingConfiguration from "./meeting-configuration";
 import * as reaction from "./reaction";
 import * as timer from "./timer";
-import * as utils from "./utils";
 import * as voiceVisualizer from "./voice-visualizer";
 
 const appid = "adaa9fb7675e4ca19ca80a6762e44dd2";
@@ -32,6 +31,9 @@ export function initAgora() {
 	remoteUsers = {};
 }
 
+/**
+ * @deprecated A channel name will be replaced with document ID on Firestore soon.
+ */
 export function generateRandomChannelName(length) {
 	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	const charactersLength = characters.length;
@@ -70,16 +72,10 @@ export async function joinOrCreate(token) {
 	localTracks.videoTrack.play("local-player");
 	$("#local-player-name").text(`${stat_auth.user.displayNameStat} (You)`);
 
-	// Show token and password
-	const shortenedToken = utils.truncate(stat_auth.user.token, 10);
-	const shortenedChannelName = utils.truncate(stat_auth.user.channel, 10);
-
-	$("#token-and-password").html(`Token: ${shortenedToken}<br>Password: ${shortenedChannelName}`);
-
 	// Publish the local video and audio tracks to the channel.
-	await client.publish(Object.values(localTracks));
+	client.publish(Object.values(localTracks));
 	published = true;
-	console.log("publish success");
+	console.log("Local user successfully published.");
 
 	$(".join-area").hide();
 	$("#copyright").hide();
@@ -112,7 +108,7 @@ export async function unpublish() {
 
 	if (published === true) {
 		// Unpublish the user
-		await client.unpublish(Object.values(localTracks));
+		client.unpublish(Object.values(localTracks));
 		published = false;
 
 		$('.available-only-published').attr('disabled', true);
@@ -124,7 +120,7 @@ export async function unpublish() {
 
 	} else {
 		// Publish the user
-		await client.publish(Object.values(localTracks));
+		client.publish(Object.values(localTracks));
 		published = true;
 
 		$('.available-only-published').attr('disabled', false);
@@ -154,7 +150,7 @@ export async function leave() {
 	$("#remote-playerlist").html("");
 
 	// leave the channel
-	await client.leave();
+	client.leave();
 
 	$("#local-player-name").text("");
 	$("#join").attr("disabled", false);
@@ -186,7 +182,7 @@ async function subscribe(user, mediaType) {
 	const uid = user.uid;
 
 	// subscribe to a remote user
-	await client.subscribe(user, mediaType);
+	client.subscribe(user, mediaType);
 	console.log("subscribe success");
 
 	if (mediaType === 'video') {
@@ -205,6 +201,9 @@ async function subscribe(user, mediaType) {
 	}
 }
 
+/**
+ * @deprecated Meeting ID (equals document ID) on Firestore will be generated automatically by Firestore.
+ */
 function generateMeetingId(token) {
 	return token.replaceAll('/', '');
 }

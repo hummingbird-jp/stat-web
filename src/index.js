@@ -50,15 +50,14 @@ if (window.location.pathname === '/signin/') {
 		});
 	});
 } else if (window.location.pathname === '/') {
-
 	// If you are at the main page, check auth instance
 	auth.onAuthStateChanged(stat_auth.authInstance, (user) => {
 		if (!user) {
 			// 1. User is not signed in.
 			// 2. Get URL parameter and pass it to sign in page.
 			// 3. Then, Redirect to sign in page.
+			console.log(`User not signed in. Redirecting to sign-in page...`);
 
-			console.log(`User not signed in. Redirecting to sign-in page/...`);
 			const urlParamStartsAt = window.location.href.indexOf('?');
 			let tempUrlParam = '';
 			if (urlParamStartsAt > 0) {
@@ -151,7 +150,7 @@ $("#create-form").on('submit', async function (e) {
 				const result = await generateTokenWithUid({ channelName: channelName })
 				const data = result.data;
 
-				// Don't worry, generateTokenWithUid returns token
+				// Don't worry, generateTokenWithUid returns a token
 				stat_auth.user.token = data.token;
 
 				await agora.joinOrCreate(stat_auth.user.token);
