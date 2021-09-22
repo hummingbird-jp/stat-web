@@ -85,6 +85,5 @@ async function createNewMeetingDocument() {
 
 	await firestore.updateDoc(meetingDocRef, {
 		lastTimeActive: firestore.Timestamp.now(),
-		meetingLimitUntil: firestore.Timestamp.fromMillis(firestore.Timestamp.now().toMillis() + 40 * 60 * 1000),
 	});
 }

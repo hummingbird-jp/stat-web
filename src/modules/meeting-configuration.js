@@ -9,7 +9,7 @@ export async function initMeetingTimeLimit() {
 	// Add caption to the bar
 	const caption = $(`
 			<p class="limit-text">
-				<span id="limit-span">00h40m</span> remains.
+				<span id="limit-span"></span>
 				<a href="https://forms.gle/5prf8vyS73KygvdL9" target="_blank" style="cursor: pointer;">Extend limit</a>
 			</p>
 		`);
@@ -44,7 +44,7 @@ export async function initMeetingTimeLimit() {
 			const minutes = Math.floor((remainMillis / 1000 / 60) % 60);
 			const hours = Math.floor((remainMillis / (1000 * 60 * 60)) % 24);
 
-			const remains = ('0' + hours).slice(-2) + 'h' + ('0' + minutes).slice(-2) + 'm';
+			const remains = ('0' + hours).slice(-2) + 'h' + ('0' + minutes).slice(-2) + 'm remains. ';
 			$("#limit-span").text(remains);
 		}
 	}
@@ -61,13 +61,12 @@ export async function initMeetingTimeLimit() {
 			displayNameStat: stat_auth.user.displayNameStat,
 			uid: stat_auth.user.uid
 		});
+	});
 
-		// Create event listner for show extended result instantly
-		const collectionRefExtend = firestore.collection(stat_firebase.meetingDocRef, stat_firebase.extendLimitCollection);
-		const unsub = firestore.onSnapshot(collectionRefExtend, (doc) => {
-			update();
-		});
-
+	// Create event listner for show extended result instantly
+	const collectionRefExtend = firestore.collection(stat_firebase.meetingDocRef, stat_firebase.extendLimitCollection);
+	const unsub = firestore.onSnapshot(collectionRefExtend, (doc) => {
+		update();
 	});
 
 }

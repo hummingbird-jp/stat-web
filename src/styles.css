@@ -114,14 +114,6 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
 	text-align: left;
 }
 
-#menu .state-success {
-	fill: #43bf30;
-}
-
-#menu .state-error {
-	fill: #bf1f5a;
-}
-
 /* Buttons */
 
 .control-button-group {
@@ -208,6 +200,7 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
 
 .limit-text {
 	right: 4rem;
+	font-family: sans-serif;
 }
 
 #limit-all {
