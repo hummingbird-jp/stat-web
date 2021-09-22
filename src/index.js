@@ -4,6 +4,7 @@ import * as bootstrap from "bootstrap";
 // Firebase
 import * as auth from "firebase/auth";
 import * as functions from "firebase/functions";
+import * as firestore from "@firebase/firestore";
 
 // Internal Modules
 import * as stat_auth from "./modules/stat_auth";
@@ -36,7 +37,10 @@ if (window.location.pathname === '/signin/') {
 	$("#sign-in-with-google").on("click", async function () {
 		// Get URL parameter and pass it to top page
 		const urlParamStartsAt = window.location.href.indexOf('?');
-		const tempUrlParam = window.location.href.slice(urlParamStartsAt);
+		let tempUrlParam = '';
+		if (urlParamStartsAt > 0) {
+			tempUrlParam = window.location.href.slice(urlParamStartsAt);
+		}
 
 		await stat_auth.signin();
 		auth.onAuthStateChanged(stat_auth.authInstance, async (user) => {
@@ -51,7 +55,7 @@ if (window.location.pathname === '/signin/') {
 	});
 } else if (window.location.pathname === '/') {
 	// If you are at the main page, check auth instance
-	auth.onAuthStateChanged(stat_auth.authInstance, (user) => {
+	auth.onAuthStateChanged(stat_auth.authInstance, async (user) => {
 		if (!user) {
 			// 1. User is not signed in.
 			// 2. Get URL parameter and pass it to sign in page.
@@ -68,6 +72,7 @@ if (window.location.pathname === '/signin/') {
 			// User is signed in.
 			// show the form
 			console.log(`User already signed in. Showing the form.`);
+			$("#sign-in-with-google").hide();
 
 			stat_auth.user.displayNameAuth = user.displayName;
 			stat_auth.user.email = user.email;
@@ -83,89 +88,187 @@ if (window.location.pathname === '/signin/') {
 
 			welcomeMessageElement.show();
 
-			// Change placeholder of join/create form
-			$("#userNameJoin").val(stat_auth.user.displayNameAuth);
-			$("#userNameCreate").val(stat_auth.user.displayNameAuth);
-
 			const urlParams = new URL(appUrl).searchParams;
-
-			stat_auth.user.token = urlParams.get("token");
 			stat_auth.user.channel = urlParams.get("channel");
 
-			if (stat_auth.user.token && stat_auth.user.channel) {
-				stat_auth.user.token = stat_auth.user.token.replaceAll(' ', '+');
-
-				// Show #userNameJoin
-				setTimeout(() => {
-					$("#sign-in-with-google").hide();
-					$("#join-form").css("display", "unset");
-					$('#userNameJoin').trigger("focus");
-				}, 2000);
+			if (stat_auth.user.channel) {
+				// Join channel
+				await agora.joinWithChannelName(stat_auth.user.channel);
 			} else {
-				// Show #userNameCreate
-				setTimeout(() => {
-					$("#sign-in-with-google").hide();
-					$("#create-form").css("display", "unset");
-					$('#userNameCreate').trigger("focus");
-				}, 2000);
+				$("#sign-in-with-google").hide();
 			}
 		}
 	});
 }
 
-// Join existing meeting
-$("#join-form").on('submit', async function (e) {
-	e.preventDefault();
-	$("#join").attr("disabled", true);
+$("#btn-create-random-channel").on('click', async function () {
+	// 1. Create new document in Firebase channels collection (addDoc)
+	// 2. Get document id
+	// 3. Use the doc id as channelName
+	const db = firestore.getFirestore();
+	const collectionRef = firestore.collection(db, 'channels');
+	const docRef = await firestore.addDoc(collectionRef, {
+		channelCreatedBy: {
+			uid: stat_auth.user.uid,
+			userName: stat_auth.user.displayNameAuth
+		},
+		channelCreatedAt: firestore.Timestamp.now(),
+		channelTitle: stat_auth.user.displayNameAuth + "'s Meeting",
+		latestMeetingId: null,
+	});
+	const channelName = docRef.id;
+	const link = window.location.href + '?channel=' + channelName;
 
-	try {
-		stat_auth.user.displayNameStat = $("#userNameJoin").val();
+	$("#modal-create-random-channel .modal-body").text(link);
+	$("#btn-copy-channel-link").attr("disabled", false);
+	$("#btn-start-meeting").attr("disabled", false);
 
-		await agora.joinOrCreate(stat_auth.user.token);
-	} catch (error) {
-		console.error(error);
-		// TODO: show error and clear form
-	} finally {
-		$("#leave").attr("disabled", false);
+	$("#btn-copy-channel-link").on("click", function () {
+		navigator.clipboard.writeText(link);
+		$("#btn-copy-channel-link").text("Copied!");
+	});
+
+	$("#btn-start-meeting").on('click', async function () {
+		window.location.href = link;
+	})
+})
+
+$("#btn-join-channel").on('click', async function () {
+	const inputValue = $("#form-join-channel").val().toString();
+
+	function isValidHttpUrl(string) {
+		let url;
+		try {
+			url = new URL(string);
+		} catch (_) {
+			return false;
+		}
+		return url.protocol === "http:" || url.protocol === "https:";
+	}
+
+	if (isValidHttpUrl(inputValue)) {
+		// Check if the input value is a valid URL
+		window.location.href = inputValue;
+
+	} else {
+		if (inputValue.length > 0) {
+			// Input Value may be equal to channel name
+			// Search Firestore if the channel exists
+			// If not, ask user to create the channel
+			// TODO: This implementation contains a future security issue! Be carefull!
+			const db = firestore.getFirestore();
+			const docRef = firestore.doc(db, 'channels', inputValue);
+			const docSnap = await firestore.getDoc(docRef);
+			if (!docSnap.exists()) {
+				$("#modal-join-channel .modal-footer").prepend(
+					$(`
+						<div class="msg-error">
+							<h5 class="msg-error">Woops! Join failed.</h5>
+							<p>Tips: Check if the channel exists or you have a permission to join the channel.</p>
+						</div>
+					`)
+				)
+				setTimeout(() => {
+					$("#modal-join-channel .msg-error").fadeOut(500);
+				}, 2000);
+			} else {
+				// Channel exists. Join the channel.
+				$("#btn-join-channel").attr("disabled", true);
+				$(".modal-backdrop").remove();
+
+				const link = window.location.href + '?channel=' + inputValue;
+				window.location.href = link;
+			}
+		}
+
 	}
 });
 
-// Create a new meeting
-$("#create-form").on('submit', async function (e) {
-	e.preventDefault();
-	$("#create").attr("disabled", true);
+$("#form-create-named-channel").on('input', async function () {
+	$("#modal-create-named-channel .msg-success p").remove();
+	$("#modal-create-named-channel .msg-error p").remove();
+	const inputValue = $("#form-create-named-channel").val().toString();
 
-	const authInstance = auth.getAuth(stat_firebase.firebaseApp);
-	auth.onAuthStateChanged(authInstance, async (userAuth) => {
-
-		if (userAuth) {
-			try {
-				const channelName = agora.generateRandomChannelName(20);
-
-				stat_auth.user.channel = channelName;
-				stat_auth.user.displayNameStat = $("#userNameCreate").val();
-
-				// Generate a token with channel name via Cloud Functions
-				const generateTokenWithUid = functions.httpsCallable(stat_firebase.functionsInstance, "generateTokenWithUid",);
-				const result = await generateTokenWithUid({ channelName: channelName })
-				const data = result.data;
-
-				// Don't worry, generateTokenWithUid returns a token
-				stat_auth.user.token = data.token;
-
-				await agora.joinOrCreate(stat_auth.user.token);
-			} catch (error) {
-				console.error(error);
-				// TODO: show error and clear form
-			} finally {
-				$("#leave").attr("disabled", false);
+	// Check if the input value is allowed to be a channel name
+	// in order to satisfy both Agora and Firestore requirements.
+	function charChecker(value) {
+		const charsProhibited = ["!", "#", "$", "%", "&", "(", ")", "+", ":", ";", "<", "=", ".", ">", "?", "@", "[", "]", "^", "{", "}", "|", "~", ",", " "];
+		for (let i = 0; i < charsProhibited.length; i++) {
+			if (value.includes(charsProhibited[i])) {
+				return false
 			}
-
-		} else {
-			stat_auth.signin();
 		}
-	});
+		return true;
+	}
 
+	if (inputValue.length === 0) {
+		$("#modal-create-named-channel .input-check-status").html(
+			`<img src="icons/search_black_24dp.svg" alt="..." class="material-icons mx-auto">`
+		)
+	} else {
+		// Input length too long. Choose a shorter name
+		if (inputValue.length > 32) {
+			$("#modal-create-named-channel .modal-body .msg-error").prepend(
+				$(`
+					<p>Channel name too long.</p>
+				`)
+			)
+		}
+		// Input contains prohibited character(s)
+		if (!charChecker(inputValue)) {
+			$("#modal-create-named-channel .modal-body .msg-error").prepend(
+				$(`
+					<p>Channel name contains unsupported character(s)!</p>
+				`)
+			)
+		}
+		if ((inputValue.length <= 32) && charChecker(inputValue)) {
+			// Check if the name is not taken yet
+			const db = firestore.getFirestore();
+			const docRef = firestore.doc(db, 'channels', inputValue);
+			const docSnap = await firestore.getDoc(docRef);
+			if (docSnap.exists()) {
+				$("#modal-create-named-channel .input-check-status").html(
+					`<img src="icons/error_black_24dp.svg" alt="OK" class="material-icons mx-auto">`
+				)
+				$("#modal-create-named-channel .modal-body .msg-error").append(
+					$(`
+						<p>Sorry! This name is already taken.<p>
+					`)
+				)
+			} else {
+				$("#modal-create-named-channel .input-check-status").html(
+					`<img src="icons/check_circle_black_24dp.svg" alt="OK" class="material-icons mx-auto">`
+				)
+				$("#btn-create-named-channel").attr("disabled", false);
+
+			}
+		} else {
+			$("#btn-create-named-channel").attr("disabled", true);
+			$("#modal-create-named-channel .input-check-status").html(
+				`<img src="icons/error_black_24dp.svg" alt="OK" class="material-icons state-error">`
+			)
+		}
+	}
+});
+
+$("#btn-create-named-channel").on('click', async function () {
+	$("#btn-create-named-channel").attr("disabled", true);
+	// Create channel and start meeting
+	const inputValue = $("#form-create-named-channel").val().toString();
+	const db = firestore.getFirestore();
+	const docRef = firestore.doc(db, 'channels', inputValue);
+	await firestore.setDoc(docRef, {
+		channelCreatedBy: {
+			uid: stat_auth.user.uid,
+			userName: stat_auth.user.displayNameAuth
+		},
+		channelCreatedAt: firestore.Timestamp.now(),
+		channelTitle: stat_auth.user.displayNameAuth + "'s Meeting",
+		latestMeetingId: null,
+	});
+	const link = window.location.href + '?channel=' + inputValue;
+	window.location.href = link;
 });
 
 $(setAgendaButton).on('click', function (e) {

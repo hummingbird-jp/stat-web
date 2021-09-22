@@ -187,7 +187,7 @@ export function init() {
 
 async function sendTalkDataToFirebase(value) {
 
-	const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.talkDataCollection);
+	const collectionRef = firestore.collection(stat_firebase.meetingDocRef, stat_firebase.talkDataCollection);
 	await firestore.addDoc(collectionRef, {
 		userName: stat_auth.user.displayNameStat,
 		uid: stat_auth.user.uid,
@@ -198,7 +198,7 @@ async function sendTalkDataToFirebase(value) {
 
 async function getTalkDataFromFirebase() {
 	let users = [];
-	const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.usersCollection);
+	const collectionRef = firestore.collection(stat_firebase.meetingDocRef, stat_firebase.usersCollection);
 	const querySnapshotUser = await firestore.getDocs(collectionRef);
 	querySnapshotUser.forEach((doc) => {
 		if (doc.data().isActive) {
@@ -210,7 +210,7 @@ async function getTalkDataFromFirebase() {
 		}
 	});
 
-	const talkDataRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.talkDataCollection)
+	const talkDataRef = firestore.collection(stat_firebase.meetingDocRef, stat_firebase.talkDataCollection)
 	const q = firestore.query(talkDataRef, firestore.orderBy("timestamp", "desc"), firestore.limit(10));
 	const querySnapshotTalkData = await firestore.getDocs(q);
 

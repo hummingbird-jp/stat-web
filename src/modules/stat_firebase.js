@@ -1,10 +1,12 @@
 import * as app from "@firebase/app";
 import * as firestore from "@firebase/firestore";
 import * as functions from "firebase/functions";
+import * as stat_auth from "./stat_auth";
 import * as appCheck from "firebase/app-check";
 
 export let db;
 export let dbRootRef;
+export let meetingDocRef;
 export const usersCollection = 'users';
 export const timerCollection = 'timer';
 export const agendasCollection = 'agenda';
@@ -35,25 +37,53 @@ export const extendLimitCollection = 'extendLimit';
 
 export const functionsInstance = functions.getFunctions(firebaseApp);
 
-export async function init(meetingId) {
+export async function init() {
 	db = firestore.getFirestore();
-	dbRootRef = firestore.doc(db, 'meetings', meetingId);
+	dbRootRef = firestore.doc(db, 'channels', stat_auth.user.channel);
 
 	try {
 		const docRef = await firestore.getDoc(dbRootRef);
-		if (!docRef.exists()) {
-			// If it is the first time to initialize this document
-			firestore.setDoc(dbRootRef, {
-				lastTimeActive: firestore.Timestamp.now(),
-			});
+		if (docRef.data().latestMeetingId === null) {
+			// If it is the first time to create a meeting in this channel,
+			// latestMeetingId is initialized with null
+			await createNewMeetingDocument()
 
 		} else {
-			firestore.updateDoc(dbRootRef, {
-				lastTimeActive: firestore.Timestamp.now()
-			});
+			// Already channel exists. Search for valid meeting
+			const meetingsRef = firestore.collection(dbRootRef, 'meetings');
+			const q = firestore.query(meetingsRef, firestore.orderBy("meetingLimitUntil", "desc"), firestore.limit(1));
+			const querySnapshot = await firestore.getDocs(q);
+			querySnapshot.forEach(async (doc) => {
+				const now = firestore.Timestamp.now();
+
+				if (doc.data().meetingLimitUntil < now) {
+					console.log("There is no valid meeting ongoing. Creating new document...");
+					await createNewMeetingDocument()
+
+				} else {
+					meetingDocRef = firestore.doc(dbRootRef, 'meetings', doc.id);
+					console.log("Joining an ongoing meeting. ", doc.id);
+				}
+			})
 		}
 		console.log("Firestore document for meetingId is set.");
 	} catch (e) {
 		console.error("Error adding document: ", e);
 	}
+}
+
+async function createNewMeetingDocument() {
+	const docRef = await firestore.addDoc(firestore.collection(dbRootRef, 'meetings'), {
+		lastTimeActive: firestore.Timestamp.now()
+	});
+	meetingDocRef = firestore.doc(dbRootRef, 'meetings', docRef.id);
+
+	await firestore.updateDoc(dbRootRef, {
+		lastTimeActive: firestore.Timestamp.now(),
+		latestMeetingId: docRef.id,
+	});
+
+	await firestore.updateDoc(meetingDocRef, {
+		lastTimeActive: firestore.Timestamp.now(),
+	});
 }

@@ -3,9 +3,9 @@ const admin = require('firebase-admin');
 const { RtcRole, RtcTokenBuilder } = require('agora-access-token');
 admin.initializeApp();
 
-exports.setTimeLimit = functions.firestore.document("/meetings/{meetingId}")
+exports.setTimeLimit = functions.firestore.document("channels/{channelId}/meetings/{meetingId}")
 	.onCreate((snapshot, context) => {
-		functions.logger.log(context.params.meetingId);
+		functions.logger.log("channelId: ", context.params.channelId, " meetingId: ", context.params.meetingId);
 
 		const nowMillis = admin.firestore.Timestamp.now().toMillis();
 		const durationMillis = 40 * 60 * 1000; // 40 minutes
@@ -18,10 +18,11 @@ exports.setTimeLimit = functions.firestore.document("/meetings/{meetingId}")
 	});
 
 exports.extendTimeLimit = functions.firestore
-	.document("/meetings/{meetingId}/extendLimit/{docId}")
+	.document("channels/{channelId}/meetings/{meetingId}/extendLimit/{docId}")
 	.onWrite(async (change, context) => {
+		const channelId = context.params.channelId;
 		const meetingId = context.params.meetingId;
-		const docRef = admin.firestore().doc(`meetings/${meetingId}`);
+		const docRef = admin.firestore().doc(`channels/${channelId}/meetings/${meetingId}`);
 		const docSnapshot = await docRef.get()
 
 		if (docSnapshot.exists) {
@@ -30,7 +31,7 @@ exports.extendTimeLimit = functions.firestore
 			const durationMillis = 40 * 60 * 1000; // 40 minutes
 			const limit = currentLimitMillis + durationMillis;
 
-			admin.firestore().doc(`meetings/${meetingId}`).set({
+			admin.firestore().doc(`channels/${channelId}/meetings/${meetingId}`).set({
 				lastTimeActive: admin.firestore.Timestamp.now(),
 				meetingLimitUntil: admin.firestore.Timestamp.fromMillis(limit)
 			}, { merge: true });

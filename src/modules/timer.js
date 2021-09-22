@@ -97,7 +97,7 @@ export async function sendTimer(isRunning, durationMin) {
 	const durationMillis = durationMin * 60 * 1000;
 	const endAt = firestore.Timestamp.fromMillis(nowMillis + durationMillis);
 
-	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.timerCollection, 'temp');
+	const docRef = firestore.doc(stat_firebase.meetingDocRef, stat_firebase.timerCollection, 'temp');
 
 	// Specify doc ID ('temp') to override each time, because no one wants timer log!
 	await firestore.setDoc(docRef, {
@@ -112,7 +112,7 @@ export async function sendTimer(isRunning, durationMin) {
 }
 
 export function listenTimer() {
-	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.timerCollection, 'temp');
+	const docRef = firestore.doc(stat_firebase.meetingDocRef, stat_firebase.timerCollection, 'temp');
 
 	const unsub = firestore.onSnapshot(docRef, (doc) => {
 		const isTimerRunningOnOthers = doc.data() !== undefined ? doc.data().isRunning : false;
