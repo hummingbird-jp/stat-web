@@ -132,7 +132,8 @@
 									<button type="button" id="btn-copy-channel-link" class="btn btn-primary" disabled>
 										Copy Link
 									</button>
-									<button type="button" id="btn-start-meeting" class="btn btn-primary" disabled>
+									<button type="button" id="btn-start-meeting" class="btn btn-primary"
+										data-bs-dismiss="modal" disabled>
 										Start
 									</button>
 								</div>
@@ -168,7 +169,8 @@
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary"
 										data-bs-dismiss="modal">Close</button>
-									<button type="button" id="btn-join-channel" class="btn btn-primary">Join</button>
+									<button type="button" id="btn-join-channel" class="btn btn-primary"
+										data-bs-dismiss="modal">Join</button>
 								</div>
 							</div>
 						</div>
@@ -222,36 +224,6 @@
 					</div>
 				</div>
 			</div>
-
-			<!-- Join Meeting -->
-			<form id="join-form">
-				<div class="row join-info-group">
-					<div class="col-lg-4 col-md-6 mx-auto">
-						<input class="form form-control" id="userNameJoin" type="text" placeholder="User Name" required
-							autocomplete="off">
-						<p class="tips">User Name is temporary. You can edit now or change it later.</p>
-						<div class="button-group d-grid gap-2">
-							<button id="join" type="submit" class="btn btn-primary">Join</button>
-						</div>
-					</div>
-				</div>
-			</form>
-
-			<!-- Create a new Meeting -->
-			<form id="create-form">
-				<div class="row join-info-group">
-					<div class="col-lg-4 col-md-6 mx-auto">
-						<input class="form form-control" id="userNameCreate" type="text" placeholder="User Name"
-							required autocomplete="off">
-						<p class="tips">User Name is temporary. You can edit now or change it later.</p>
-						<div class="button-group d-grid gap-2">
-							<button id="create" type="submit" class="btn btn-primary">
-								Create
-							</button>
-						</div>
-					</div>
-				</div>
-			</form>
 		</div>
 
 		<button id="sign-in-with-google" style="padding: 0; border: 0; background-color: #0D0D0D;">
