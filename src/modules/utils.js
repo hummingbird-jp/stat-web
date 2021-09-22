@@ -21,7 +21,7 @@ export function truncate(str, n) {
 };
 
 export function generateShareUrl() {
-	return `${_.appUrl}?token=${stat_auth.user.token}&channel=${stat_auth.user.channel}`;
+	return `${_.appUrl}?channel=${stat_auth.user.channel}`;
 }
 
 export function generateUid() {

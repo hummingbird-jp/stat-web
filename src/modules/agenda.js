@@ -6,7 +6,7 @@ import * as stat_firebase from "./stat_firebase";
 
 // Send agenda to Firestore
 export async function sendAgenda(agenda) {
-	const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.agendasCollection);
+	const collectionRef = firestore.collection(stat_firebase.meetingDocRef, stat_firebase.agendasCollection);
 
 	// addDoc instead of setDoc, because no need to specify doc ID
 	await firestore.addDoc(collectionRef, {
@@ -22,7 +22,7 @@ export async function sendAgenda(agenda) {
 }
 
 export function listenAgenda() {
-	const unsub = firestore.onSnapshot(firestore.collection(stat_firebase.dbRootRef, stat_firebase.agendasCollection), (snapshot) => {
+	const unsub = firestore.onSnapshot(firestore.collection(stat_firebase.meetingDocRef, stat_firebase.agendasCollection), (snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			if (change.type === "added") {
 				const newAgenda = change.doc.data().agenda;

@@ -196,7 +196,7 @@ function fft0(freal) {
 }
 
 function sendMyReaction(text) {
-	const docRef = firestore.doc(stat_firebase.dbRootRef, stat_firebase.usersCollection, stat_auth.user.uid);
+	const docRef = firestore.doc(stat_firebase.meetingDocRef, stat_firebase.usersCollection, stat_auth.user.uid);
 	firestore.updateDoc(docRef, {
 		reaction: text
 	});

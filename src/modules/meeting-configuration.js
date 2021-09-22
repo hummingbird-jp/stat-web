@@ -18,7 +18,7 @@ export async function initMeetingTimeLimit() {
 	const id = setInterval(update, 60000);
 
 	async function update() {
-		const snapshot = await firestore.getDoc(stat_firebase.dbRootRef);
+		const snapshot = await firestore.getDoc(stat_firebase.meetingDocRef);
 
 		// Firestore Timestamp to numeric timestamp
 		const startTime = snapshot.data().meetingStartedAt.toMillis();
@@ -55,7 +55,7 @@ export async function initMeetingTimeLimit() {
 	$(".limit-text a").on('click', async function () {
 		$(".limit-text a").remove();
 
-		const collectionRef = firestore.collection(stat_firebase.dbRootRef, stat_firebase.extendLimitCollection);
+		const collectionRef = firestore.collection(stat_firebase.meetingDocRef, stat_firebase.extendLimitCollection);
 		await firestore.addDoc(collectionRef, {
 			timestamp: firestore.Timestamp.now(),
 			displayNameStat: stat_auth.user.displayNameStat,
@@ -63,7 +63,7 @@ export async function initMeetingTimeLimit() {
 		});
 
 		// Create event listner for show extended result instantly
-		const collectionRefExtend = firestore.collection(stat_firebase.dbRootRef, stat_firebase.extendLimitCollection);
+		const collectionRefExtend = firestore.collection(stat_firebase.meetingDocRef, stat_firebase.extendLimitCollection);
 		const unsub = firestore.onSnapshot(collectionRefExtend, (doc) => {
 			update();
 		});
