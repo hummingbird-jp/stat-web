@@ -1,6 +1,7 @@
 import * as app from "@firebase/app";
 import * as firestore from "@firebase/firestore";
 import * as functions from "firebase/functions";
+import * as appCheck from "firebase/app-check";
 
 export let db;
 export let dbRootRef;
@@ -20,6 +21,14 @@ export const firebaseApp = app.initializeApp({
 	appId: "1:1093597820985:web:ebd29201a74fea5acf35e8",
 	measurementId: "G-ZWTBZRCXXE"
 });
+
+export function enableAppCheck() {
+	appCheck.initializeAppCheck(firebaseApp, {
+		// Don't worry, the site key is not a secret one
+		provider: new appCheck.ReCaptchaV3Provider("6Lc7loAcAAAAAJftbQJ7z_8pE5RRPi3KHeyuXCxr"),
+		isTokenAutoRefreshEnabled: true,
+	});
+}
 
 // TODO: this should be distinguished between free account and pro.
 export const extendLimitCollection = 'extendLimit';
