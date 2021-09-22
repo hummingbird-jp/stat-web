@@ -1,4 +1,9 @@
+// Bootstrap
 import * as bootstrap from "bootstrap";
+
+// Firebase
+import * as auth from "firebase/auth";
+import * as functions from "firebase/functions";
 
 import * as stat_firebase from "./stat_firebase";
 import * as stat_auth from "./stat_auth";
@@ -8,6 +13,7 @@ import * as meetingConfiguration from "./meeting-configuration";
 import * as reaction from "./reaction";
 import * as timer from "./timer";
 import * as voiceVisualizer from "./voice-visualizer";
+import { exp } from "@tensorflow/tfjs-core";
 
 const appid = "adaa9fb7675e4ca19ca80a6762e44dd2";
 const toastOptions = { animation: true, autohide: true, delay: 3000 };
@@ -48,8 +54,39 @@ export function generateRandomChannelName(length) {
 	return result;
 }
 
-export async function joinOrCreate(token) {
-	meetingId = generateMeetingId(token);
+export async function joinWithChannelName(channelName) {
+	auth.onAuthStateChanged(stat_auth.authInstance, async (userAuth) => {
+		if (userAuth) {
+			try {
+
+				// Generate a token with channel name via Cloud Functions
+				const generateTokenWithUid = functions.httpsCallable(stat_firebase.functionsInstance, "generateTokenWithUid",);
+				const result = await generateTokenWithUid({ channelName: channelName })
+				const data = result.data;
+
+				// Don't worry, generateTokenWithUid returns a token
+				stat_auth.user.token = data.token;
+				// Initialize other local user information
+				stat_auth.user.channel = channelName;
+				stat_auth.user.uid = userAuth.uid;
+				stat_auth.user.displayNameAuth = userAuth.displayName;
+				stat_auth.user.displayNameStat = userAuth.displayName;
+
+				await joinOrCreate();
+			} catch (error) {
+				console.error(error);
+				// TODO: show error and clear form
+			} finally {
+				$("#leave").attr("disabled", false);
+			}
+
+		} else {
+			stat_auth.signin();
+		}
+	});
+}
+
+export async function joinOrCreate() {
 
 	// Add an event listener to play remote tracks when remote user publishes.
 	client.on("user-published", handleUserPublished);
@@ -85,7 +122,8 @@ export async function joinOrCreate(token) {
 	$("#create").text("Create");
 	$("#create").attr("disabled", false);
 
-	await stat_firebase.init(meetingId);
+	await stat_firebase.init();
+	console.log("debug ", stat_auth.user, stat_firebase.meetingDocRef);
 	bgm.init();
 	voiceVisualizer.init();
 	reaction.init();
