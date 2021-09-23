@@ -120,7 +120,10 @@ if (window.location.pathname === '/signin/') {
 					$("#tile-users-rooms").append(
 						`<div class="col-lg-3 col-md-4 col-sm-5">
 							<div class="card">
-								<button class="card-btn" data-bs-toggle="modal" data-bs-target="#modal-create-named-channel">
+								<button class="card-btn btn-with-tooltip" data-bs-toggle="modal" data-bs-target="#modal-create-named-channel">
+									<span class="tooltiptext">
+									Recurrent meeting with a specific name.
+									</span>
 									<div class="card-body">
 										<h6 class="card-title">Create a new room</h6>
 										<p class="card-text">/</p>
