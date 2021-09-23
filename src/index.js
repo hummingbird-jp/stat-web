@@ -20,15 +20,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
 export const appUrl = $(location).attr('href');
-const urlStr = window.location.toString();
-const setAgendaButton = $('#set-agenda')[0];
 
 utils.initScreen();
-agora.initAgora();
 
 try {
 	stat_firebase.enableAppCheck();
-	console.log(`AppCheck enabled!`);
+	utils.statConsoleLog("AppCheck enabled!")
 } catch (error) {
 	console.error(`Error enabling AppCheck: ${error}`);
 }
@@ -46,7 +43,6 @@ if (window.location.pathname === '/signin/') {
 		auth.onAuthStateChanged(stat_auth.authInstance, async (user) => {
 			if (user) {
 				// If successfully signed in, redirect to main page
-				console.log(`User signed in. Redirecting to home page...`);
 				window.location.href = '../' + tempUrlParam;
 			} else {
 				console.error(`Error signing in. Try again...`);
@@ -60,8 +56,6 @@ if (window.location.pathname === '/signin/') {
 			// 1. User is not signed in.
 			// 2. Get URL parameter and pass it to sign in page.
 			// 3. Then, Redirect to sign in page.
-			console.log(`User not signed in. Redirecting to sign-in page...`);
-
 			const urlParamStartsAt = window.location.href.indexOf('?');
 			let tempUrlParam = '';
 			if (urlParamStartsAt > 0) {
@@ -71,7 +65,7 @@ if (window.location.pathname === '/signin/') {
 		} else {
 			// User is signed in.
 			// show the form
-			console.log(`User already signed in. Showing the form.`);
+			utils.statConsoleLog(`User already signed in. Showing the menu.`);
 			$("#sign-in-with-google").hide();
 
 			stat_auth.user.displayNameAuth = user.displayName;
@@ -79,7 +73,7 @@ if (window.location.pathname === '/signin/') {
 			stat_auth.user.uid = user.uid;
 			stat_auth.user.photoURL = user.photoURL;
 
-			console.log(`Signed in: ${stat_auth.user.displayNameAuth}`);
+			utils.statConsoleLog(`Signed in: ${stat_auth.user.displayNameAuth}`);
 
 			$("#display-name").text(`Welcome back, ${stat_auth.user.displayNameAuth} 👋`);
 
@@ -271,7 +265,7 @@ $("#btn-create-named-channel").on('click', async function () {
 	window.location.href = link;
 });
 
-$(setAgendaButton).on('click', function (e) {
+$('#set-agenda').on('click', function (e) {
 	const newAgenda = $("#agenda-in").val();
 
 	$("#agenda-out").text(newAgenda);
@@ -326,7 +320,7 @@ $(window).on("keypress", async function (e) {
 	const isTyping = $("input").is(":focus");
 
 	if (isTyping === true) {
-		console.log(`Keypress ignored because typing.`);
+		utils.statConsoleLog(`Keypress ignored because typing.`);
 		return;
 	}
 
