@@ -13,12 +13,11 @@ import * as meetingConfiguration from "./meeting-configuration";
 import * as reaction from "./reaction";
 import * as timer from "./timer";
 import * as voiceVisualizer from "./voice-visualizer";
-import { exp } from "@tensorflow/tfjs-core";
 
 const appid = "adaa9fb7675e4ca19ca80a6762e44dd2";
 const toastOptions = { animation: true, autohide: true, delay: 3000 };
 
-let client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+let client;
 let published = false;
 let localTracks;
 let remoteUsers;
@@ -35,23 +34,6 @@ export function initAgora() {
 	};
 
 	remoteUsers = {};
-}
-
-/**
- * @deprecated A channel name will be replaced with document ID on Firestore soon.
- */
-export function generateRandomChannelName(length) {
-	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	const charactersLength = characters.length;
-
-	let result = '';
-
-	for (let i = 0; i < length; i++) {
-		result += characters.charAt(Math.floor(Math.random() *
-			charactersLength));
-	}
-
-	return result;
 }
 
 export async function joinWithChannelName(channelName) {
@@ -88,6 +70,8 @@ export async function joinWithChannelName(channelName) {
 
 export async function joinOrCreate() {
 
+	initAgora();
+
 	// Add an event listener to play remote tracks when remote user publishes.
 	client.on("user-published", handleUserPublished);
 	client.on("user-unpublished", handleUserUnpublished);
@@ -118,12 +102,8 @@ export async function joinOrCreate() {
 	$("#copyright").hide();
 	$(".meeting-area").fadeIn();
 	$(".control-button-group").fadeIn();
-	$("#join").text("Join");
-	$("#create").text("Create");
-	$("#create").attr("disabled", false);
 
 	await stat_firebase.init();
-	console.log("debug ", stat_auth.user, stat_firebase.meetingDocRef);
 	bgm.init();
 	voiceVisualizer.init();
 	reaction.init();
@@ -220,7 +200,7 @@ async function subscribe(user, mediaType) {
 	const uid = user.uid;
 
 	// subscribe to a remote user
-	client.subscribe(user, mediaType);
+	await client.subscribe(user, mediaType);
 	console.log("subscribe success");
 
 	if (mediaType === 'video') {
@@ -237,13 +217,6 @@ async function subscribe(user, mediaType) {
 	if (mediaType === 'audio') {
 		user.audioTrack.play();
 	}
-}
-
-/**
- * @deprecated Meeting ID (equals document ID) on Firestore will be generated automatically by Firestore.
- */
-function generateMeetingId(token) {
-	return token.replaceAll('/', '');
 }
 
 /*
