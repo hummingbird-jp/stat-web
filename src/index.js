@@ -76,10 +76,7 @@ if (window.location.pathname === '/signin/') {
 
 			$("#display-name").text(`Welcome back, ${stat_auth.user.displayNameAuth} 👋`);
 
-			const toastOptions = { animation: true, autohide: true, delay: 3000 };
-			const welcomeMessageElement = new bootstrap.Toast($('#welcome-message'), toastOptions);
-
-			welcomeMessageElement.show();
+			utils.showToast("welcome-message");
 
 			const urlParams = new URL(appUrl).searchParams;
 			stat_auth.user.channel = urlParams.get("channel");

@@ -159,12 +159,14 @@ export function mute() {
 
 		muted = true;
 		utils.statConsoleLog("Local audio successfully muted 🤫");
+		utils.showToast("muted-message");
 	} else {
 		localAudioTrack = AgoraRTC.createCameraVideoTrack();
 		publishLocalTracks();
 
 		muted = false;
 		utils.statConsoleLog("Local audio successfully started 📣");
+		utils.showToast("unmuted-message");
 	}
 }
 
@@ -177,6 +179,7 @@ export function stopVideo() {
 
 		cameraStopped = true;
 		utils.statConsoleLog("Local video successfully stopped 🚫");
+		utils.showToast("stop-video-message");
 	} else {
 		localVideoTrack = AgoraRTC.createCameraVideoTrack();
 		playLocalVideo();
@@ -184,6 +187,7 @@ export function stopVideo() {
 
 		cameraStopped = false;
 		utils.statConsoleLog("Local video successfully started 🎥");
+		utils.showToast("start-video-message");
 	}
 }
 

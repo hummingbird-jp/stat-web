@@ -76,21 +76,6 @@
 	</script>
 
 	<div class="container">
-		<!-- Welcome Message -->
-		<div id="welcome-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
-			style="z-index: 10000;">
-			<div class="toast-header">
-				<img src="images/square.jpg" class="rounded me-2" alt="hummingbird-logo hummingbird logo"
-					style="width: 12px; height: 12px;">
-				<strong id="display-name" class="me-auto">Welcome back 👋</strong>
-				<small>Now</small>
-				<button class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-			</div>
-			<div class="toast-body">
-				We're so happy that you're back! Enjoy your time 🙃
-			</div>
-		</div>
-
 		<!-- Time Limit -->
 		<div id="limit" style="display: none;">
 			<div id="limit-all">
@@ -365,29 +350,68 @@
 		</div>
 
 		<!-- Toast Messages -->
-		<div id="unpublished-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+		<div id="welcome-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
 			<div class="toast-header">
 				<img src="images/square.jpg" class="rounded me-2" alt="hummingbird-logo hummingbird logo"
 					style="width: 12px; height: 12px;">
-				<strong class="me-auto">Ghost mode 👻</strong>
+				<strong id="display-name" class="me-auto">Welcome back 👋</strong>
 				<small>Now</small>
 				<button class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
 			</div>
 			<div class="toast-body">
-				You're muted and invisible from others! Click the button again to rejoin them.
+				We're so happy that you're back! Enjoy your time 🙃
 			</div>
 		</div>
 
-		<div id="published-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+		<div id="muted-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
 			<div class="toast-header">
 				<img src="images/square.jpg" class="rounded me-2" alt="hummingbird-logo hummingbird logo"
 					style="width: 12px; height: 12px;">
-				<strong class="me-auto">Welcome back! 🎉</strong>
+				<strong class="me-auto">Muted 🤫</strong>
 				<small>Now</small>
 				<button class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
 			</div>
 			<div class="toast-body">
-				Hi again! Did you enjoy your break? Say hi to others 👋
+				You're muted! Click the button again to unmute.
+			</div>
+		</div>
+
+		<div id="unmuted-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header">
+				<img src="images/square.jpg" class="rounded me-2" alt="hummingbird-logo hummingbird logo"
+					style="width: 12px; height: 12px;">
+				<strong class="me-auto">Unmuted 📣</strong>
+				<small>Now</small>
+				<button class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+			<div class="toast-body">
+				Unmuted! Say hi to others 👋
+			</div>
+		</div>
+
+		<div id="stop-video-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header">
+				<img src="images/square.jpg" class="rounded me-2" alt="hummingbird-logo hummingbird logo"
+					style="width: 12px; height: 12px;">
+				<strong class="me-auto">Video Stopped 🚫</strong>
+				<small>Now</small>
+				<button class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+			<div class="toast-body">
+				Video stopped! You're invisible from others 👻
+			</div>
+		</div>
+
+		<div id="start-video-message" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header">
+				<img src="images/square.jpg" class="rounded me-2" alt="hummingbird-logo hummingbird logo"
+					style="width: 12px; height: 12px;">
+				<strong class="me-auto">Video Started 🎥</strong>
+				<small>Now</small>
+				<button class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+			</div>
+			<div class="toast-body">
+				Hi again 🙌 You're now visible!
 			</div>
 		</div>
 
