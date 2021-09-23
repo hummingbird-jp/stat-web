@@ -105,46 +105,58 @@
 			<div class="vertical-spacer-3rem"></div>
 
 			<div id="menu">
-				<!-- Button trigger modal -->
-				<div class="row">
+				<!-- Your Room(s) Appear Here -->
+				<!-- Create Your Room -->
+				<div class="row" id="default-create-your-room">
+					<!-- Button trigger modal -->
 					<div class="d-grid gap-2 col-6 mx-auto">
-						<button type="button" class="btn btn-primary" id="btn-create-random-channel"
-							data-bs-toggle="modal" data-bs-target="#modal-create-random-channel">
-							New Meeting
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+							data-bs-target="#modal-create-named-channel">
+							Create Your Room
 						</button>
 					</div>
-					<!-- Modal -->
-					<div class="modal fade" id="modal-create-random-channel" tabindex="-1"
-						aria-labelledby="label-create-random-channel" aria-hidden="true">
-						<div class="modal-dialog modal-dialog-centered">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title">Start a new meeting</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal"
-										aria-label="Close"></button>
+				</div>
+				<!-- Modal -->
+				<div class="modal fade" id="modal-create-named-channel" tabindex="-1"
+					aria-labelledby="label-join-channel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Create Your Room</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<div class="input-group mb-3">
+									<span class="input-group-text">channel=</span>
+									<input type="text" class="form-control" id="form-create-named-channel"
+										autocomplete="off">
+									<span class="input-group-text input-check-status my-auto">
+										<img src="icons/search_black_24dp.svg" alt="..." class="material-icons mx-auto">
+									</span>
 								</div>
-								<div class="modal-body">
-									Creating...
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-bs-dismiss="modal">Close</button>
-									<button type="button" id="btn-copy-channel-link" class="btn btn-primary" disabled>
-										Copy Link
-									</button>
-									<button type="button" id="btn-start-meeting" class="btn btn-primary"
-										data-bs-dismiss="modal" disabled>
-										Start
-									</button>
-								</div>
+								<p class="tips">If you choose "hummingbird" as room name, your room's link will look
+									like "https://stat-web-6372a.web.app/?channel=hummingbird"</p>
+								<p class="tips">You can use: a to z, A to Z, 0 to 9, "-" and "_"</p>
+								<div class="msg-success"></div>
+								<div class="msg-error"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+								<button type="button" id="btn-create-named-channel" class="btn btn-primary"
+									disabled>Create</button>
 							</div>
 						</div>
 					</div>
 				</div>
-				<!-- Button trigger modal -->
+				<div class="row" style="margin-top: 2rem;">
+					<p>or</p>
+				</div>
+				<!-- Join Meeting -->
 				<div class="row">
+					<!-- Button trigger modal -->
 					<div class="d-grid gap-2 col-6 mx-auto">
-						<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+						<button type="button" class="btn btn-primary-weak" data-bs-toggle="modal"
 							data-bs-target="#modal-join-channel">
 							Join Meeting
 						</button>
@@ -176,48 +188,38 @@
 						</div>
 					</div>
 				</div>
-				<div class="row" style="margin-top: 2rem;">
-					<p>or</p>
-				</div>
-				<!-- Button trigger modal -->
+				<!-- New Meeting -->
 				<div class="row">
+					<!-- Button trigger modal -->
 					<div class="d-grid gap-2 col-6 mx-auto">
-						<button type="button" class="btn btn-primary" data-bs-toggle="modal"
-							data-bs-target="#modal-create-named-channel">
-							Create Your Room
+						<button type="button" class="btn btn-primary-weak" id="btn-create-random-channel"
+							data-bs-toggle="modal" data-bs-target="#modal-create-random-channel">
+							New Meeting
 						</button>
 					</div>
 					<!-- Modal -->
-					<div class="modal fade" id="modal-create-named-channel" tabindex="-1"
-						aria-labelledby="label-join-channel" aria-hidden="true">
+					<div class="modal fade" id="modal-create-random-channel" tabindex="-1"
+						aria-labelledby="label-create-random-channel" aria-hidden="true">
 						<div class="modal-dialog modal-dialog-centered">
 							<div class="modal-content">
 								<div class="modal-header">
-									<h5 class="modal-title">Create Your Room</h5>
+									<h5 class="modal-title">Start a new meeting</h5>
 									<button type="button" class="btn-close" data-bs-dismiss="modal"
 										aria-label="Close"></button>
 								</div>
 								<div class="modal-body">
-									<div class="input-group mb-3">
-										<span class="input-group-text">channel=</span>
-										<input type="text" class="form-control" id="form-create-named-channel"
-											autocomplete="off">
-										<span class="input-group-text input-check-status my-auto">
-											<img src="icons/search_black_24dp.svg" alt="..."
-												class="material-icons mx-auto">
-										</span>
-									</div>
-									<p class="tips">If you choose "hummingbird" as room name, your room's link will look
-										like "https://stat-web-6372a.web.app/?channel=hummingbird"</p>
-									<p class="tips">You can use: a to z, A to Z, 0 to 9, "-" and "_"</p>
-									<div class="msg-success"></div>
-									<div class="msg-error"></div>
+									Creating...
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-secondary"
 										data-bs-dismiss="modal">Close</button>
-									<button type="button" id="btn-create-named-channel" class="btn btn-primary"
-										disabled>Create</button>
+									<button type="button" id="btn-copy-channel-link" class="btn btn-primary" disabled>
+										Copy Link
+									</button>
+									<button type="button" id="btn-start-meeting" class="btn btn-primary"
+										data-bs-dismiss="modal" disabled>
+										Start
+									</button>
 								</div>
 							</div>
 						</div>

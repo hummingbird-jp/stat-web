@@ -96,6 +96,31 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
 }
 
 /* Menu */
+#menu .card {
+	background-color: #0d0d0d;
+}
+#menu .card-btn{
+	background-color: #1d1d1d;
+	border: 1px solid #1d1d1d;
+	border-radius: 3px;
+	color: aliceblue;
+	text-align: left;
+}
+
+#menu .card-btn:hover {
+	background-color: #222222;
+	border: 1px solid #8f35ff;
+}
+
+#menu .card-body p {
+	font-size: 14px;
+	color: #6b6b6b;
+}
+
+#menu .active-users-list {
+	height: 30px;
+}
+
 .modal-title,
 .modal-body {
 	color: #0d0d0d;
@@ -144,6 +169,14 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
 
 .btn-secondary:hover {
 	background-color: #0d0d0d;
+}
+
+.btn-primary-weak {
+	background-color: #0d0d0d;
+	color: aliceblue;
+	border: solid;
+	border-width: 1px;
+	border-color: #8f35ff;
 }
 
 .btn-transparent {

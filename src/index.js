@@ -90,6 +90,48 @@ if (window.location.pathname === '/signin/') {
 				await agora.joinWithChannelName(stat_auth.user.channel);
 			} else {
 				$("#sign-in-with-google").hide();
+
+				// Show rooms if the user has created before
+				const db = firestore.getFirestore();
+				const docRef = firestore.doc(db, 'users', stat_auth.user.uid)
+				const docSnap = await firestore.getDoc(docRef);
+				if (docSnap.exists() && docSnap.data().channels != null) {
+
+					$("#menu").prepend(
+						`<div class="row justify-content-center g-2" id="tile-users-rooms"></div>`
+					);
+
+					const channels = docSnap.data().channels;
+					for (let i = 0; i < channels.length; i++) {
+						$("#tile-users-rooms").append(
+							`<div class="col-lg-3 col-md-4 col-sm-5">
+								<div class="card">
+									<button class="card-btn" onclick="window.location.href='./?channel=${channels[i].id}'">
+										<div class="card-body">
+											<h6 class="card-title">${channels[i].title}</h6>
+											<p class="card-text">/${channels[i].id}</p>
+											<div id="active-users-${channels[i].id}" class="active-users-list"></div>
+										</div>
+									</button>
+								</div>
+							</div>`
+						);
+					}
+					$("#tile-users-rooms").append(
+						`<div class="col-lg-3 col-md-4 col-sm-5">
+							<div class="card">
+								<button class="card-btn" data-bs-toggle="modal" data-bs-target="#modal-create-named-channel">
+									<div class="card-body">
+										<h6 class="card-title">Create a new room</h6>
+										<p class="card-text">/</p>
+										<div class="active-users-list"></div>
+									</div>
+								</button>
+							</div>
+						</div>`
+					);
+					$("#default-create-your-room").remove();
+				}
 			}
 		}
 	});
@@ -109,6 +151,7 @@ $("#btn-create-random-channel").on('click', async function () {
 		channelCreatedAt: firestore.Timestamp.now(),
 		channelTitle: stat_auth.user.displayNameAuth + "'s Meeting",
 		latestMeetingId: null,
+		channelType: 'random',
 	});
 	const channelName = docRef.id;
 	const link = window.location.href + '?channel=' + channelName;
@@ -258,8 +301,9 @@ $("#btn-create-named-channel").on('click', async function () {
 			userName: stat_auth.user.displayNameAuth
 		},
 		channelCreatedAt: firestore.Timestamp.now(),
-		channelTitle: stat_auth.user.displayNameAuth + "'s Meeting",
+		channelTitle: inputValue + "'s Meeting",
 		latestMeetingId: null,
+		channelType: 'named',
 	});
 	const link = window.location.href + '?channel=' + inputValue;
 	window.location.href = link;
