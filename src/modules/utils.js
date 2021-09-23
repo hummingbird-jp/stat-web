@@ -9,6 +9,13 @@ export function showToast(elementId) {
 	toastElement.show();
 }
 
+export function hideToast(elementId) {
+	const toastOptions = { animation: true, autohide: true, delay: 3000 };
+	const toastElement = new bootstrap.Toast($(`#${elementId}`), toastOptions);
+
+	toastElement.hide();
+}
+
 export function initScreen() {
 	$('#join-form').css('display', 'none');
 	$('#create-form').css('display', 'none');
