@@ -13,17 +13,19 @@ import * as meetingConfiguration from "./meeting-configuration";
 import * as reaction from "./reaction";
 import * as timer from "./timer";
 import * as voiceVisualizer from "./voice-visualizer";
+import * as utils from "./utils";
 
 const appid = "adaa9fb7675e4ca19ca80a6762e44dd2";
 const toastOptions = { animation: true, autohide: true, delay: 3000 };
 
 let client;
 let published = false;
+let muted = false;
+let cameraStopped = false;
 let localTracks;
 let remoteUsers;
-let meetingId;
 
-export function initAgora() {
+function initAgora() {
 	published = false;
 
 	client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -68,7 +70,7 @@ export async function joinWithChannelName(channelName) {
 	});
 }
 
-export async function joinOrCreate() {
+async function joinOrCreate() {
 
 	initAgora();
 
@@ -90,13 +92,11 @@ export async function joinOrCreate() {
 	]);
 
 	// Play the local video track to the local browser and update the UI with the user ID.
-	localTracks.videoTrack.play("local-player");
+	playLocalVideo();
 	$("#local-player-name").text(`${stat_auth.user.displayNameStat} (You)`);
 
 	// Publish the local video and audio tracks to the channel.
-	client.publish(Object.values(localTracks));
-	published = true;
-	console.log("Local user successfully published.");
+	publishLocalTracks();
 
 	$(".join-area").hide();
 	$("#copyright").hide();
@@ -147,6 +147,43 @@ export async function unpublish() {
 		// Show toast message
 		unpublishedMessageElement.hide();
 		publishedMessageElement.show();
+	}
+}
+
+export function mute() {
+	let localAudioTrack = localTracks.audioTrack;
+
+	if (muted === false) {
+		localAudioTrack.stop();
+		localAudioTrack = null;
+
+		muted = true;
+		utils.statConsoleLog("Local audio successfully muted 🤫");
+	} else {
+		localAudioTrack = AgoraRTC.createCameraVideoTrack();
+		publishLocalTracks();
+
+		muted = false;
+		utils.statConsoleLog("Local audio successfully started 📣");
+	}
+}
+
+export function stopVideo() {
+	let localVideoTrack = localTracks.videoTrack;
+
+	if (cameraStopped === false) {
+		localVideoTrack.stop();
+		localVideoTrack = null;
+
+		cameraStopped = true;
+		utils.statConsoleLog("Local video successfully stopped 🚫");
+	} else {
+		localVideoTrack = AgoraRTC.createCameraVideoTrack();
+		playLocalVideo();
+		publishLocalTracks();
+
+		cameraStopped = false;
+		utils.statConsoleLog("Local video successfully started 🎥");
 	}
 }
 
@@ -242,3 +279,14 @@ function handleUserUnpublished(user) {
 
 	$(`#player-wrapper-${id}`).remove();
 }
+
+function playLocalVideo() {
+	localTracks.videoTrack.play("local-player");
+}
+
+function publishLocalTracks() {
+	client.publish(Object.values(localTracks));
+	published = true;
+	console.log("Local user successfully published.");
+}
+

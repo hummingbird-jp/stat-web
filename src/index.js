@@ -3,7 +3,6 @@ import * as bootstrap from "bootstrap";
 
 // Firebase
 import * as auth from "firebase/auth";
-import * as functions from "firebase/functions";
 import * as firestore from "@firebase/firestore";
 
 // Internal Modules
@@ -335,7 +334,10 @@ $(window).on("keypress", async function (e) {
 			utils.copyTextToClipboard(text, tooltip);
 			break;
 		case "m":
-			await agora.unpublish();
+			agora.mute();
+			break;
+		case "v":
+			agora.stopVideo();
 			break;
 		case "l":
 			agora.leave();
@@ -343,6 +345,14 @@ $(window).on("keypress", async function (e) {
 		default:
 			break;
 	}
+});
+
+$("#mute").on("click", function () {
+	agora.mute();
+});
+
+$("#stop-video").on("click", function () {
+	agora.stopVideo();
 });
 
 // Click "Clap!" to clap
