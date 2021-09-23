@@ -116,6 +116,14 @@ input[type="range"]:focus::-webkit-slider-runnable-track {
 
 /* Buttons */
 
+.control-button-group-left {
+  position: fixed;
+  z-index: 1;
+  left: 4rem;
+  bottom: 2rem;
+  /*transform: translate(-50%);*/
+}
+
 .control-button-group {
   position: fixed;
   z-index: 1;
