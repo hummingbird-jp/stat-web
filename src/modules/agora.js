@@ -155,16 +155,18 @@ export function toggleMic() {
 
 	if (isMicOn === false) {
 		// Turn on the mic
-		localAudioTrack = AgoraRTC.createCameraVideoTrack();
-		publishLocalTracks();
+		//localAudioTrack = AgoraRTC.createCameraVideoTrack();
+		//publishLocalTracks();
+		client.publish(Object.values(localAudioTrack));
 
 		isMicOn = true;
 		utils.statConsoleLog("Local audio successfully started 📣");
 		utils.showToast("unmuted-message");
 	} else {
 		// Turn off the mic
-		localAudioTrack.stop();
-		localAudioTrack = null;
+		//localAudioTrack.stop();
+		//localAudioTrack = null;
+		client.unpublish(Object.values(localAudioTrack));
 
 		isMicOn = false;
 		utils.statConsoleLog("Local audio successfully muted 🤫");
@@ -177,17 +179,19 @@ export function toggleVideo() {
 
 	if (isVideoOn === false) {
 		// Turn on video
-		localVideoTrack = AgoraRTC.createCameraVideoTrack();
-		playLocalVideo();
-		publishLocalTracks();
+		//localVideoTrack = AgoraRTC.createCameraVideoTrack();
+		//playLocalVideo();
+		//publishLocalTracks();
+		client.publish(Object.values(localVideoTrack));
 
 		isVideoOn = true;
 		utils.statConsoleLog("Local video successfully started 🎥");
 		utils.showToast("start-video-message");
 	} else {
 		// Turn off video
-		localVideoTrack.stop();
-		localVideoTrack = null;
+		//localVideoTrack.stop();
+		//localVideoTrack = null;
+		client.unpublish(Object.values(localVideoTrack));
 
 		isVideoOn = false;
 		utils.statConsoleLog("Local video successfully stopped 🚫");
