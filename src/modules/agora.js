@@ -155,16 +155,14 @@ export function toggleMic() {
 
 	if (isMicOn === false) {
 		// Turn on the mic
-		localAudioTrack = AgoraRTC.createCameraVideoTrack();
-		publishLocalTracks();
+		localAudioTrack.setEnabled(true);
 
 		isMicOn = true;
 		utils.statConsoleLog("Local audio successfully started 📣");
 		utils.showToast("unmuted-message");
 	} else {
 		// Turn off the mic
-		localAudioTrack = null;
-		publishLocalTracks();
+		localAudioTrack.setEnabled(false);
 
 		isMicOn = false;
 		utils.statConsoleLog("Local audio successfully muted 🤫");
@@ -177,18 +175,20 @@ export function toggleVideo() {
 
 	if (isVideoOn === false) {
 		// Turn on video
-		playLocalVideo();
-		localVideoTrack = AgoraRTC.createCameraVideoTrack();
-		publishLocalTracks();
+		//localVideoTrack = await AgoraRTC.createMicrophoneAudioTrack();
+		//playLocalVideo();
+		////publishLocalTracks();
+		localVideoTrack.setEnabled(true);
 
 		isVideoOn = true;
 		utils.statConsoleLog("Local video successfully started 🎥");
 		utils.showToast("start-video-message");
 	} else {
 		// Turn off video
-		localVideoTrack.stop();
-		localVideoTrack = null;
-		publishLocalTracks();
+		//localVideoTrack.close();
+		//localVideoTrack = null;
+		//publishLocalTracks();
+		localVideoTrack.setEnabled(false);
 
 		isVideoOn = false;
 		utils.statConsoleLog("Local video successfully stopped 🚫");
@@ -282,11 +282,13 @@ function handleUserPublished(user, mediaType) {
  *
  * @param  {string} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to remove.
  */
-function handleUserUnpublished(user) {
+function handleUserUnpublished(user, mediaType) {
 	const id = user.uid;
 	delete remoteUsers[id];
 
-	$(`#player-wrapper-${id}`).remove();
+	if (mediaType === "video") {
+		$(`#player-wrapper-${id}`).remove();
+	}
 }
 
 function playLocalVideo() {
