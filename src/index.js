@@ -331,10 +331,10 @@ $(window).on("keypress", async function (e) {
 			utils.copyTextToClipboard(text, tooltip);
 			break;
 		case "m":
-			agora.mute();
+			agora.toggleMic();
 			break;
 		case "v":
-			agora.stopVideo();
+			agora.toggleVideo();
 			break;
 		case "l":
 			agora.leave();
@@ -344,12 +344,12 @@ $(window).on("keypress", async function (e) {
 	}
 });
 
-$("#mute").on("click", function () {
-	agora.mute();
+$("#toggle-mic").on("click", function () {
+	agora.toggleMic();
 });
 
-$("#stop-video").on("click", function () {
-	agora.stopVideo();
+$("#toggle-video").on("click", function () {
+	agora.toggleVideo();
 });
 
 // Click "Clap!" to clap

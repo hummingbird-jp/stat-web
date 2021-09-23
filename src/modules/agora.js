@@ -20,8 +20,8 @@ const toastOptions = { animation: true, autohide: true, delay: 3000 };
 
 let client;
 let published = false;
-let muted = false;
-let cameraStopped = false;
+let isMicOn = true;
+let isVideoOn = true;
 let localTracks;
 let remoteUsers;
 
@@ -150,44 +150,48 @@ export async function unpublish() {
 	}
 }
 
-export function mute() {
+export function toggleMic() {
 	let localAudioTrack = localTracks.audioTrack;
 
-	if (muted === false) {
-		localAudioTrack.stop();
-		localAudioTrack = null;
-
-		muted = true;
-		utils.statConsoleLog("Local audio successfully muted 🤫");
-		utils.showToast("muted-message");
-	} else {
+	if (isMicOn === false) {
+		// Turn on the mic
 		localAudioTrack = AgoraRTC.createCameraVideoTrack();
 		publishLocalTracks();
 
-		muted = false;
+		isMicOn = true;
 		utils.statConsoleLog("Local audio successfully started 📣");
 		utils.showToast("unmuted-message");
+	} else {
+		// Turn off the mic
+		localAudioTrack.stop();
+		localAudioTrack = null;
+
+		isMicOn = false;
+		utils.statConsoleLog("Local audio successfully muted 🤫");
+		utils.showToast("muted-message");
 	}
 }
 
-export function stopVideo() {
+export function toggleVideo() {
 	let localVideoTrack = localTracks.videoTrack;
 
-	if (cameraStopped === false) {
-		localVideoTrack.stop();
-		localVideoTrack = null;
-
-		cameraStopped = true;
-		utils.statConsoleLog("Local video successfully stopped 🚫");
-		utils.showToast("stop-video-message");
-	} else {
+	if (isVideoOn === false) {
+		// Turn on video
 		localVideoTrack = AgoraRTC.createCameraVideoTrack();
 		playLocalVideo();
 		publishLocalTracks();
 
-		cameraStopped = false;
+		isVideoOn = true;
 		utils.statConsoleLog("Local video successfully started 🎥");
 		utils.showToast("start-video-message");
+	} else {
+		// Turn off video
+		localVideoTrack.stop();
+		localVideoTrack = null;
+
+		isVideoOn = false;
+		utils.statConsoleLog("Local video successfully stopped 🚫");
+		utils.showToast("stop-video-message");
 	}
 }
 
