@@ -21,11 +21,9 @@ export function truncate(str, n) {
 };
 
 export function generateShareUrl() {
-	return `${_.appUrl}?channel=${stat_auth.user.channel}`;
+	return window.location.href;
 }
 
-export function generateUid() {
-	let uid = '0000000000';
-
-	return parseInt((uid + Math.floor(Math.random() * 1000000000)).slice(-10));
+export function statConsoleLog(msg) {
+	console.log(`%cStat! [DEBUG]: %c${msg}`, 'color: #8f35ff', 'color: #0D0D0D');
 }
