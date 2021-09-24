@@ -158,6 +158,9 @@ export function toggleMic() {
 		utils.statConsoleLog("Local audio successfully started 📣");
 		utils.hideToast("muted-message");
 		utils.showToast("unmuted-message");
+
+		stat_auth.adjustMyPublishStatus("audio", true);
+
 	} else {
 		// Turn off the mic
 		localAudioTrack.setEnabled(false);
@@ -166,6 +169,9 @@ export function toggleMic() {
 		utils.statConsoleLog("Local audio successfully muted 🤫");
 		utils.hideToast("unmuted-message");
 		utils.showToast("muted-message");
+
+		stat_auth.adjustMyPublishStatus("audio", false);
+
 	}
 }
 
@@ -180,6 +186,9 @@ export function toggleVideo() {
 		utils.statConsoleLog("Local video successfully started 🎥");
 		utils.hideToast("stop-video-message");
 		utils.showToast("start-video-message");
+
+		stat_auth.adjustMyPublishStatus("video", true);
+
 	} else {
 		// Turn off video
 		localVideoTrack.setEnabled(false);
@@ -188,6 +197,8 @@ export function toggleVideo() {
 		utils.statConsoleLog("Local video successfully stopped 🚫");
 		utils.hideToast("start-video-message");
 		utils.showToast("stop-video-message");
+
+		stat_auth.adjustMyPublishStatus("video", false);
 	}
 }
 
