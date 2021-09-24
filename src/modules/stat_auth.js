@@ -140,3 +140,21 @@ export async function adjustMyActiveStatus(isActive) {
 		console.error(`Error: user ${uid} does not exists!`)
 	};
 }
+
+export async function adjustMyPublishStatus(type, isActive) {
+	const docRef = firestore.doc(stat_firebase.meetingDocRef, stat_firebase.usersCollection, user.uid);
+	const docSnap = await firestore.getDoc(docRef);
+	if (docSnap.exists()) {
+		if (type === "video") {
+			firestore.updateDoc(docRef, {
+				"publishStatus.video": isActive
+			})
+		} else if (type === "audio") {
+			firestore.updateDoc(docRef, {
+				"publishStatus.audio": isActive
+			})
+		}
+	} else {
+		console.error(`Error: user ${uid} does not exists!`)
+	};
+}
