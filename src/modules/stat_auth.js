@@ -75,7 +75,7 @@ export async function addMyUserInfo() {
 		isActive: true,
 		reaction: "😀"
 	}).then((result) => {
-		console.log(`Successfully sent user data. ${result}`);
+		console.log(`Successfully sent user data.`);
 	}).catch((err) => {
 		console.error(`Error sending user data: ${err}`);
 	});

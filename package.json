@@ -40,6 +40,7 @@
 		"@popperjs/core": "^2.10.1",
 		"@tensorflow-models/blazeface": "^0.0.7",
 		"@tensorflow/tfjs": "^3.9.0",
+		"agora-rtc-sdk-ng": "^4.7.1",
 		"bootstrap": "^5.1.1",
 		"file-loader": "^6.2.0",
 		"firebase": "^9.0.2",
