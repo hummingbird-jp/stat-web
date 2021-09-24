@@ -3,7 +3,6 @@ import * as bootstrap from "bootstrap";
 
 // Firebase
 import * as auth from "firebase/auth";
-import * as functions from "firebase/functions";
 import * as firestore from "@firebase/firestore";
 
 // Internal Modules
@@ -77,10 +76,7 @@ if (window.location.pathname === '/signin/') {
 
 			$("#display-name").text(`Welcome back, ${stat_auth.user.displayNameAuth} 👋`);
 
-			const toastOptions = { animation: true, autohide: true, delay: 3000 };
-			const welcomeMessageElement = new bootstrap.Toast($('#welcome-message'), toastOptions);
-
-			welcomeMessageElement.show();
+			utils.showToast("welcome-message");
 
 			const urlParams = new URL(appUrl).searchParams;
 			stat_auth.user.channel = urlParams.get("channel");
@@ -335,7 +331,10 @@ $(window).on("keypress", async function (e) {
 			utils.copyTextToClipboard(text, tooltip);
 			break;
 		case "m":
-			await agora.unpublish();
+			agora.toggleMic();
+			break;
+		case "v":
+			agora.toggleVideo();
 			break;
 		case "l":
 			agora.leave();
@@ -343,6 +342,14 @@ $(window).on("keypress", async function (e) {
 		default:
 			break;
 	}
+});
+
+$("#toggle-mic").on("click", function () {
+	agora.toggleMic();
+});
+
+$("#toggle-video").on("click", function () {
+	agora.toggleVideo();
 });
 
 // Click "Clap!" to clap

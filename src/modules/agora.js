@@ -13,17 +13,19 @@ import * as meetingConfiguration from "./meeting-configuration";
 import * as reaction from "./reaction";
 import * as timer from "./timer";
 import * as voiceVisualizer from "./voice-visualizer";
+import * as utils from "./utils";
 
 const appid = "adaa9fb7675e4ca19ca80a6762e44dd2";
 const toastOptions = { animation: true, autohide: true, delay: 3000 };
 
 let client;
 let published = false;
+let isMicOn = true;
+let isVideoOn = true;
 let localTracks;
 let remoteUsers;
-let meetingId;
 
-export function initAgora() {
+function initAgora() {
 	published = false;
 
 	client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -40,7 +42,6 @@ export async function joinWithChannelName(channelName) {
 	auth.onAuthStateChanged(stat_auth.authInstance, async (userAuth) => {
 		if (userAuth) {
 			try {
-
 				// Generate a token with channel name via Cloud Functions
 				const generateTokenWithUid = functions.httpsCallable(stat_firebase.functionsInstance, "generateTokenWithUid",);
 				const result = await generateTokenWithUid({ channelName: channelName })
@@ -61,15 +62,13 @@ export async function joinWithChannelName(channelName) {
 			} finally {
 				$("#leave").attr("disabled", false);
 			}
-
 		} else {
 			stat_auth.signin();
 		}
 	});
 }
 
-export async function joinOrCreate() {
-
+async function joinOrCreate() {
 	initAgora();
 
 	// Add an event listener to play remote tracks when remote user publishes.
@@ -90,13 +89,11 @@ export async function joinOrCreate() {
 	]);
 
 	// Play the local video track to the local browser and update the UI with the user ID.
-	localTracks.videoTrack.play("local-player");
+	playLocalVideo();
 	$("#local-player-name").text(`${stat_auth.user.displayNameStat} (You)`);
 
 	// Publish the local video and audio tracks to the channel.
-	client.publish(Object.values(localTracks));
-	published = true;
-	console.log("Local user successfully published.");
+	publishLocalTracks();
 
 	$(".join-area").hide();
 	$("#copyright").hide();
@@ -147,6 +144,50 @@ export async function unpublish() {
 		// Show toast message
 		unpublishedMessageElement.hide();
 		publishedMessageElement.show();
+	}
+}
+
+export function toggleMic() {
+	let localAudioTrack = localTracks.audioTrack;
+
+	if (isMicOn === false) {
+		// Turn on the mic
+		localAudioTrack.setEnabled(true);
+		isMicOn = true;
+		$("#toggle-mic").prop("checked", true);
+		utils.statConsoleLog("Local audio successfully started 📣");
+		utils.hideToast("muted-message");
+		utils.showToast("unmuted-message");
+	} else {
+		// Turn off the mic
+		localAudioTrack.setEnabled(false);
+		isMicOn = false;
+		$("#toggle-mic").prop("checked", false);
+		utils.statConsoleLog("Local audio successfully muted 🤫");
+		utils.hideToast("unmuted-message");
+		utils.showToast("muted-message");
+	}
+}
+
+export function toggleVideo() {
+	let localVideoTrack = localTracks.videoTrack;
+
+	if (isVideoOn === false) {
+		// Turn on video
+		localVideoTrack.setEnabled(true);
+		isVideoOn = true;
+		$("#toggle-video").prop("checked", true);
+		utils.statConsoleLog("Local video successfully started 🎥");
+		utils.hideToast("stop-video-message");
+		utils.showToast("start-video-message");
+	} else {
+		// Turn off video
+		localVideoTrack.setEnabled(false);
+		isVideoOn = false;
+		$("#toggle-video").prop("checked", false);
+		utils.statConsoleLog("Local video successfully stopped 🚫");
+		utils.hideToast("start-video-message");
+		utils.showToast("stop-video-message");
 	}
 }
 
@@ -206,11 +247,13 @@ async function subscribe(user, mediaType) {
 	if (mediaType === 'video') {
 		const player = $(`
 				<div id="player-wrapper-${uid}" class="col">
-					<p id="player-reaction-${uid}" class="reaction-text">😀</p>
-					<p class="player-name">${uid}</p>
+				<p id="player-reaction-${uid}" class="reaction-text">😀</p>
+				<p class="player-name">${uid}</p>
 					<div id="player-${uid}" class="player mx-auto"></div>
 				</div>
 		`);
+		// Remove old player wrapper
+		$(`#player-wrapper-${uid}`).remove();
 		$("#video-group").append(player);
 		user.videoTrack.play(`player-${uid}`);
 	}
@@ -236,9 +279,23 @@ function handleUserPublished(user, mediaType) {
  *
  * @param  {string} user - The {@link  https://docs.agora.io/en/Voice/API%20Reference/web_ng/interfaces/iagorartcremoteuser.html| remote user} to remove.
  */
-function handleUserUnpublished(user) {
+function handleUserUnpublished(user, mediaType) {
 	const id = user.uid;
 	delete remoteUsers[id];
 
-	$(`#player-wrapper-${id}`).remove();
+	// If remote user muted
+	if (mediaType === "video") {
+		$(`#player-${id}`).remove();
+	}
 }
+
+function playLocalVideo() {
+	localTracks.videoTrack.play("local-player");
+}
+
+function publishLocalTracks() {
+	client.publish(Object.values(localTracks));
+	published = true;
+	console.log("Local user successfully published.");
+}
+
