@@ -1,5 +1,20 @@
+import * as bootstrap from "bootstrap";
+
 import * as _ from "..";
-import * as stat_auth from "./stat_auth";
+
+export function showToast(elementId) {
+	const toastOptions = { animation: true, autohide: true, delay: 3000 };
+	const toastElement = new bootstrap.Toast($(`#${elementId}`), toastOptions);
+
+	toastElement.show();
+}
+
+export function hideToast(elementId) {
+	const toastOptions = { animation: true, autohide: true, delay: 3000 };
+	const toastElement = new bootstrap.Toast($(`#${elementId}`), toastOptions);
+
+	toastElement.hide();
+}
 
 export function initScreen() {
 	$('#join-form').css('display', 'none');
