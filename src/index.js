@@ -21,6 +21,7 @@ import './styles.css';
 export const appUrl = $(location).attr('href');
 
 utils.initScreen();
+agora.initAgora();
 
 try {
 	stat_firebase.enableAppCheck();
@@ -350,11 +351,6 @@ $('#stop-timer').on('click', function () {
 	}, 1000);
 
 	timer.sendTimer(false, 0);
-});
-
-// Unpublish the local video and audio tracks to the channel when the user down the button #unpublish
-$("#unpublish").on("click", async function () {
-	await agora.unpublish();
 });
 
 // Control with keypress

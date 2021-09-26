@@ -1,3 +1,6 @@
+// Agora Video SDK for Web NG (stands for Next Generation; also means 4.x)
+import AgoraRTC from "agora-rtc-sdk-ng"
+
 // Bootstrap
 import * as bootstrap from "bootstrap";
 
@@ -18,14 +21,14 @@ import * as utils from "./utils";
 const appid = "adaa9fb7675e4ca19ca80a6762e44dd2";
 const toastOptions = { animation: true, autohide: true, delay: 3000 };
 
+let localTracks;
 let client;
 let published = false;
 let isMicOn = true;
 let isVideoOn = true;
-let localTracks;
 let remoteUsers;
 
-function initAgora() {
+export async function initAgora() {
 	published = false;
 
 	client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
@@ -36,6 +39,10 @@ function initAgora() {
 	};
 
 	remoteUsers = {};
+
+	// Add an event listener to play remote tracks when remote user publishes.
+	client.on("user-published", handleUserPublished);
+	client.on("user-unpublished", handleUserUnpublished);
 }
 
 export async function joinWithChannelName(channelName) {
@@ -55,7 +62,43 @@ export async function joinWithChannelName(channelName) {
 				stat_auth.user.displayNameAuth = userAuth.displayName;
 				stat_auth.user.displayNameStat = userAuth.displayName;
 
-				await joinOrCreate();
+				// Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
+				[stat_auth.user.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
+					// Join the channel.
+					client.join(appid, stat_auth.user.channel, stat_auth.user.token || null, stat_auth.user.uid || null),
+					// Create tracks to the local microphone and camera.
+					AgoraRTC.createMicrophoneAudioTrack(),
+					AgoraRTC.createCameraVideoTrack(),
+				]);
+
+				// hide join panel; show up #leave button
+				$("#join").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
+				$("#create").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
+
+				// Play the local video track to the local browser and update the UI with the user ID.
+				playLocalVideo();
+				$("#local-player-name").text(`${stat_auth.user.displayNameStat} (You)`);
+
+				// Publish the local video and audio tracks to the channel.
+				publishLocalTracks();
+
+				$(".join-area").hide();
+				$("#copyright").hide();
+				$(".meeting-area").fadeIn();
+				$(".control-button-group").fadeIn();
+
+				await stat_firebase.init();
+				bgm.init();
+				voiceVisualizer.init();
+				reaction.init();
+
+				stat_auth.addMyUserInfo();
+
+				stat_auth.listenUserInfo();
+				agenda.listenAgenda();
+				timer.listenTimer();
+
+				meetingConfiguration.initMeetingTimeLimit();
 			} catch (error) {
 				console.error(error);
 				// TODO: show error and clear form
@@ -66,85 +109,6 @@ export async function joinWithChannelName(channelName) {
 			stat_auth.signin();
 		}
 	});
-}
-
-async function joinOrCreate() {
-	initAgora();
-
-	// Add an event listener to play remote tracks when remote user publishes.
-	client.on("user-published", handleUserPublished);
-	client.on("user-unpublished", handleUserUnpublished);
-
-	// hide join panel; show up #leave button
-	$("#join").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
-	$("#create").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
-
-	// Join a channel and create local tracks. Best practice is to use Promise.all and run them concurrently.
-	[stat_auth.user.uid, localTracks.audioTrack, localTracks.videoTrack] = await Promise.all([
-		// Join the channel.
-		client.join(appid, stat_auth.user.channel, stat_auth.user.token || null, stat_auth.user.uid || null),
-		// Create tracks to the local microphone and camera.
-		AgoraRTC.createMicrophoneAudioTrack(),
-		AgoraRTC.createCameraVideoTrack()
-	]);
-
-	// Play the local video track to the local browser and update the UI with the user ID.
-	playLocalVideo();
-	$("#local-player-name").text(`${stat_auth.user.displayNameStat} (You)`);
-
-	// Publish the local video and audio tracks to the channel.
-	publishLocalTracks();
-
-	$(".join-area").hide();
-	$("#copyright").hide();
-	$(".meeting-area").fadeIn();
-	$(".control-button-group").fadeIn();
-
-	await stat_firebase.init();
-	bgm.init();
-	voiceVisualizer.init();
-	reaction.init();
-
-	stat_auth.addMyUserInfo();
-
-	stat_auth.listenUserInfo();
-	agenda.listenAgenda();
-	timer.listenTimer();
-
-	meetingConfiguration.initMeetingTimeLimit();
-}
-
-export async function unpublish() {
-	const unpublishedMessageElement = new bootstrap.Toast($('#unpublished-message'), toastOptions);
-	const publishedMessageElement = new bootstrap.Toast($('#published-message'), toastOptions);
-
-	// Firestore Update
-	stat_auth.adjustMyActiveStatus(published);
-
-	if (published === true) {
-		// Unpublish the user
-		client.unpublish(Object.values(localTracks));
-		published = false;
-
-		$('.available-only-published').attr('disabled', true);
-		$('.visible-only-published').hide();
-
-		// Show toast message
-		unpublishedMessageElement.show();
-		publishedMessageElement.hide();
-
-	} else {
-		// Publish the user
-		client.publish(Object.values(localTracks));
-		published = true;
-
-		$('.available-only-published').attr('disabled', false);
-		$('.visible-only-published').show();
-
-		// Show toast message
-		unpublishedMessageElement.hide();
-		publishedMessageElement.show();
-	}
 }
 
 export function toggleMic() {
