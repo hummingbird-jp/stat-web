@@ -97,8 +97,6 @@ const reactionModule = (function () {
 				const sum = eyeMovedLog.reduce((a, b) => a + b);
 
 				if (sum > 80) {
-					//console.log(eyeMovedLog.length, sum);
-					//console.log("%c are you nodding?", 'color: #0583F2');
 					eyeMovedLog = [];
 					detector += 1;
 				}
@@ -109,7 +107,6 @@ const reactionModule = (function () {
 				eyeMovedLog = [];
 				detector = 0;
 				nodWindow = windowSize;
-				//console.log('%c detector reset ', 'color: #BF1F5A');
 				const currentReaction = $("#local-player-reaction").text();
 				if (currentReaction != '😀') {
 					$("#local-player-reaction").text("😀");
@@ -120,7 +117,6 @@ const reactionModule = (function () {
 			if (detector >= threshold) {
 				eyeMovedLog = [];
 				detector = 0;
-				//console.log('%c You are nodding! ', 'background: #222; color: #bada55');
 				$("#local-player-reaction").append("👍");
 				sendMyReaction($("#local-player-reaction").text());
 			}

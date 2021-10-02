@@ -1,9 +1,6 @@
 // Agora Video SDK for Web NG (stands for Next Generation; also means 4.x)
 import AgoraRTC from "agora-rtc-sdk-ng"
 
-// Bootstrap
-import * as bootstrap from "bootstrap";
-
 // Firebase
 import * as auth from "firebase/auth";
 import * as functions from "firebase/functions";
