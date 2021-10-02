@@ -1,5 +1,6 @@
 import * as firestore from "@firebase/firestore";
 import * as stat_firebase from "./stat_firebase";
+import { statConsoleLog } from "./utils";
 
 let isTimerRunningLocally;
 let shouldStop;
@@ -105,7 +106,7 @@ export async function sendTimer(isRunning, durationMin) {
 		endAt: endAt,
 		startedAt: firestore.Timestamp.now()
 	}).then((result) => {
-		console.log(`Timer successfully sent! ${result}`);
+		statConsoleLog("Timer successfully sent.");
 	}).catch((err) => {
 		console.error(`Error sending timer: ${err}`);
 	});
@@ -121,10 +122,10 @@ export function listenTimer() {
 
 		if (isTimerRunningLocally !== isTimerRunningOnOthers) {
 			if (isTimerRunningOnOthers === true) {
-				console.log(`Timer on others has started.`);
+				statConsoleLog("Timer started on another client.");
 				startTimer(startedAt, endAt);
 			} else {
-				console.log(`Timer on others has stopped.`);
+				statConsoleLog("Timer stopped on another client.");
 				stopTimer();
 			}
 		}

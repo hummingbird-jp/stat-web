@@ -189,7 +189,7 @@ export async function leave() {
 	$("#local-player-name").text("");
 	$("#join").attr("disabled", false);
 	$("#leave").attr("disabled", true);
-	console.log("client leaves channel success");
+	utils.statConsoleLog("You successfully leaved the channel.");
 
 	$("#leave").html(`<img src="icons/hourglass_empty_black_24dp.svg" alt="" class="material-icons">`);
 
@@ -217,7 +217,7 @@ async function subscribe(user, mediaType) {
 
 	// subscribe to a remote user
 	await client.subscribe(user, mediaType);
-	console.log("subscribe success");
+	utils.statConsoleLog(`Successfully subscribed!`);
 
 	if (mediaType === 'video') {
 		const player = $(`
@@ -271,6 +271,6 @@ function playLocalVideo() {
 function publishLocalTracks() {
 	client.publish(Object.values(localTracks));
 	published = true;
-	console.log("Local user successfully published.");
+	utils.statConsoleLog("Your tracks successfully published.");
 }
 

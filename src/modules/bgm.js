@@ -2,7 +2,7 @@ import * as firestore from "@firebase/firestore";
 
 import * as _ from "../index";
 import * as stat_firebase from "./stat_firebase";
-import * as stat_auth from "./stat_auth";
+import * as utils from "./utils";
 
 const selectorObj = $("#bgm-selector")[0];
 const playButton = $("#play-button")[0];
@@ -52,7 +52,7 @@ export async function init() {
 		const category = selectorObj.value;
 		if (category != audioTrackData.categoryFirestore) {
 			// New bgm selected
-			console.log("New bgm selected!")
+			utils.statConsoleLog(`New bgm selected: ${category}`);
 			sendBgmStatus(0, true, true);
 		} else {
 			const currentTime = audioElm.currentTime;
