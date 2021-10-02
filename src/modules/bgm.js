@@ -23,12 +23,11 @@ export async function init() {
 	if (!docSnap.exists()) {
 		// If you are the first person in the meeting, initialize Firestore document.
 		initBgmFirestoreDoc();
-
 	} else {
 		// If someone already started playing BGM, your local player follows.
 		if (docSnap.data().isPlaying) {
-			const currentTrackId = doc.data().currentTrackId;
-			const currentTime = doc.data().currentTime;
+			const currentTrackId = docSnap.data().currentTrackId;
+			const currentTime = docSnap.data().currentTime;
 			const docRef = firestore.doc(stat_firebase.db, stat_firebase.audioSetCollection, currentTrackId);
 			const snapshot = await firestore.getDoc(docRef);
 			changeSelectorTo(snapshot.data().category);
