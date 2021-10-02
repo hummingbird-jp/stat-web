@@ -190,7 +190,7 @@ function setLocalPause() {
 	selectorObj.disabled = true;
 };
 
-function setLocalStop() {
+export function setLocalStop() {
 	audioElm.pause();
 
 	// Configure control panel as 'Stopped'

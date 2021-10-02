@@ -159,30 +159,31 @@ export function init() {
 		draw();
 
 	}
+}
 
-	$("#leave").on("click", function () {
-		audioCtx.close().then(function () {
-			console.log("Audio Context was closed. ");
-		});
-		shouldContinue = false;
-		const constraints = { audio: true }
-
-		/*
-		 * Note: use MediaStreamTrack.stop() to stop tracks,
-		 * but the red circle sign on the right side of web browzer tab remains.
-		 */
-		navigator.mediaDevices.getUserMedia(constraints)
-			.then(
-				function (stream) {
-					const tracks = stream.getTracks();
-					tracks.forEach(function (track) {
-						track.stop();
-						console.log("log : track stopped")
-					});
-				})
-			.catch(function (err) { console.log('The following gUM error occured: ' + err); })
+export function closeAudioContext() {
+	audioCtx.close().then(function () {
+		statConsoleLog("Audio context closed.");
 	});
+	shouldContinue = false;
+	const constraints = { audio: true }
 
+	/*
+	 * Note: use MediaStreamTrack.stop() to stop tracks,
+	 * but the red circle sign on the right side of web browzer tab remains.
+	 */
+	navigator.mediaDevices.getUserMedia(constraints)
+		.then(
+			function (stream) {
+				const tracks = stream.getTracks();
+				tracks.forEach(function (track) {
+					track.stop();
+					statConsoleLog(`Track stopped: ${track.label}`);
+				});
+			})
+		.catch(function (err) {
+			statConsoleLog(`Error stopping tracks: ${err}`);
+		});
 }
 
 async function sendTalkDataToFirebase(value) {
