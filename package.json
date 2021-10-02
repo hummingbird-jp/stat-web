@@ -28,8 +28,8 @@
 		"cz-conventional-changelog": "^3.3.0",
 		"path": "^0.12.7",
 		"style-loader": "^3.3.0",
-		"webpack": "^5.53.0",
-		"webpack-dev-server": "^4.2.1"
+		"webpack": "^5.56.0",
+		"webpack-dev-server": "^4.3.0"
 	},
 	"config": {
 		"commitizen": {
@@ -37,13 +37,13 @@
 		}
 	},
 	"dependencies": {
-		"@popperjs/core": "^2.10.1",
+		"@popperjs/core": "^2.10.2",
 		"@tensorflow-models/blazeface": "^0.0.7",
 		"@tensorflow/tfjs": "^3.9.0",
 		"agora-rtc-sdk-ng": "^4.7.1",
 		"bootstrap": "^5.1.1",
 		"file-loader": "^6.2.0",
-		"firebase": "^9.0.2",
+		"firebase": "^9.1.1",
 		"firebaseui": "^5.0.0",
 		"jquery": "^3.6.0",
 		"webpack-cli": "^4.8.0"
