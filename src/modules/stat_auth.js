@@ -4,6 +4,7 @@ import * as firestore from "@firebase/firestore";
 import * as stat_firebase from "./stat_firebase";
 import * as voiceVisualizer from "./voice-visualizer";
 import * as _ from "..";
+import { statConsoleLog } from "./utils";
 
 export const user = {
 	// User info from "sign in with google"
@@ -31,7 +32,7 @@ export async function signin() {
 	const result = await auth.signInWithPopup(authInstance, provider);
 
 	if (result) {
-		console.log(`Successfully signed in: ${result.user.displayName}`);
+		statConsoleLog(`Successfully signed in: ${result.user.displayName}`);
 	} else {
 		console.error(`Failed signing in. Try again...`)
 	}
@@ -52,7 +53,7 @@ export async function addMyUserInfo() {
 			isActive: true,
 		});
 	} else {
-		console.log("Welcome to Stat!");
+		statConsoleLog("Welcome to Stat!");
 		firestore.setDoc(docRefUsers, {
 			displayNameAuth: user.displayNameAuth,
 			email: user.email,
@@ -75,7 +76,7 @@ export async function addMyUserInfo() {
 		isActive: true,
 		reaction: "😀"
 	}).then((result) => {
-		console.log(`Successfully sent user data.`);
+		statConsoleLog("Successfully sent your user data.");
 	}).catch((err) => {
 		console.error(`Error sending user data: ${err}`);
 	});

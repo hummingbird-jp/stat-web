@@ -3,6 +3,7 @@ import * as firestore from "@firebase/firestore";
 import * as _ from "../index";
 import * as stat_auth from "./stat_auth";
 import * as stat_firebase from "./stat_firebase";
+import * as utils from "./utils";
 
 // Send agenda to Firestore
 export async function sendAgenda(agenda) {
@@ -14,7 +15,7 @@ export async function sendAgenda(agenda) {
 		timeSet: firestore.Timestamp.now(),
 		setBy: stat_auth.user.displayNameStat,
 	}).then(() => {
-		console.log(`Agenda successfully sent! ${agenda}`);
+		utils.statConsoleLog(`Agenda successfully sent! ${agenda}`);
 	}).catch((err) => {
 		console.error(`Error sending agenda: ${err}`);
 	});

@@ -2,16 +2,15 @@ import * as firestore from "@firebase/firestore";
 import * as stat_auth from "./stat_auth";
 import * as _ from "..";
 import * as stat_firebase from "./stat_firebase";
+import { statConsoleLog } from "./utils";
 
 const colorPalette = ["#BF1F5A", "#0583F2", "#5FD93D", "#F2780C"];
 
 export function init() {
-
 	// Older browsers might not implement mediaDevices at all, so we set an empty object first
 	if (navigator.mediaDevices === undefined) {
 		navigator.mediaDevices = {};
 	}
-
 
 	// Some browsers partially implement mediaDevices. We can't just assign an object
 	// with getUserMedia as it would overwrite existing properties.
@@ -39,8 +38,7 @@ export function init() {
 	// window. is needed otherwise Safari explodes
 
 	const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-	console.log("Sampling rate: ", audioCtx.sampleRate);
+	statConsoleLog(`Sampling rate: ${audioCtx.sampleRate}`);
 
 	let source;
 	let stream;
@@ -70,7 +68,7 @@ export function init() {
 	//main block for doing the audio recording
 
 	if (navigator.mediaDevices.getUserMedia) {
-		console.log('getUserMedia supported.');
+		statConsoleLog("Successfully got user media.");
 		const constraints = { audio: true }
 		navigator.mediaDevices.getUserMedia(constraints)
 			.then(
@@ -79,9 +77,11 @@ export function init() {
 					source.connect(analyser);
 					visualize();
 				})
-			.catch(function (err) { console.log('The following gUM error occured: ' + err); })
+			.catch(function (err) {
+				statConsoleLog(`Error getting user media: ${err}`);
+			});
 	} else {
-		console.log('getUserMedia not supported on your browser!');
+		statConsoleLog("User media not supported.");
 	}
 
 	function visualize() {
@@ -159,30 +159,31 @@ export function init() {
 		draw();
 
 	}
+}
 
-	$("#leave").on("click", function () {
-		audioCtx.close().then(function () {
-			console.log("Audio Context was closed. ");
-		});
-		shouldContinue = false;
-		const constraints = { audio: true }
-
-		/*
-		 * Note: use MediaStreamTrack.stop() to stop tracks,
-		 * but the red circle sign on the right side of web browzer tab remains.
-		 */
-		navigator.mediaDevices.getUserMedia(constraints)
-			.then(
-				function (stream) {
-					const tracks = stream.getTracks();
-					tracks.forEach(function (track) {
-						track.stop();
-						console.log("log : track stopped")
-					});
-				})
-			.catch(function (err) { console.log('The following gUM error occured: ' + err); })
+export function closeAudioContext() {
+	audioCtx.close().then(function () {
+		statConsoleLog("Audio context closed.");
 	});
+	shouldContinue = false;
+	const constraints = { audio: true }
 
+	/*
+	 * Note: use MediaStreamTrack.stop() to stop tracks,
+	 * but the red circle sign on the right side of web browzer tab remains.
+	 */
+	navigator.mediaDevices.getUserMedia(constraints)
+		.then(
+			function (stream) {
+				const tracks = stream.getTracks();
+				tracks.forEach(function (track) {
+					track.stop();
+					statConsoleLog(`Track stopped: ${track.label}`);
+				});
+			})
+		.catch(function (err) {
+			statConsoleLog(`Error stopping tracks: ${err}`);
+		});
 }
 
 async function sendTalkDataToFirebase(value) {

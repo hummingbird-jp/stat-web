@@ -2,7 +2,7 @@ import * as firestore from "@firebase/firestore";
 
 import * as _ from "../index";
 import * as stat_firebase from "./stat_firebase";
-import * as stat_auth from "./stat_auth";
+import * as utils from "./utils";
 
 const selectorObj = $("#bgm-selector")[0];
 const playButton = $("#play-button")[0];
@@ -23,12 +23,11 @@ export async function init() {
 	if (!docSnap.exists()) {
 		// If you are the first person in the meeting, initialize Firestore document.
 		initBgmFirestoreDoc();
-
 	} else {
 		// If someone already started playing BGM, your local player follows.
 		if (docSnap.data().isPlaying) {
-			const currentTrackId = doc.data().currentTrackId;
-			const currentTime = doc.data().currentTime;
+			const currentTrackId = docSnap.data().currentTrackId;
+			const currentTime = docSnap.data().currentTime;
 			const docRef = firestore.doc(stat_firebase.db, stat_firebase.audioSetCollection, currentTrackId);
 			const snapshot = await firestore.getDoc(docRef);
 			changeSelectorTo(snapshot.data().category);
@@ -53,7 +52,7 @@ export async function init() {
 		const category = selectorObj.value;
 		if (category != audioTrackData.categoryFirestore) {
 			// New bgm selected
-			console.log("New bgm selected!")
+			utils.statConsoleLog(`New bgm selected: ${category}`);
 			sendBgmStatus(0, true, true);
 		} else {
 			const currentTime = audioElm.currentTime;
@@ -191,7 +190,7 @@ function setLocalPause() {
 	selectorObj.disabled = true;
 };
 
-function setLocalStop() {
+export function setLocalStop() {
 	audioElm.pause();
 
 	// Configure control panel as 'Stopped'

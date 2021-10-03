@@ -9,9 +9,11 @@ import * as firestore from "@firebase/firestore";
 import * as stat_auth from "./modules/stat_auth";
 import * as stat_firebase from "./modules/stat_firebase";
 import * as agenda from "./modules/agenda";
+import * as bgm from "./modules/bgm";
 import * as agora from "./modules/agora"
 import * as reaction from "./modules/reaction";
 import * as timer from "./modules/timer";
+import * as voiceVisualizer from "./modules/voice-visualizer";
 import * as utils from "./modules/utils"
 
 // Stylesheets
@@ -417,4 +419,6 @@ $("#copy-infos-to-clipboard").on("mouseout", function () {
 // Leave
 $("#leave").on('click', function (e) {
 	agora.leave();
+	bgm.setLocalStop();
+	voiceVisualizer.closeAudioContext();
 });
